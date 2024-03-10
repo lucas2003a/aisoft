@@ -82,6 +82,7 @@ CREATE TABLE permisos(
 -- USUARIOS
 CREATE TABLE usuarios(
 	idusuario			INT PRIMARY KEY AUTO_INCREMENT,
+    imagen 				VARCHAR(100) 		NULL,
     nombres				VARCHAR(40) 		NOT NULL,
     apellidos			VARCHAR(20)			NOT NULL,
     documento_tipo		VARCHAR(20)			NOT NULL,
@@ -108,6 +109,7 @@ CREATE TABLE usuarios(
 -- PROYECTOS
 CREATE TABLE proyectos(
 	idproyecto 				INT PRIMARY KEY AUTO_INCREMENT,
+    imagen					VARCHAR(100) NULL,
     iddireccion				INT			NOT NULL,
     codigo	 				VARCHAR(20) NOT NULL, -- "A-12 NOMBRE DEL PROYECTO" => VARIA
     denominacion 			VARCHAR(30) NOT NULL,
@@ -130,6 +132,7 @@ CREATE TABLE proyectos(
 -- LOTES
 CREATE TABLE lotes(
 	idlote 				INT PRIMARY KEY AUTO_INCREMENT,
+    imagen 				VARCHAR(100) 		NULL,
     idproyecto			INT  		NOT  NULL,
     estado_venta 		VARCHAR(10) NOT  NULL DEFAULT "SIN VENDER",
     codigo				VARCHAR(5)	NOT NULL,
@@ -160,6 +163,7 @@ CREATE TABLE lotes(
     CONSTRAINT fk_idusuario_lotes FOREIGN KEY(idusuario) REFERENCES usuarios(idusuario)
 )ENGINE = INNODB;
 
+-- ALTER TABLE lotes CHANGE area_terremo area_terreno DECIMAL(5,2) NOT NULL;
 -- CLIENTES
 CREATE TABLE clientes(
 	idcliente			INT PRIMARY KEY AUTO_INCREMENT,

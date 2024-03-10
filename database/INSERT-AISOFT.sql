@@ -144,7 +144,7 @@ INSERT INTO lotes (idproyecto, estado_venta, codigo, tipo_casa, sublote, iddistr
 				(2, 'NO VENDIDO', 'LT039', 'CUH C004', 55, 4, 'CALLE DE LA ESPERANZA', 'USD', 260.25, 185.0, 185.0, NULL, NULL, 36, '11077494 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 39"}', 4),	
 				(3, 'SEPARADO', 'LT040', 'CUH C004', 56, 4, 'AVENIDA DEL PROGRESO', 'USD', 270.50, 190.0, 190.0, NULL, NULL, 38, '11077495 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 40"}', 5);
 
-SELECT * FROM lotes where idproyecto = 1;
+SELECT * FROM lotes;
 
 -- CLIENTES
 INSERT INTO clientes (nombres, apellidos, documento_tipo, documento_nro, estado_civil, iddistrito, direccion, idusuario)
