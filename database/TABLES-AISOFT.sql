@@ -51,8 +51,7 @@ CREATE TABLE direcciones(
     update_at			DATE 			NULL,
     inactive_at			DATE 			NULL,
     CONSTRAINT fk_idempresa_direccs FOREIGN KEY(idempresa) REFERENCES empresas(idempresa),
-    CONSTRAINT fk_iddistrito_direccs FOREIGN KEY(iddistrito) REFERENCES distritos(iddistrito),
-    CONSTRAINT uk_direccion_direccs UNIQUE(direccion)
+    CONSTRAINT fk_iddistrito_direccs FOREIGN KEY(iddistrito) REFERENCES distritos(iddistrito)
 )ENGINE = INNODB;
 
 -- ROLES

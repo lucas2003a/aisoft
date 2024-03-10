@@ -16,6 +16,13 @@ INSERT INTO direcciones(idempresa, iddistrito, direccion, referencia)
                 (1, 1009, "AV. LOS ALAMOS MZA. C LOTE. 25 URB. EL ROSAL","FRENTE AL PARQUE"),
 				(1, 1010, "CALLE LOS GIRASOLES MZA. E LOTE. 10 URB. LAS MARGARITAS","A 200 METROS DE LA AVENIDA PRINCIPAL");
                 
+INSERT INTO direcciones(idempresa, iddistrito, direccion, referencia)
+			VALUES
+				(2, 1008, "MZA. A LOTE. 06 URB. JULIO ARBOLEDA","A 1/2 CUADRA DE MAESTRO"),
+                (2, 1010, "AV. LOS ALAMOS MZA. C LOTE. 25 URB. EL ROSAL","FRENTE AL PARQUE"),
+				(2, 1011, "CALLE LOS GIRASOLES MZA. E LOTE. 10 URB. LAS MARGARITAS","A 200 METROS DE LA AVENIDA PRINCIPAL");                
+                                
+                
 SELECT * FROM direcciones;
 
 -- ROLES
@@ -108,13 +115,36 @@ SELECT * FROM PROYECTOS;
 -- LOTES
 INSERT INTO lotes (idproyecto, estado_venta, codigo, tipo_casa, sublote, iddistrito, urbanizacion, moneda_venta, area_terremo, area_construccion, area_techada, airesm2, zcomunes_porcent, estacionamiento_nro, partida_elect, detalles, idusuario)
 			VALUES
-				(1, 'SIN VENDER', 'LT001','CUH C001', 17, 1, 'SUB LOTE A-17 ZONA CALLE PROGRESO N°137', 'USD', 70.02, 42.5, 42.5, NULL, NULL, NULL, '11077471 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 1"}', 1),
+				(1, 'NO VENDIDO', 'LT001','CUH C001', 17, 1, 'SUB LOTE A-17 ZONA CALLE PROGRESO N°137', 'USD', 70.02, 42.5, 42.5, NULL, NULL, NULL, '11077471 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 1"}', 1),
 				(1, 'VENDIDO', 'LT002', 'CUH C001', 18, 1, 'URBANIZACIÓN EL ROSAL', 'USD', 80.00, 50.0, 50.0, NULL, 10, 1, '11077472 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 2"}', 2),
-				(1, 'EN PROCESO', 'LT003', 'CUH C001', 19, 1, 'LAS ACACIAS', 'USD', 65.75, 35.25, 35.25, NULL, NULL, NULL, '11077473 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 3"}', 3),
-				(1, 'SIN VENDER', 'LT004', 'CUH C001', 20, 1, 'VISTA HERMOSA', 'USD', 75.50, 45.0, 45.0, NULL, NULL, 2, '11077474 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 4"}', 4),
+				(1, 'SEPARADO', 'LT003', 'CUH C001', 19, 1, 'LAS ACACIAS', 'USD', 65.75, 35.25, 35.25, NULL, NULL, NULL, '11077473 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 3"}', 3),
+				(1, 'NO VENDIDO', 'LT004', 'CUH C001', 20, 1, 'VISTA HERMOSA', 'USD', 75.50, 45.0, 45.0, NULL, NULL, 2, '11077474 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 4"}', 4),
 				(1, 'VENDIDO', 'LT005', 'CUH C001', 21, 1, 'SAN MIGUEL', 'USD', 90.20, 60.8, 60.8, NULL, 15, NULL, '11077475 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 5"}', 5);
 
-SELECT * FROM lotes;
+INSERT INTO lotes (idproyecto, estado_venta, codigo, tipo_casa, sublote, iddistrito, urbanizacion, moneda_venta, area_terremo, area_construccion, area_techada, airesm2, zcomunes_porcent, estacionamiento_nro, partida_elect, detalles, idusuario)
+			VALUES
+				(2, 'NO VENDIDO', 'LT021', 'CUH C001', 37, 1, 'AVENIDA PRINCIPAL', 'USD', 100.00, 70.0, 70.0, NULL, NULL, 5, '11077476 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 21"}', 1),
+				(2, 'SEPARADO', 'LT022', 'CUH C001', 38, 1, 'CALLE ESPERANZA', 'USD', 85.50, 55.25, 55.25, NULL, NULL, 6, '11077477 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 22"}', 2),
+				(2, 'VENDIDO', 'LT023', 'CUH C001', 39, 1, 'PASEO DEL SOL', 'USD', 95.75, 65.75, 65.75, NULL, 8, NULL, '11077478 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 23"}', 3),
+				(3, 'NO VENDIDO', 'LT024', 'CUH C001', 40, 1, 'AVENIDA DEL MAR', 'USD', 110.25, 80.25, 80.25, NULL, NULL, 8, '11077479 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 24"}', 4),
+				(3, 'SEPARADO', 'LT025', 'CUH C001', 41, 1, 'CALLE SAN JUAN', 'USD', 120.00, 90.0, 90.0, NULL, NULL, 10, '11077480 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 25"}', 5),
+				(3, 'VENDIDO', 'LT026', 'CUH C002', 42, 2, 'PASEO DEL BOSQUE', 'USD', 130.50, 100.0, 100.0, NULL, 12, NULL, '11077481 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 26"}', 1),
+				(3, 'NO VENDIDO', 'LT027', 'CUH C002', 43, 2, 'CALLE NUEVA', 'USD', 145.75, 110.0, 110.0, NULL, NULL, 15, '11077482 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 27"}', 2),
+				(4, 'SEPARADO', 'LT028', 'CUH C002', 44, 2, 'AVENIDA LIBERTAD', 'USD', 155.25, 120.0, 120.0, NULL, NULL, 18, '11077483 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 28"}', 3),
+				(4, 'VENDIDO', 'LT029', 'CUH C002', 45, 2, 'PASEO DE LA LUNA', 'USD', 160.00, 125.0, 125.0, NULL, 20, NULL, '11077484 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 29"}', 4),
+				(4, 'NO VENDIDO', 'LT030', 'CUH C002', 46, 2, 'CALLE PRINCIPAL', 'USD', 170.50, 135.0, 135.0, NULL, NULL, 22, '11077485 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 30"}', 5),
+				(5, 'SEPARADO', 'LT031', 'CUH C003', 47, 3, 'AVENIDA DEL CIELO', 'USD', 180.75, 145.0, 145.0, NULL, NULL, 24, '11077486 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 31"}', 1),
+				(5, 'VENDIDO', 'LT032', 'CUH C003', 48, 3, 'PASEO DE LAS ESTRELLAS', 'USD', 190.25, 150.0, 150.0, NULL, 25, NULL, '11077487 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 32"}', 2),
+				(5, 'NO VENDIDO', 'LT033', 'CUH C003', 49, 3, 'CALLE LA LUNA', 'USD', 200.50, 155.0, 155.0, NULL, NULL, 26, '11077488 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 33"}', 3),
+				(5, 'SEPARADO', 'LT034', 'CUH C003', 50, 3, 'AVENIDA DEL SOL', 'USD', 210.00, 160.0, 160.0, NULL, NULL, 28, '11077489 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 34"}', 4),
+				(5, 'VENDIDO', 'LT035', 'CUH C003', 51, 3, 'PASEO DE LA TIERRA', 'USD', 220.25, 165.0, 165.0, NULL, 30, NULL, '11077490 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 35"}', 5),
+				(2, 'NO VENDIDO', 'LT036', 'CUH C004', 52, 4, 'CALLE NUEVA ESPERANZA', 'USD', 230.50, 170.0, 170.0, NULL, NULL, 32, '11077491 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 36"}', 1),
+				(3, 'SEPARADO', 'LT037', 'CUH C004', 53, 4, 'AVENIDA PRINCIPAL', 'USD', 240.75, 175.0, 175.0, NULL, NULL, 34, '11077492 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 37"}', 2),
+				(4, 'VENDIDO', 'LT038', 'CUH C004', 54, 4, 'PASEO DEL PARQUE', 'USD', 250.00, 180.0, 180.0, NULL, 35, NULL, '11077493 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 38"}', 3),
+				(2, 'NO VENDIDO', 'LT039', 'CUH C004', 55, 4, 'CALLE DE LA ESPERANZA', 'USD', 260.25, 185.0, 185.0, NULL, NULL, 36, '11077494 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 39"}', 4),	
+				(3, 'SEPARADO', 'LT040', 'CUH C004', 56, 4, 'AVENIDA DEL PROGRESO', 'USD', 270.50, 190.0, 190.0, NULL, NULL, 38, '11077495 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 40"}', 5);
+
+SELECT * FROM lotes where idproyecto = 1;
 
 -- CLIENTES
 INSERT INTO clientes (nombres, apellidos, documento_tipo, documento_nro, estado_civil, iddistrito, direccion, idusuario)

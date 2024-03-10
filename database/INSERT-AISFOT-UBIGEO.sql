@@ -1,4 +1,4 @@
-USE AISFOT;
+USE AISOFT;
 
 -- DEPARTAMENTOS
 INSERT INTO departamentos (departamento) VALUES
