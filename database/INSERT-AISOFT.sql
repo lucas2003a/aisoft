@@ -183,10 +183,26 @@ INSERT INTO separaciones (
     penalidad_porcent, estado, create_at, idusuario
 	) 
 		VALUES (
-		3, 1, 1, 150.5, '2024-03-08',
+		1, 1, 1, 150.5, '2024-03-08',
 		5, 'Activo', '2024-03-08', 1
 		);
         
+INSERT INTO separaciones (
+    idlote, idvend_representante, idcliente, separacion, fecha_pago,
+    penalidad_porcent, estado, create_at, idusuario
+	) 
+		VALUES (
+		5, 1, 1, 150.5, '2024-03-08',
+		5, 'Activo', '2024-03-08', 1
+		);
+INSERT INTO separaciones (
+    idlote, idvend_representante, idcliente, separacion, fecha_pago,
+    penalidad_porcent, estado, create_at, idusuario
+	) 
+		VALUES (
+		6, 1, 1, 150.5, '2024-03-08',
+		5, 'Activo', '2024-03-08', 1
+		);
 SELECT * FROM separaciones;
 
 -- SUSTENTO SEPARACIONES

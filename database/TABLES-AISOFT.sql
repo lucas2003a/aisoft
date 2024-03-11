@@ -135,10 +135,9 @@ CREATE TABLE lotes(
     imagen 				VARCHAR(100) 		NULL,
     idproyecto			INT  		NOT  NULL,
     estado_venta 		VARCHAR(10) NOT  NULL DEFAULT "SIN VENDER",
-    codigo				VARCHAR(5)	NOT NULL,
+    codigo				CHAR(5)	NOT NULL,
     tipo_casa			CHAR(8) 	NOT NULL,
     sublote 			TINYINT 	NOT NULL,
-    iddistrito 			INT 		NOT NULL,
     urbanizacion		VARCHAR(70) NOT NULL,
     latitud 			VARCHAR(20) NULL,
     longitud 			VARCHAR(20) NULL,
@@ -159,10 +158,15 @@ CREATE TABLE lotes(
     CONSTRAINT fk_idproyecto_lotes FOREIGN KEY(idproyecto)  REFERENCES proyectos(idproyecto),
     CONSTRAINT uk_codigo_lotes UNIQUE(codigo),
     CONSTRAINT uk_sublote_lotes UNIQUE(idproyecto, sublote),
-    CONSTRAINT fk_iddistrito_lotes FOREIGN KEY(iddistrito) REFERENCES distritos(iddistrito),
     CONSTRAINT fk_idusuario_lotes FOREIGN KEY(idusuario) REFERENCES usuarios(idusuario)
 )ENGINE = INNODB;
 
+-- ALTER TABLE lotes MODIFY codigo CHAR(5);
+/*
+alter table lotes drop constraint fk_iddistrito_lotes;
+alter table lotes
+drop column iddistrito;
+*/
 -- ALTER TABLE lotes CHANGE area_terremo area_terreno DECIMAL(5,2) NOT NULL;
 -- CLIENTES
 CREATE TABLE clientes(
@@ -214,6 +218,8 @@ CREATE TABLE contratos(
     CONSTRAINT fk_idusuario_cont FOREIGN KEY(idusuario) REFERENCES usuarios(idusuario)
 )ENGINE = INNODB;
 
+ALTER TABLE contratos
+	ADD CONSTRAINT uk_cliente_lote_contra UNIQUE(idlote, idcliente);
 -- VENDEDORES Y REPRESENTANTES
 CREATE TABLE vend_representantes(
 	idvend_representante 			INT PRIMARY KEY AUTO_INCREMENT,
