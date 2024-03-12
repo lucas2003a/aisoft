@@ -60,6 +60,7 @@ CALL spu_list_inactive_contracts_short();
 CALL spu_list_inactive_contracts_short_by_code("LT");
 
 -- CUANDO RESTAURES UN CONTRATO ELIMINADO, PRIMERO VERIFFICA QUE NO EXISTA OTRO CONTRATO ACTIVO CON ESE LOTE
-SELECT * FROM lotes;
+CALL spu_resotres_contracts(5);
+SELECT * FROM contratos;
 
     

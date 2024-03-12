@@ -652,10 +652,44 @@ END $$
 DELIMITER ;
 
 DELIMITER $$
-CREATE PROCEDURE spu_list_inactive_contracts_short_by_code(IN _codigo VARCHAR(5))
+CREATE PROCEDURE spu_lits_contracts_short_by_code(IN _codigo VARCHAR(5))
 BEGIN
 	SELECT * FROM vws_list_inactive_contracts_short
     WHERE codigo LIKE CONCAT(_codigo, "%");
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE spu_resotres_contracts(IN _idcontrato INT)
+BEGIN
+	DECLARE _idlote SMALLINT;
+	DECLARE _contratosActivos SMALLINT;
+    
+    -- OBTENGO EL IDLOTE
+    SET _idlote = (
+		SELECT idlote FROM contratos
+        WHERE idcontrato = _idcontrato
+    );
+    
+    -- VEREIFICO SI EXISTE ALGUN CONTRTO ACTIVO CON ESE IDLOTE
+    SET _contratosActivos = (
+		SELECT COUNT(*) FROM contratos
+        WHERE idlote = _idlote
+        AND inactive_at IS NULL
+    );
+    
+    -- EJECUTO LA CONSULTA
+    IF _contratosActivos = 0 THEN
+		UPDATE contratos
+			SET
+				estado = "ACTIVO",
+                update_at = CURDATE(),
+                inactive_at =  NULL
+			WHERE 
+				idcontrato = _idcontrato;
+	ELSE
+		SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Error: Ya existe un contrato con este lote";
+    END IF;
 END $$
 DELIMITER ;
 
