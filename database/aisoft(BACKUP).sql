@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:3307
--- Tiempo de generación: 12-03-2024 a las 02:30:36
+-- Tiempo de generación: 12-03-2024 a las 08:11:35
 -- Versión del servidor: 11.2.2-MariaDB
 -- Versión de PHP: 8.2.13
 
@@ -198,10 +198,27 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_inactve_clients` (IN `_idclient
 	END IF;
 END$$
 
-DROP PROCEDURE IF EXISTS `spu_list_adresses`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_list_adresses` (IN `_ruc` CHAR(11))   BEGIN
+DROP PROCEDURE IF EXISTS `spu_list_addresses`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_list_addresses` ()   BEGIN
+	SELECT
+		direcc.iddireccion,
+        emp.ruc,
+		emp.razon_social,
+        emp.partida_elect,
+        direcc.referencia,
+        dist.distrito,
+        prov.provincia,
+        dept.departamento
+		FROM direcciones AS direcc
+        INNER JOIN empresas AS emp ON emp.idempresa = direcc.idempresa
+        INNER JOIN distritos AS dist ON dist.iddistrito = direcc.iddistrito
+        INNER JOIN provincias AS prov ON prov.idprovincia = dist.idprovincia
+        INNER JOIN departamentos AS dept ON dept.iddepartamento = prov.iddepartamento;
+END$$
+
+DROP PROCEDURE IF EXISTS `spu_list_addresses_ruc`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_list_addresses_ruc` (IN `_ruc` VARCHAR(11))   BEGIN
 	DECLARE _idempresa INT;
-    DECLARE _iddistrito INT;
 
     -- OBTENGO LA EMPRESA
     SET _idempresa = (
@@ -243,7 +260,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_list_companies` ()   BEGIN
 END$$
 
 DROP PROCEDURE IF EXISTS `spu_list_companies_ruc`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_list_companies_ruc` (IN `_ruc` CHAR(11))   BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_list_companies_ruc` (IN `_ruc` VARCHAR(11))   BEGIN
 	SELECT * FROM vws_list_companies
     WHERE ruc LIKE CONCAT(_ruc, "%")
     ORDER BY 2;
