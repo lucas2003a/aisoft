@@ -11,10 +11,11 @@ CALL spu_list_districts(100); -- 100 => PROVINCIA DE CHINCHA
 
 -- EMPRESAS
 CALL spu_list_companies();
-CALL spu_list_companies_ruc("12"); -- POR RUC
+CALL spu_list_companies_ruc("1"); -- POR RUC
 
 -- DIRECCIONES
-CALL spu_list_adresses("12");
+CALL spu_list_addresses();
+CALL spu_list_addresses_ruc("12"); -- RUC EMPRESA
 
 -- PROYECTOS
 CALL spu_list_projects();
@@ -23,7 +24,7 @@ CALL spu_add_projects("", 3, "B-20 PUERTO RICO", "RESIDENCIAL PUERTO RICO", "", 
 CALL spu_set_projects(6, "", 3, "B-20 PUERTO RICO", "GRAN RESIDENCIAL PUERTO RICO", "", "", "", 15, "CALLE LOS ROSALES 123", 3);
 CALL spu_inactive_projects(6);
 CALL spu_list_drop_projects();
-CALL spu_list_drop_projects_by_code("12");
+CALL spu_list_drop_projects_by_code("b-20");
 CALL spu_restore_projects(6);
 
 -- lotes
@@ -33,11 +34,24 @@ CALL spu_list_lots_short();
 CALL spu_list_lots_short_by_code("LT0");
 CALL spu_inactive_list_short();
 CALL spu_inactive_list_short_by_code("LT");
-CALL spu_add_lots("",6,'NO VENDIDO', 'LT043', 'CUH C002', 38, 'AVENIDA PRINCIPAL', NULL, NULL, NULL, 'USD', 90.00, 60.0, 60.0, NULL, NULL, 6, '11077477 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 22"}', 1);
-CALL spu_set_lots(32, "",6,'NO VENDIDO', 'LT043', 'CUH C002', 38, 'AVENIDA PRINCIPAL', NULL, NULL, NULL, 'USD', 90.00, 60.0, 60.0, NULL, NULL, 6, '11077477 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 22"}', 1);
+CALL spu_add_lots(1, 'VENDIDO', 'LT040', 1, 'Urbanización XYZ', '12.3456', '-78.9101', '{"puntos": [{"x": 1, "y": 2}, {"x": 3, "y": 4}, {"x": 5, "y": 6}]}', 'USD', 200.00, 'Número de partida eléctronica', 12);
+CALL spu_set_lots(16, 6, 'VENDIDO', 'LT070', 1, 'Urbanización XYA', '12.3456', '-78.9101', '{"puntos": [{"x": 1, "y": 2}, {"x": 3, "y": 4}, {"x": 5, "y": 6}]}', 'USD', 200.00, 'Número de partida eléctronica', 12);
 CALL spu_inactive_lots(2); -- DESACTIVA POR ID SI EL LOTE ESTA "NO VENDIDO"
 CALL spu_restore_lotes(2); -- RECUPERA LOS LOTES DESACTIVADOS POR IDLOTE
 SELECT *FROM lotes;
+
+SELECT * FROM viviendas;
+UPDATE lotes AS lt 
+INNER JOIN viviendas AS viv ON viv.idlote = lt.idlote
+SET estado_venta = "VENDIDO";
+
+-- VIVIENDAS
+SELECT * FROM viviendas;
+CALL spu_add_houses(6,"", 'CHU 001', 200.00, 250.00, NULL, 5, 2, '{"detalle": "Información adicional"}', 1);
+CALL spu_set_houses(11, 7,"", 'CHU 001', 200.00, 250.00, NULL, 5, 2, '{"detalle": "Información adicional"}', 1);
+CALL spu_inactive_houses(9);
+CALL spu_restore_houses(9);
+SELECT * FROM presupuestos;
 
 -- CLIENTES
 CALL spu_list_clients();
@@ -52,15 +66,16 @@ SELECT * FROM clientes;
 -- CONTRATOS
 SELECT * FROM contratos;
 CALL spu_list_contracts_short(); -- > LISTA CORTA
-CALL spu_lits_contracts_short_by_code("LT"); -- > OBTENGO EL CONTRATO POR EL CÓDIGO DEL LOTE (LISTA COMPLETA)
+CALL spu_lits_contracts_short_by_code("LT001"); -- > OBTENGO EL CONTRATO POR EL CÓDIGO DEL LOTE (LISTA COMPLETA)
 CALL spu_lits_contracts_full_by_id(4); -- > OBTENGO EL CONTRATO COMPLETO POR EL IDCONTRATO
-CALL spu_add_contracts(6, 3, NULL, 5, NULL, 15000.00, 500.00, 1000.00, 1200.00, '2024-03-10', 'USD', 'mensual', 0.05, 3.50, 'Activo', '2024-03-10', 3);
-CALL set_inactive_contracts(6);
+CALL spu_add_contracts(3, 1, NULL, 2, NULL, 50000.00, 3.50, 'ACTIVO', 'VENTA', '{"detalle": "Información adicional"}', '2024-03-15', 1);
+CALL spu_set_contracts(7, 3, 1, NULL, 2, NULL, 50000.00, 3.50, 'ACTIVO', 'VENTA', '{"detalle": "Información adicional", "detalles construccion":"varios"}', '2024-03-15', 1);
+CALL set_inactive_contracts(3);
 CALL spu_list_inactive_contracts_short();
 CALL spu_list_inactive_contracts_short_by_code("LT");
 
 -- CUANDO RESTAURES UN CONTRATO ELIMINADO, PRIMERO VERIFFICA QUE NO EXISTA OTRO CONTRATO ACTIVO CON ESE LOTE
-CALL spu_resotres_contracts(5);
+CALL spu_resotres_contracts(3);
 SELECT * FROM contratos;
 
     

@@ -74,6 +74,8 @@ CREATE VIEW vws_list_projects AS
 $$
 DELIMITER ;
 
+SELECT * FROM vws_list_projects;
+
 DELIMITER $$
 CREATE VIEW vws_list_drop_projects AS
 		SELECT 
@@ -96,32 +98,41 @@ CREATE VIEW vws_list_drop_projects AS
 $$
 DELIMITER ;
 
-SELECT * FROM vws_list_projects;
+SELECT * FROM vws_list_drop_projects;
 
 -- LOTES
 DELIMITER $$
 CREATE VIEW vws_list_lots AS
+	WITH dataHouse AS(
+		SELECT 
+			viv.idvivienda,
+            viv.idlote AS loteid,
+            viv.imagen,
+            viv.tipo_casa,
+            viv.area_construccion,
+            viv.area_techada,
+            viv.airesm2,
+            viv.zcomunes_porcent,
+            viv.estacionamiento_nro,
+            viv.detalles,
+            usu.nombres AS usuarioH
+			FROM viviendas AS viv
+            INNER JOIN usuarios AS usu ON usu.idusuario = viv.idusuario
+            WHERE viv.inactive_at IS NULL
+    )
+    
 	SELECT 
 		lt.idlote,
         proy.denominacion,
-        lt.imagen,
         lt.codigo,
         lt.estado_venta,
-        lt.tipo_casa,
-        lt.sublote,
-        lt.urbanizacion,
         dist.distrito,
         prov.provincia,
         dept.departamento,
         lt.moneda_venta,
         lt.area_terreno,
-        lt.area_construccion,
-        lt.area_techada,
-        lt.airesm2,
-        lt.zcomunes_porcent,
-        lt.estacionamiento_nro,
         lt.partida_elect,
-        lt.detalles,
+        dth.*,
         usu.nombres AS usuario
 		FROM lotes AS lt
         INNER JOIN proyectos AS proy ON proy.idproyecto = lt.idproyecto
@@ -129,6 +140,7 @@ CREATE VIEW vws_list_lots AS
         INNER JOIN provincias AS prov ON prov.idprovincia = dist.idprovincia
         INNER JOIN departamentos AS dept ON dept.iddepartamento = prov.iddepartamento
         INNER JOIN usuarios AS usu ON usu.idusuario = lt.idusuario
+        LEFT JOIN dataHouse AS dth ON dth.loteid = lt.idlote
         WHERE lt.inactive_at IS NULL
         ORDER BY proy.denominacion
 $$
@@ -141,10 +153,8 @@ CREATE VIEW vws_list_lots_short AS
 	SELECT
 		lt.idlote,
         proy.denominacion,
-        lt.imagen,
         lt.codigo,
         lt.estado_venta,
-        lt.tipo_casa,
         lt.sublote,
         lt.urbanizacion,
         dist.distrito,
@@ -194,7 +204,6 @@ CREATE VIEW vws_list_lots_short AS
         ORDER BY proy.denominacion;
 $$
 DELIMITER ;
-
 SELECT * FROM vws_list_lots_short;
 
 DELIMITER $$
@@ -202,10 +211,7 @@ CREATE VIEW vws_list_inactive_lots_short AS
 	SELECT 
 		lt.idlote,
         proy.denominacion,
-        lt.imagen,
-        lt.codigo,
         lt.estado_venta,
-        lt.tipo_casa,
         lt.sublote,
         lt.urbanizacion,
         dist.distrito,
@@ -283,6 +289,7 @@ DELIMITER $$
 CREATE VIEW vws_list_contracts_short AS
 	SELECT 
 		cont.idcontrato,
+        cont.tipo_contrato,
         proy.denominacion,
         lt.codigo,
         lt.sublote,
@@ -311,10 +318,13 @@ CREATE VIEW vws_list_contracts_short AS
 $$
 DELIMITER ;
 
+SELECT * FROM vws_list_contracts_short;
+
 DELIMITER $$
 CREATE VIEW vws_list_inactive_contracts_short AS
 	SELECT 
 		cont.idcontrato,
+        cont.tipo_contrato,
         proy.denominacion,
         lt.codigo,
         lt.sublote,
@@ -348,6 +358,8 @@ CREATE VIEW vws_list_contracts_full AS
 
 	-- CTE (EPRESION DE TABLA COMUN) ESTRUCTURA TEMPORAL QUE SE PUEDE USAR DENTRO DE UNA CONSULTA
     -- RECOLECTAMOS LA DATA
+    
+    -- DATA CLEINTE 1
 	WITH ubigeo1 AS(
 		SELECT 
 			dist.iddistrito,
@@ -371,6 +383,8 @@ CREATE VIEW vws_list_contracts_full AS
 			FROM clientes AS clien
             INNER JOIN ubigeo1 AS ubdata ON ubdata.iddistrito = clien.iddistrito
     ),
+    
+    -- DATA CLIENTE 2
     ubigeo2 AS(
 		SELECT 
 			dist.iddistrito AS iddistritoCL2,
@@ -394,6 +408,8 @@ CREATE VIEW vws_list_contracts_full AS
 			FROM clientes AS clien
             INNER JOIN ubigeo2 AS ubdata2 ON ubdata2.iddistritoCL2 = clien.iddistrito
     ),
+    
+    -- DATA REPRESENTANTE 1
 	ubigeor1 AS(
 		SELECT 
 			dist.iddistrito AS iddistritoUB,
@@ -418,6 +434,8 @@ CREATE VIEW vws_list_contracts_full AS
             INNER JOIN ubigeor1 AS ubr1 ON ubr1.iddistritoUB = usu.iddistrito
 		
     ),
+    
+    -- DATA REPRESENTANTE 2
 	ubigeor2 AS(
 		SELECT 
 			dist.iddistrito AS iddistritoUB2,
@@ -442,6 +460,23 @@ CREATE VIEW vws_list_contracts_full AS
 			FROM usuarios AS usu
             INNER JOIN ubigeor2 AS ubr2 ON ubr2.iddistritoUB2 = usu.iddistrito
 
+    ),
+    
+    -- DATA VIVIENDA
+	dataHouse AS(
+		SELECT 
+			idvivienda,
+            idlote AS loteid,
+            imagen,
+            tipo_casa,
+            area_construccion,
+            area_techada,
+            airesm2,
+            zcomunes_porcent,
+            estacionamiento_nro,
+            detalles
+			FROM viviendas AS viv
+            WHERE viv.inactive_at IS NULL
     )
 	SELECT 
 		cont.idcontrato,
@@ -453,14 +488,8 @@ CREATE VIEW vws_list_contracts_full AS
 		rp1.*,
         rp2.*,
         cont.precio_total, -- CREO QUE SE DEBERIA CALCULAR
-        cont.cuota_inicial,
-        cont.bono,
-        cont.financiamiento,
-        cont.plazo_entrega,
-        cont.penalidad_moneda,
-        cont.penalidad_periodo,
-        cont.penalidad,
         cont.tipo_cambio,
+        dth.*,
         cont.estado,
         cont.fecha_contrato,
         usu.nombres AS usuario
@@ -476,9 +505,14 @@ CREATE VIEW vws_list_contracts_full AS
         INNER JOIN represen1 AS rp1 ON rp1.idrepresentante1 = cont.idrepresentante
         LEFT JOIN represen2 AS rp2 ON rp2.idrepresentante2 = cont.idrepresentante2
         
+        -- OBTENGO LOS DATOS DE LA VIVIENDA
+        LEFT JOIN dataHouse AS dth ON dth.loteid = lt.idlote
+        
         -- OBTENGO LOS DATOS DEL USUARIO 
         INNER JOIN usuarios AS usu ON usu.idusuario = cont.idusuario
         WHERE cont.inactive_at IS NULL
         ORDER BY denominacion;
 $$
 DELIMITER ;
+
+SELECT * FROM vws_list_contracts_full ;

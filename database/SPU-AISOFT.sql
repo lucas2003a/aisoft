@@ -42,7 +42,7 @@ DELIMITER ;
 
 -- EMPRESAS POR RUC
 DELIMITER $$
-CREATE PROCEDURE spu_list_companies_ruc(IN _ruc CHAR(11))
+CREATE PROCEDURE spu_list_companies_ruc(IN _ruc VARCHAR(11))
 BEGIN
 	SELECT * FROM vws_list_companies
     WHERE ruc LIKE CONCAT(_ruc, "%")
@@ -52,10 +52,29 @@ DELIMITER ;
 
 -- DIRECCIONES
 DELIMITER $$
-CREATE PROCEDURE spu_list_adresses(IN _ruc CHAR(11))
+CREATE PROCEDURE spu_list_addresses()
+BEGIN
+	SELECT
+		direcc.iddireccion,
+        emp.ruc,
+		emp.razon_social,
+        emp.partida_elect,
+        direcc.referencia,
+        dist.distrito,
+        prov.provincia,
+        dept.departamento
+		FROM direcciones AS direcc
+        INNER JOIN empresas AS emp ON emp.idempresa = direcc.idempresa
+        INNER JOIN distritos AS dist ON dist.iddistrito = direcc.iddistrito
+        INNER JOIN provincias AS prov ON prov.idprovincia = dist.idprovincia
+        INNER JOIN departamentos AS dept ON dept.iddepartamento = prov.iddepartamento;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE spu_list_addresses_ruc(IN _ruc VARCHAR(11))
 BEGIN
 	DECLARE _idempresa INT;
-    DECLARE _iddistrito INT;
 
     -- OBTENGO LA EMPRESA
     SET _idempresa = (
@@ -249,11 +268,9 @@ DELIMITER ;
 DELIMITER $$
 CREATE PROCEDURE spu_add_lots
 (
-	IN _imagen			VARCHAR(100),
     IN _idproyecto		INT,
     IN _estado_venta 	VARCHAR(10),
     IN _codigo 			CHAR(5),
-    IN _tipo_casa  		CHAR(8),
     IN _sublote 		TINYINT,
     IN _urbanizacion 	VARCHAR(70),
     IN _latitud 		VARCHAR(20),
@@ -261,21 +278,15 @@ CREATE PROCEDURE spu_add_lots
     IN _perimetro 		JSON,
     IN _moneda_venta 	VARCHAR(10),
     IN _area_terreno	DECIMAL(5,2),
-    IN _area_construccion DECIMAL(5,2),
-    IN _area_techada	DECIMAL(5,2),
-    IN _airesm2 		DECIMAL(5, 2),
-    IN _zcomunes_porcent TINYINT,
-    IN _estacionamiento_nro TINYINT,
     IN _partida_elect	VARCHAR(100),
-	IN _detalles 		JSON,
     IN _idusuario 		INT
 )
 BEGIN
-	INSERT INTO lotes (imagen, idproyecto, estado_venta, codigo, tipo_casa, sublote, urbanizacion, latitud, longitud, perimetro, moneda_venta, area_terreno, 
-						area_construccion, area_techada, airesm2, zcomunes_porcent, estacionamiento_nro, partida_elect, detalles, idusuario)
+	INSERT INTO lotes ( idproyecto, estado_venta, codigo, sublote, urbanizacion, latitud, longitud, perimetro, moneda_venta, area_terreno, 
+						partida_elect, idusuario)
 			VALUES
-				(NULLIF(_imagen, ""), _idproyecto, _estado_venta, _codigo, _tipo_casa, _sublote, NULLIF(_urbanizacion, ""),NULLIF(_latitud, ""), NULLIF(_longitud, ""), NULLIF(perimetro,""), _moneda_venta, _area_terreno, 
-						_area_construccion, _area_techada, _airesm2, _zcomunes_porcent, _estacionamiento_nro, _partida_elect, _detalles, _idusuario);
+				(_idproyecto, _estado_venta, _codigo, _sublote, NULLIF(_urbanizacion, ""),NULLIF(_latitud, ""), NULLIF(_longitud, ""), NULLIF(perimetro,""), _moneda_venta, _area_terreno, 
+                _partida_elect, _idusuario);
 END $$
 DELIMITER 
 
@@ -283,11 +294,9 @@ DELIMITER $$
 CREATE PROCEDURE spu_set_lots
 (
 	IN _idlote  		INT,
-	IN _imagen			VARCHAR(100),
     IN _idproyecto		INT,
     IN _estado_venta 	VARCHAR(10),
     IN _codigo 			CHAR(5),
-    IN _tipo_casa  		CHAR(8),
     IN _sublote 		TINYINT,
     IN _urbanizacion 	VARCHAR(70),
     IN _latitud 		VARCHAR(20),
@@ -295,23 +304,15 @@ CREATE PROCEDURE spu_set_lots
     IN _perimetro 		JSON,
     IN _moneda_venta 	VARCHAR(10),
     IN _area_terreno	DECIMAL(5,2),
-    IN _area_construccion DECIMAL(5,2),
-    IN _area_techada	DECIMAL(5,2),
-    IN _airesm2 		DECIMAL(5, 2),
-    IN _zcomunes_porcent TINYINT,
-    IN _estacionamiento_nro TINYINT,
     IN _partida_elect	VARCHAR(100),
-	IN _detalles 		JSON,
     IN _idusuario 		INT
 )
 BEGIN
 	UPDATE lotes
 		SET
-			imagen 			= NULLIF(_imagen, ""),
 			idproyecto		= _idproyecto,
 			estado_venta 	= _estado_venta,
 			codigo			= _codigo,
-			tipo_casa		= _tipo_casa,
 			sublote			= _sublote,
 			urbanizacion	= NULLIF(_urbanizacion, ""),
 			latitud			= NULLIF(_latitud, ""),
@@ -319,13 +320,7 @@ BEGIN
 			perimetro		= NULLIF(_perimetro, ""),
 			moneda_venta	= _moneda_venta,
 			area_terreno 	= _area_terreno,
-			area_construccion = _area_construccion,
-			area_techada	= _area_techada,
-			airesm2			= _airesm2,
-			zcomunes_porcent = _zcomunes_porcent,
-			estacionamiento_nro =_estacionamiento_nro,
 			partida_elect	= _partida_elect,
-			detalles		= _detalles,
 			idusuario 		= _idusuario,
             update_at		= CURDATE()
 		WHERE
@@ -365,6 +360,131 @@ BEGIN
             update_at 	= CURDATE()
 		WHERE idlote = _idlote;
 END$$
+DELIMITER ;
+
+-- VIVIENDAS
+DELIMITER $$
+CREATE PROCEDURE spu_add_houses
+(
+
+	IN _idlote				INT,
+	IN _imagen				VARCHAR(100),
+    IN _tipo_casa  			CHAR(8),
+	IN _area_construccion 	DECIMAL(5,2),
+    IN _area_techada		DECIMAL(5,2),
+    IN _airesm2 			DECIMAL(5, 2),
+    IN _zcomunes_porcent 	TINYINT,
+    IN _estacionamiento_nro TINYINT,
+    IN _detalles 			JSON,
+    IN _idusuario 			INT
+)
+BEGIN
+	DECLARE _activos  TINYINT;
+    SET _activos  = (
+		SELECT COUNT(idlote) 
+        FROM viviendas WHERE idlote = _idlote
+        AND inactive_at IS NULL
+        );
+        
+        IF _activos = 0 THEN
+        
+			INSERT INTO viviendas(idlote, imagen, tipo_casa, area_construccion, area_techada, airesm2, zcomunes_porcent, estacionamiento_nro, detalles, idusuario)
+					VALUES
+						(_idlote, NULLIF(_imagen, ""),  _tipo_casa, _area_construccion, _area_techada, _airesm2, _zcomunes_porcent, _estacionamiento_nro, _detalles, _idusuario);
+		ELSE 
+			SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT ="Error, ya hay un registro con ese nombre";
+        END IF ;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE spu_set_houses
+(
+	IN _idvivienda 			INT,
+    IN _idlote 				INT,
+    IN _imagen				VARCHAR(100),
+    IN _tipo_casa  			CHAR(8),
+    IN _area_construccion 	DECIMAL(5,2),
+    IN _area_techada		DECIMAL(5,2),
+    IN _airesm2 			DECIMAL(5, 2),
+    IN _zcomunes_porcent 	TINYINT,
+    IN _estacionamiento_nro TINYINT,
+    IN _detalles 			JSON,
+    IN _idusuario			INT
+)
+BEGIN
+	UPDATE viviendas
+		SET
+			idlote 				= _idlote,
+			imagen 				= NULLIF(_imagen, ""),
+            tipo_casa			= _tipo_casa,
+            area_construccion 	= _area_construccion,
+			area_techada		= _area_techada,
+			airesm2				= _airesm2,
+			zcomunes_porcent 	= _zcomunes_porcent,
+			estacionamiento_nro =_estacionamiento_nro,
+            detalles			= _detalles,
+			idusuario 			= _idusuario,
+            update_at			= CURDATE()
+        WHERE
+			idvivienda = _idvivienda;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE spu_inactive_houses(IN _idvivienda  INT)
+BEGIN
+	
+    DECLARE _idlote INT;
+    DECLARE _registros TINYINT;
+    
+    -- 	OBTENGO EL IDLOTE
+    SET _idlote = (SELECT idlote FROM viviendas WHERE idvivienda = _idvivienda);
+    
+    -- VERIFICO SI EXISTE ALGUNN REGISTRO EN LOS PRESUPUESTOS
+     SET _registros = (
+		SELECT COUNT(*) FROM presupuestos
+        WHERE idlote = _idlote
+        AND inactive_at IS NULL
+     );
+     
+	IF _registros = 0 THEN
+		UPDATE viviendas
+			SET
+				inactive_at = CURDATE()
+			WHERE
+				idvivienda = _idvivienda;
+	ELSE 
+		SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Error: la vivienda cuenta con un presupuesto";
+    END IF;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+CREATE PROCEDURE spu_restore_houses(IN _idvivienda INT)
+BEGIN
+	DECLARE _activos TINYINT;
+    DECLARE _idlote TINYINT;
+    
+    SET _idlote = (SELECT idlote FROM viviendas WHERE idvivienda = _idvivienda);
+    
+    SET _activos = (
+		SELECT COUNT(*) FROM viviendas
+        WHERE idlote = _idlote
+        AND inactive_at IS NULL
+    );
+    
+    IF _activoS = 0 THEN
+        UPDATE viviendas
+			SET
+				inactive_at = NULL,
+				update_at = CURDATE()
+			WHERE
+				idvivienda = _idvivienda;
+    ELSE
+		SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Error, ya estiste otro registro con ese lote";
+    END IF;
+END $$
 DELIMITER ;
 
 -- CLIENTES
@@ -521,15 +641,10 @@ CREATE PROCEDURE spu_add_contracts
     IN _idrepresentante 	INT,
     IN _idrepresentante2	INT,
     IN _precio_total 		DECIMAL(8,2),
-	IN _cuota_inicial 		DECIMAL(8,2),
-    IN _bono 				DECIMAL(8,2),
-    IN _financiamiento 		DECIMAL(8,2),
-    IN _plazo_entrega 		DATE,
-    IN _penalidad_moneda	VARCHAR(10),
-    IN _penalidad_periodo 	VARCHAR(10),
-    IN _penalidad 			DECIMAL(4,3),
     IN _tipo_cambio 		DECIMAL(4,3),
     IN _estado 				VARCHAR(10),
+    IN _tipo_contrato 		VARCHAR(45),
+    IN _detalles			JSON,
     IN _fecha_contrato 		DATE,
     IN _idusuario 			INT
 )
@@ -553,12 +668,12 @@ BEGIN
     -- REGISTRA EL NUEVO CONTRATO
     IF _loteSeparado = 1 THEN
 		INSERT INTO contratos(
-					idlote, idcliente, idcliente2, idrepresentante, idrepresentante2, precio_total, cuota_inicial, bono, financiamiento,
-					plazo_entrega, penalidad_moneda, penalidad_periodo, penalidad, tipo_cambio, estado, fecha_contrato, idusuario
+					idlote, idcliente, idcliente2, idrepresentante, idrepresentante2, precio_total, tipo_cambio, estado, tipo_contrato, 
+                    detalles, fecha_contrato, idusuario
 				)
 				VALUES(
-					_idlote, _idcliente, NULLIF(_idcliente2, 0), _idrepresentante, NULLIF(_idrepresentante2, 0), _precio_total, _cuota_inicial, _bono, _financiamiento,
-					_plazo_entrega, _penalidad_moneda, _penalidad_periodo, _penalidad, _tipo_cambio, _estado, _fecha_contrato, _idusuario
+					_idlote, _idcliente, NULLIF(_idcliente2, 0), _idrepresentante, NULLIF(_idrepresentante2, 0), _precio_total, 
+                    _tipo_cambio, _estado, _tipo_contrato, _detalles, _fecha_contrato, _idusuario
 				);
 	ELSE
 		SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Error: separe el lote";
@@ -576,15 +691,10 @@ CREATE PROCEDURE spu_set_contracts
     IN _idrepresentante 	INT,
     IN _idrepresentante2	INT,
     IN _precio_total 		DECIMAL(8,2),
-	IN _cuota_inicial 		DECIMAL(8,2),
-    IN _bono 				DECIMAL(8,2),
-    IN _financiamiento 		DECIMAL(8,2),
-    IN _plazo_entrega 		DATE,
-    IN _penalidad_moneda	VARCHAR(10),
-    IN _penalidad_periodo 	VARCHAR(10),
-    IN _penalidad 			DECIMAL(4,3),
     IN _tipo_cambio 		DECIMAL(4,3),
     IN _estado 				VARCHAR(10),
+    IN _tipo_contrato 		VARCHAR(45),
+    IN _detalles			JSON,
     IN _fecha_contrato 		DATE,
     IN _idusuario 			INT
 )
@@ -593,19 +703,14 @@ BEGIN
 		SET
 			idlote				= _idlote,
             idcliente 			= _idcliente,
-            idcliente2			= _idcliente2,
+            idcliente2			= NULLIF(_idcliente2,""),
             idrepresentante 	= _idrepresentante,
-            idrepresentante2	= _idrepresentante2,
+            idrepresentante2	= NULLIF(_idrepresentante2, ""),
             precio_total		= _precio_total,
-            cuota_inicial		= _cuota_inicial,
-            bono				= _bono,
-            financiamiento		= _financiamiento,
-            plazo_entrega		= _plazo_entrega,
-            penalidad_moneda	= _penalidad_moneda,
-            penalidad_periodo	= _penalidad_periodo,
-            penalidad			= _penalidad,
             tipo_cambio			= _tipo_cambio,
             estado 				= _estado,
+            tipo_contrato		= _tipo_contrato,
+            detalles			= NULLIF(_detalles,""),
             fecha_contrato		= _fecha_contrato,
             idusuario			= _idusuario,
             update_at 			= CURDATE()
@@ -648,14 +753,6 @@ DELIMITER $$
 CREATE PROCEDURE spu_list_inactive_contracts_short()
 BEGIN
 	SELECT * FROM vws_list_inactive_contracts_short;
-END $$
-DELIMITER ;
-
-DELIMITER $$
-CREATE PROCEDURE spu_lits_contracts_short_by_code(IN _codigo VARCHAR(5))
-BEGIN
-	SELECT * FROM vws_list_inactive_contracts_short
-    WHERE codigo LIKE CONCAT(_codigo, "%");
 END $$
 DELIMITER ;
 
