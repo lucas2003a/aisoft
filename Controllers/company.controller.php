@@ -16,9 +16,9 @@ if(isset($_POST["action"])){
 
         case "list-ruc": 
 
-            $ruc = $_POST["ruc"];
+            $rucObtained = $_POST["ruc"];
 
-            echo json_encode($company->list_companies_ruc($ruc));
+            echo json_encode($company->list_companies_ruc($rucObtained));
 
         break;
     }
