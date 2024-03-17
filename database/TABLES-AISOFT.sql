@@ -96,7 +96,7 @@ CREATE TABLE usuarios(
     idrol				INT 				NOT NULL,
     iddireccion 		INT 				NOT NULL,
     partida_elect 		VARCHAR(60) 		NULL,
-	create_at 			DATE 			NOT NULL	DEFAULT (current_date()),
+	create_at 			DATE 			NOT NULL	DEFAULT (CURDATE()),
     update_at			DATE 			NULL,
     inactive_at			DATE 			NULL,
     CONSTRAINT uk_documento_nro_usu UNIQUE(documento_nro),
@@ -129,45 +129,40 @@ CREATE TABLE proyectos(
     CONSTRAINT fk_idusuario_proyects FOREIGN KEY(idusuario) REFERENCES usuarios(idusuario)
 )ENGINE = INNODB;
 
--- LOTES
-CREATE TABLE lotes(
-	idlote 				INT PRIMARY KEY AUTO_INCREMENT,
+-- ACTIVOS
+-- PUEDEN SER LOS LOTES O CASAS
+CREATE TABLE activos(
+	idactivo 			INT PRIMARY KEY AUTO_INCREMENT,
+    idproyecto			INT  				NOT  NULL,
+    tipo_activo 		VARCHAR(10) 		NOT NULL,
     imagen 				VARCHAR(100) 		NULL,
-    idproyecto			INT  		NOT  NULL,
-    estado_venta 		VARCHAR(10) NOT  NULL DEFAULT "SIN VENDER",
-    codigo				CHAR(5)	NOT NULL,
-    tipo_casa			CHAR(8) 	NOT NULL,
-    sublote 			TINYINT 	NOT NULL,
-    urbanizacion		VARCHAR(70) NOT NULL,
-    latitud 			VARCHAR(20) NULL,
-    longitud 			VARCHAR(20) NULL,
-    perimetro			JSON		NULL,
-    moneda_venta 		VARCHAR(10) NOT NULL,
-    area_terremo   		DECIMAL(5,2) NOT NULL,
-    area_construccion 	DECIMAL(5,2) NOT NULL,
-    area_techada		DECIMAL(5,2) NOT NULL,
-    airesm2          	DECIMAL(5,2) NULL,
-    zcomunes_porcent	TINYINT		 NULL,
-    estacionamiento_nro TINYINT		NULL,
-    partida_elect 		VARCHAR(100) NOT NULL,
-    detalles 			JSON 		NOT NULL,
-	create_at 			DATE 		NOT NULL	DEFAULT(CURDATE()),
-    update_at			DATE 		NULL,
-    inactive_at			DATE 		NULL,
-    idusuario 			INT 		NOT NULL,
+    estado 				VARCHAR(10) 		NOT  NULL 	DEFAULT "SIN VENDER", 
+    codigo				CHAR(7)				NOT NULL,
+    sublote 			TINYINT 			NOT NULL,
+    urbanizacion		VARCHAR(70) 		NOT NULL,
+    moneda_venta 		VARCHAR(10) 		NOT NULL,
+    area_terreno   		DECIMAL(5,2) 		NOT NULL,
+    zcomunes_porcent	TINYINT		 		NULL,
+    partida_elect 		VARCHAR(100) 		NOT NULL,
+    latitud 			VARCHAR(20) 		NULL,
+    longitud 			VARCHAR(20) 		NULL,
+    perimetro			JSON				NULL,
+    det_casa 			JSON 				NULL,
+    precio_venta 		DECIMAL(8,2)		NOT NULL,
+	create_at 			DATE 				NOT NULL	DEFAULT(CURDATE()),
+    update_at			DATE 				NULL,
+    inactive_at			DATE 				NULL,
+    idusuario 			INT 				NOT NULL,
     CONSTRAINT fk_idproyecto_lotes FOREIGN KEY(idproyecto)  REFERENCES proyectos(idproyecto),
     CONSTRAINT uk_codigo_lotes UNIQUE(codigo),
     CONSTRAINT uk_sublote_lotes UNIQUE(idproyecto, sublote),
     CONSTRAINT fk_idusuario_lotes FOREIGN KEY(idusuario) REFERENCES usuarios(idusuario)
 )ENGINE = INNODB;
 
--- ALTER TABLE lotes MODIFY codigo CHAR(5);
-/*
-alter table lotes drop constraint fk_iddistrito_lotes;
-alter table lotes
-drop column iddistrito;
-*/
--- ALTER TABLE lotes CHANGE area_terremo area_terreno DECIMAL(5,2) NOT NULL;
+-- ALTER TABLE activos MODIFY COLUMN codigo CHAR(7);
+-- ALTER TABLE activos CHANGE urbanizacion direccion VARCHAR(60);
+-- ALTER TABLE activos DROP COLUMN idlote;
+
 -- CLIENTES
 CREATE TABLE clientes(
 	idcliente			INT PRIMARY KEY AUTO_INCREMENT,
@@ -187,39 +182,6 @@ CREATE TABLE clientes(
     CONSTRAINT fk_idusuario_cli FOREIGN KEY(idusuario) REFERENCES usuarios(idusuario)
 )ENGINE = INNODB;
 
--- CONTRATOS
-CREATE TABLE contratos(
-	idcontrato 				INT PRIMARY KEY AUTO_INCREMENT,
-    idlote					INT  			NOT NULL,
-    idcliente				INT  			NOT NULL,	-- EL CLIENTE
-    idcliente2 				INT    			NULL,		-- EL CONYUGUE (SOLO SI ESTÁ CASADO)
-    idrepresentante 		INT 			NOT NULL,	-- REPRESENTANTE DEL VENDEDOR
-    idrepresentante2 		INT 			NULL,		-- REPRESENTANTE DEL VENDEDOR 2 (SOLO SI EXISTIERA)
-    precio_total 			DECIMAL(8,2)  	NOT NULL,
-    cuota_inicial 			DECIMAL(8,2) 	NOT NULL,
-    bono 					DECIMAL(8,2)  	NOT NULL,
-    financiamiento 			DECIMAL(8,2) 	NOT NULL,
-    plazo_entrega 			DATE 			NOT NULL,
-    penalidad_moneda 		VARCHAR(10) 	NOT NULL,	-- SOLES O DOLARES
-    penalidad_periodo 		VARCHAR(10) 	NOT NULL, 	-- POR DIA, MES O AÑO
-    penalidad 				DECIMAL(4,3) 	NOT NULL, 	-- 1.00 ....
-	tipo_cambio 			DECIMAL(4,3) 	NOT NULL,
-	estado 					VARCHAR(10)		NOT NULL,
-    fecha_contrato			DATE 			NOT NULL,
-	create_at 				DATE 			NOT NULL	DEFAULT (CURDATE()),
-    update_at				DATE 			NULL,
-    inactive_at				DATE 			NULL,
-    idusuario 				INT 			NOT NULL,
-    CONSTRAINT fk_idlote_cont FOREIGN KEY(idlote) REFERENCES lotes(idlote),
-    CONSTRAINT fk_idcliente_cont FOREIGN KEY(idcliente) REFERENCES clientes(idcliente),
-    CONSTRAINT fk_idcliente2_cont FOREIGN KEY(idcliente2) REFERENCES clientes(idcliente),
-    CONSTRAINT fk_idrepresentante_cont FOREIGN KEY(idrepresentante) REFERENCES usuarios(idusuario),
-    CONSTRAINT fk_idrepresentante2_cont FOREIGN KEY(idrepresentante2) REFERENCES usuarios(idusuario),
-    CONSTRAINT fk_idusuario_cont FOREIGN KEY(idusuario) REFERENCES usuarios(idusuario)
-)ENGINE = INNODB;
-
-ALTER TABLE contratos
-	ADD CONSTRAINT uk_cliente_lote_contra UNIQUE(idlote, idcliente);
 -- VENDEDORES Y REPRESENTANTES
 CREATE TABLE vend_representantes(
 	idvend_representante 			INT PRIMARY KEY AUTO_INCREMENT,
@@ -235,10 +197,46 @@ CREATE TABLE vend_representantes(
     CONSTRAINT fk_idusuario_vend_represents FOREIGN KEY(idusuario) REFERENCES usuarios(idusuario)
 )ENGINE = INNODB;
 
+-- CONTRATOS
+CREATE TABLE contratos(
+	idcontrato 				INT PRIMARY KEY AUTO_INCREMENT,
+    idcliente				INT  			NOT NULL,	-- EL CLIENTE
+    idconyugue 				INT    			NULL,		-- EL CONYUGUE (SOLO SI ESTÁ CASADO)
+    idrepresentante_primario 		INT 			NOT NULL,	-- REPRESENTANTE DEL VENDEDOR
+    idrepresentante_secundario 		INT 			NULL,		-- REPRESENTANTE DEL VENDEDOR 2 (SOLO SI EXISTIERA)
+	tipo_cambio 			DECIMAL(4,3) 	NOT NULL,
+	estado 					VARCHAR(10)		NOT NULL,
+    detalles				JSON 			NULL, -- BONOS, FINACIAMIENTOS, PENALIDAD, PLAZO ENTREGA, CUOTA INICIAL ..
+    fecha_contrato			DATE 			NOT NULL,
+	create_at 				DATE 			NOT NULL	DEFAULT (CURDATE()),
+    update_at				DATE 			NULL,
+    inactive_at				DATE 			NULL,
+    idusuario 				INT 			NOT NULL,
+    CONSTRAINT fk_idcliente_cont FOREIGN KEY(idcliente) REFERENCES clientes(idcliente),
+    CONSTRAINT fk_idcliente2_cont FOREIGN KEY(idconyugue) REFERENCES clientes(idcliente),
+    CONSTRAINT fk_idrepresentante_cont FOREIGN KEY(idrepresentante_primario) REFERENCES vend_representantes(idvend_representante),
+    CONSTRAINT fk_idrepresentante2_cont FOREIGN KEY(idrepresentante_secundario) REFERENCES vend_representantes(idvend_representante),
+    CONSTRAINT fk_idusuario_cont FOREIGN KEY(idusuario) REFERENCES usuarios(idusuario)
+)ENGINE = INNODB;
+
+-- DETALLES CONTRATOS
+CREATE TABLE detalles_contratos(
+	iddetalle_contrato		INT PRIMARY KEY AUTO_INCREMENT,
+    idactivo				INT  			NOT NULL,
+    idcontrato 				INT 			NOT NULL,
+	create_at 				DATE 			NOT NULL	DEFAULT (CURDATE()),
+    update_at				DATE 			NULL,
+    inactive_at				DATE 			NULL,
+    idusuario 				INT 			NOT NULL,
+    CONSTRAINT fk_idactivo_dt_contratos FOREIGN KEY(idactivo) REFERENCES activos(idactivo),
+    CONSTRAINT fk_idcontrato_dt_contratos FOREIGN KEY(idcontrato) REFERENCES contratos(idcontrato),
+    CONSTRAINT fk_idusuario_dt_contrato FOREIGN KEY(idusuario) REFERENCES usuarios(idusuario)
+)ENGINE = INNODB;
+
 -- SEPARACIONES
 CREATE TABLE separaciones(
 	idseparacion  			INT PRIMARY KEY AUTO_INCREMENT,
-    idlote 					INT 			NOT NULL,
+    idactivo				INT 			NOT NULL,
     idvend_representante 	INT  			NOT NULL,
     idcliente 				INT  			NOT NULL,
     separacion				DECIMAL(5,2) 	NOT NULL,
@@ -250,7 +248,7 @@ CREATE TABLE separaciones(
     update_at				DATE 			NULL,
     inactive_at				DATE 			NULL,
     idusuario 				INT 			NOT NULL,
-    CONSTRAINT fk_idlote_sep FOREIGN KEY(idlote) REFERENCES lotes(idlote),
+    CONSTRAINT fk_idactivo_sep FOREIGN KEY(idactivo) REFERENCES activos(idactivo),
     CONSTRAINT fk_idvend_representante_sep FOREIGN KEY(idvend_representante) REFERENCES vend_representantes(idvend_representante),
     CONSTRAINT fk_idcliente_sep FOREIGN KEY(idcliente) REFERENCES clientes(idcliente),
     CONSTRAINT fk_idusuario_sep FOREIGN KEY(idusuario) REFERENCES usuarios(idusuario)
@@ -282,7 +280,7 @@ CREATE TABLE financieras(
 CREATE TABLE desembolsos(
 	iddesembolso			INT PRIMARY KEY AUTO_INCREMENT,
     idfinanciera			INT 			NOT NULL,
-    idlote	 				INT 			NOT NULL,
+    idactivo 				INT 			NOT NULL,
     monto_desemb 			DECIMAL(8,2) 	NOT NULL,
     porcentaje				TINYINT			NOT NULL,
     fecha_desembolso 		DATETIME		NOT NULL,
@@ -291,21 +289,21 @@ CREATE TABLE desembolsos(
     inactive_at				DATE 			NULL,
     idusuario 				INT 			NOT NULL,
     CONSTRAINT fk_idfinanciera_desemb FOREIGN KEY(idfinanciera) REFERENCES financieras(idfinanciera),
-    CONSTRAINT fk_idlote_desemb	FOREIGN KEY(idlote) REFERENCES lotes(idlote),
+    CONSTRAINT fk_idactivo_desemb	FOREIGN KEY(idactivo) REFERENCES activos(idactivo),
     CONSTRAINT fk_idusuario_desemb FOREIGN KEY(idusuario) REFERENCES usuarios(idusuario)
 )ENGINE = INNODB;
 
 -- PRESUPUESTOS
 CREATE TABLE presupuestos(
 	idpresupuesto			INT PRIMARY KEY AUTO_INCREMENT,
-    idlote 					INT 			NOT NULL,
+    idactivo 					INT 			NOT NULL,
     descripcion	 			VARCHAR(70)		NOT NULL,
     fecha_program 			DATE 			NOT NULL,
 	create_at 				DATE 			NOT NULL	DEFAULT (CURDATE()),
     update_at				DATE 			NULL,
     inactive_at				DATE 			NULL,
     idusuario 				INT 			NOT NULL,
-    CONSTRAINT fk_idlote_presup FOREIGN KEY(idlote) REFERENCES lotes(idlote),
+    CONSTRAINT fk_idactivo_presup FOREIGN KEY(idactivo) REFERENCES activos(idactivo),
     CONSTRAINT fk_idusuario_presup FOREIGN KEY(idusuario) REFERENCES usuarios(idusuario)
 )ENGINE = INNODB;
 
@@ -329,13 +327,13 @@ CREATE TABLE detalle_gastos(
 -- CUOTAS
 CREATE TABLE cuotas(
 	idcuota 				INT PRIMARY KEY AUTO_INCREMENT,
-    idcontrato				INT  			NOT NULL,
+    idcontrato		INT  			NOT NULL,
     monto_cuota 			DECIMAL(8,2) 	NOT NULL,
     fecha_vencimiento 		DATE 			NOT NULL,
     fecha_pago 				DATE 			NULL,
     detalles  	 			VARCHAR(100) 	NULL,
-    tipo_pago 				VARCHAR(20) 	NULL,
-    entidad_bancaria 		VARCHAR(20) 	NULL,
+    tipo_pago 				VARCHAR(20) 	NOT NULL,
+    entidad_bancaria 		VARCHAR(20) 	NOT NULL,
 	create_at 				DATE 			NOT NULL	DEFAULT (CURDATE()),
     update_at				DATE 			NULL,
     inactive_at				DATE 			NULL,
@@ -358,3 +356,4 @@ CREATE TABLE sustentos_cuotas(
 )ENGINE = INNODB;
 
 
+-- DROP TABLE sustentos_cuotas, cuotas, detalle_gastos, presupuestos, desembolsos, sustentos_sep, separaciones, contratos, viviendas, lotes;

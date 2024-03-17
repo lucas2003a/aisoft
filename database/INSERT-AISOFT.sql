@@ -39,37 +39,37 @@ SELECT * FROM roles;
 
 -- PERMISOS
 INSERT INTO permisos(idrol, modulo)
-			VALUES (1, 'LISTAR-LOTES'),
+			VALUES (1, 'LISTAR-activos'),
 					(1, 'EDITAR-CLIENTES'),
 					(1, 'CREAR-VENTAS'),
 					(1, 'ELIMINAR-PROYECTOS'),
 
 			-- Representante de ventas 2
 				(2, 'LISTAR-PROYECTOS'),
-				(2, 'EDITAR-LOTES'),
+				(2, 'EDITAR-activos'),
 				(2, 'CREAR-CLIENTES'),
 				(2, 'ELIMINAR-VENTAS'),
 
 			-- Administrador principal
 				(3, 'LISTAR-CLIENTES'),
 				(3, 'EDITAR-VENTAS'),
-				(3, 'CREAR-LOTES'),
+				(3, 'CREAR-activos'),
 				(3, 'ELIMINAR-PROYECTOS'),
 
 			-- Administrador asistente
 				(4, 'LISTAR-VENTAS'),
 				(4, 'EDITAR-PROYECTOS'),
 				(4, 'CREAR-CLIENTES'),
-				(4, 'ELIMINAR-LOTES'),
+				(4, 'ELIMINAR-activos'),
 
 			-- Administrador secundario
 				(5, 'LISTAR-PROYECTOS'),
-				(5, 'EDITAR-LOTES'),
+				(5, 'EDITAR-activos'),
 				(5, 'CREAR-VENTAS'),
 				(5, 'ELIMINAR-CLIENTES'),
 
 			-- Vendedor
-				(6, 'LISTAR-LOTES'),
+				(6, 'LISTAR-activos'),
 				(6, 'EDITAR-CLIENTES'),
 				(6, 'CREAR-VENTAS'),
 				(6, 'ELIMINAR-PROYECTOS');
@@ -112,39 +112,60 @@ INSERT INTO proyectos(iddireccion, codigo, denominacion, iddistrito,direccion, i
                 
 SELECT * FROM PROYECTOS;
 
--- LOTES
-INSERT INTO lotes (idproyecto, estado_venta, codigo, tipo_casa, sublote, iddistrito, urbanizacion, moneda_venta, area_terremo, area_construccion, area_techada, airesm2, zcomunes_porcent, estacionamiento_nro, partida_elect, detalles, idusuario)
-			VALUES
-				(1, 'NO VENDIDO', 'LT001','CUH C001', 17, 1, 'SUB LOTE A-17 ZONA CALLE PROGRESO N°137', 'USD', 70.02, 42.5, 42.5, NULL, NULL, NULL, '11077471 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 1"}', 1),
-				(1, 'VENDIDO', 'LT002', 'CUH C001', 18, 1, 'URBANIZACIÓN EL ROSAL', 'USD', 80.00, 50.0, 50.0, NULL, 10, 1, '11077472 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 2"}', 2),
-				(1, 'SEPARADO', 'LT003', 'CUH C001', 19, 1, 'LAS ACACIAS', 'USD', 65.75, 35.25, 35.25, NULL, NULL, NULL, '11077473 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 3"}', 3),
-				(1, 'NO VENDIDO', 'LT004', 'CUH C001', 20, 1, 'VISTA HERMOSA', 'USD', 75.50, 45.0, 45.0, NULL, NULL, 2, '11077474 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 4"}', 4),
-				(1, 'VENDIDO', 'LT005', 'CUH C001', 21, 1, 'SAN MIGUEL', 'USD', 90.20, 60.8, 60.8, NULL, 15, NULL, '11077475 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 5"}', 5);
+-- ACTIVOS
+ALTER TABLE activos AUTO_INCREMENT = 0; 
+SELECT * FROM activos;
 
-INSERT INTO lotes (idproyecto, estado_venta, codigo, tipo_casa, sublote, iddistrito, urbanizacion, moneda_venta, area_terremo, area_construccion, area_techada, airesm2, zcomunes_porcent, estacionamiento_nro, partida_elect, detalles, idusuario)
-			VALUES
-				(2, 'NO VENDIDO', 'LT021', 'CUH C001', 37, 1, 'AVENIDA PRINCIPAL', 'USD', 100.00, 70.0, 70.0, NULL, NULL, 5, '11077476 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 21"}', 1),
-				(2, 'SEPARADO', 'LT022', 'CUH C001', 38, 1, 'CALLE ESPERANZA', 'USD', 85.50, 55.25, 55.25, NULL, NULL, 6, '11077477 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 22"}', 2),
-				(2, 'VENDIDO', 'LT023', 'CUH C001', 39, 1, 'PASEO DEL SOL', 'USD', 95.75, 65.75, 65.75, NULL, 8, NULL, '11077478 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 23"}', 3),
-				(3, 'NO VENDIDO', 'LT024', 'CUH C001', 40, 1, 'AVENIDA DEL MAR', 'USD', 110.25, 80.25, 80.25, NULL, NULL, 8, '11077479 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 24"}', 4),
-				(3, 'SEPARADO', 'LT025', 'CUH C001', 41, 1, 'CALLE SAN JUAN', 'USD', 120.00, 90.0, 90.0, NULL, NULL, 10, '11077480 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 25"}', 5),
-				(3, 'VENDIDO', 'LT026', 'CUH C002', 42, 2, 'PASEO DEL BOSQUE', 'USD', 130.50, 100.0, 100.0, NULL, 12, NULL, '11077481 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 26"}', 1),
-				(3, 'NO VENDIDO', 'LT027', 'CUH C002', 43, 2, 'CALLE NUEVA', 'USD', 145.75, 110.0, 110.0, NULL, NULL, 15, '11077482 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 27"}', 2),
-				(4, 'SEPARADO', 'LT028', 'CUH C002', 44, 2, 'AVENIDA LIBERTAD', 'USD', 155.25, 120.0, 120.0, NULL, NULL, 18, '11077483 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 28"}', 3),
-				(4, 'VENDIDO', 'LT029', 'CUH C002', 45, 2, 'PASEO DE LA LUNA', 'USD', 160.00, 125.0, 125.0, NULL, 20, NULL, '11077484 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 29"}', 4),
-				(4, 'NO VENDIDO', 'LT030', 'CUH C002', 46, 2, 'CALLE PRINCIPAL', 'USD', 170.50, 135.0, 135.0, NULL, NULL, 22, '11077485 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 30"}', 5),
-				(5, 'SEPARADO', 'LT031', 'CUH C003', 47, 3, 'AVENIDA DEL CIELO', 'USD', 180.75, 145.0, 145.0, NULL, NULL, 24, '11077486 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 31"}', 1),
-				(5, 'VENDIDO', 'LT032', 'CUH C003', 48, 3, 'PASEO DE LAS ESTRELLAS', 'USD', 190.25, 150.0, 150.0, NULL, 25, NULL, '11077487 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 32"}', 2),
-				(5, 'NO VENDIDO', 'LT033', 'CUH C003', 49, 3, 'CALLE LA LUNA', 'USD', 200.50, 155.0, 155.0, NULL, NULL, 26, '11077488 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 33"}', 3),
-				(5, 'SEPARADO', 'LT034', 'CUH C003', 50, 3, 'AVENIDA DEL SOL', 'USD', 210.00, 160.0, 160.0, NULL, NULL, 28, '11077489 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 34"}', 4),
-				(5, 'VENDIDO', 'LT035', 'CUH C003', 51, 3, 'PASEO DE LA TIERRA', 'USD', 220.25, 165.0, 165.0, NULL, 30, NULL, '11077490 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 35"}', 5),
-				(2, 'NO VENDIDO', 'LT036', 'CUH C004', 52, 4, 'CALLE NUEVA ESPERANZA', 'USD', 230.50, 170.0, 170.0, NULL, NULL, 32, '11077491 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 36"}', 1),
-				(3, 'SEPARADO', 'LT037', 'CUH C004', 53, 4, 'AVENIDA PRINCIPAL', 'USD', 240.75, 175.0, 175.0, NULL, NULL, 34, '11077492 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 37"}', 2),
-				(4, 'VENDIDO', 'LT038', 'CUH C004', 54, 4, 'PASEO DEL PARQUE', 'USD', 250.00, 180.0, 180.0, NULL, 35, NULL, '11077493 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 38"}', 3),
-				(2, 'NO VENDIDO', 'LT039', 'CUH C004', 55, 4, 'CALLE DE LA ESPERANZA', 'USD', 260.25, 185.0, 185.0, NULL, NULL, 36, '11077494 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 39"}', 4),	
-				(3, 'SEPARADO', 'LT040', 'CUH C004', 56, 4, 'AVENIDA DEL PROGRESO', 'USD', 270.50, 190.0, 190.0, NULL, NULL, 38, '11077495 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '{"otros_detalles": "Información adicional 40"}', 5);
+-- activos
+INSERT INTO activos (idproyecto, tipo_activo, codigo, sublote, direccion, moneda_venta, area_terreno, partida_elect, precio_venta, create_at, idusuario)
+VALUES
+	(1, 'lote', 'AC00001', 1, 'Urbanización Alpha', 'USD', 300.00, 'Partida 001', 80000.00, CURDATE(), 1),
+	(2, 'lote', 'AC00003', 1, 'Urbanización Gamma', 'USD', 250.00, 'Partida 003', 100000.00, CURDATE(), 1),
+	(1, 'lote', 'AC00005', 3, 'Urbanización Epsilon', 'USD', 350.00, 'Partida 005', 90000.00, CURDATE(), 1),
+	(3, 'lote', 'AC00007', 2, 'Urbanización Eta', 'USD', 400.00, 'Partida 007', 120000.00, CURDATE(), 3),
+	(2, 'lote', 'AC00009', 3, 'Urbanización Iota', 'USD', 280.00, 'Partida 009', 110000.00, CURDATE(), 2),
+	(3, 'lote', 'AC00011', 5, 'Urbanización Lambda', 'USD', 320.00, 'Partida 011', 95000.00, CURDATE(), 2),
+	(4, 'lote', 'AC00013', 1, 'Urbanización Nu', 'USD', 300.00, 'Partida 013', 85000.00, CURDATE(), 2),
+	(4, 'lote', 'AC00015', 3, 'Urbanización Omicron', 'USD', 380.00, 'Partida 015', 110000.00, CURDATE(), 1),
+	(1, 'lote', 'AC00017', 7, 'Urbanización Rho', 'USD', 420.00, 'Partida 017', 105000.00, CURDATE(), 3),
+	(2,	'lote', 'AC00019', 9, 'Urbanización Tau', 'USD', 450.00, 'Partida 019', 115000.00, CURDATE(), 3),
+	(3, 'lote', 'AC00021', 11, 'Urbanización Phi', 'USD', 480.00, 'Partida 021', 100000.00, CURDATE(), 2),
+	(4, 'lote', 'AC00023', 13, 'Urbanización Psi', 'USD', 500.00, 'Partida 023', 120000.00, CURDATE(), 2),
+	(1, 'lote', 'AC00025', 15, 'Urbanización Beta', 'USD', 300.00, 'Partida 025', 90000.00, CURDATE(), 2);
 
-SELECT * FROM lotes;
+-- CASAS
+INSERT INTO activos (idproyecto, tipo_activo, codigo, sublote, direccion, moneda_venta, area_terreno, partida_elect, idactivo, precio_venta, create_at, idusuario)
+VALUES
+	(1, 'casa', 'AC00002', 2, 'Urbanización Beta', 'USD', 200.00, 'Partida 002', 1, 150000.00, CURDATE(), 1),
+	(2, 'casa', 'AC00004', 2, 'Urbanización Delta', 'USD', 220.00, 'Partida 004', 2, 180000.00, CURDATE(), 1),
+	(1, 'casa', 'AC00006', 4, 'Urbanización Zeta', 'USD', 180.00, 'Partida 006', 3, 120000.00, CURDATE(), 2),
+	(3, 'casa', 'AC00008', 3, 'Urbanización Theta', 'USD', 250.00, 'Partida 008', 4, 200000.00, CURDATE(), 2),
+	(2, 'casa', 'AC00010', 4, 'Urbanización Kappa', 'USD', 230.00, 'Partida 010', 5, 190000.00, CURDATE(), 2),
+	(3, 'casa', 'AC00012', 6, 'Urbanización Mu', 'USD', 210.00, 'Partida 012', 6, 160000.00, CURDATE(), 2),
+	(4, 'casa', 'AC00014', 2, 'Urbanización Xi', 'USD', 240.00, 'Partida 014', 7, 175000.00, CURDATE(), 2),
+	(4, 'casa', 'AC00016', 4, 'Urbanización Pi', 'USD', 260.00, 'Partida 016', 8, 220000.00, CURDATE(), 3),
+	(1, 'casa', 'AC00018', 8, 'Urbanización Sigma', 'USD', 280.00, 'Partida 018', 9, 200000.00, CURDATE(), 3),
+	(2, 'casa', 'AC00020', 10, 'Urbanización Upsilon', 'USD', 300.00, 'Partida 020', 10, 210000.00, CURDATE(), 3),
+	(3, 'casa', 'AC00022', 12, 'Urbanización Chi', 'USD', 320.00, 'Partida 022', 11, 180000.00, CURDATE(), 2),
+	(4, 'casa', 'AC00024', 14, 'Urbanización Omega', 'USD', 350.00, 'Partida 024', 12, 190000.00, CURDATE(), 2);
+
+
+SELECT * FROM activos;
+
+-- VIVIENDAS
+INSERT INTO viviendas (idactivo, tipo_casa, area_construccion, area_techada, airesm2, zcomunes_porcent, estacionamiento_nro, detalles, idusuario)
+			VALUES
+				(1, 'CUH C001', 70.0, 70.0, NULL, NULL, 5, '{"otros_detalles": "Información adicional para la vivienda 1"}', 1),
+				(2, 'CUH C001', 55.25, 55.25, NULL, NULL, 6, '{"otros_detalles": "Información adicional para la vivienda 2"}', 2),
+				(3, 'CUH C001', 65.75, 65.75, NULL, 8, NULL, '{"otros_detalles": "Información adicional para la vivienda 3"}', 3),
+				(4, 'CUH C001', 80.25, 80.25, NULL, NULL, 8, '{"otros_detalles": "Información adicional para la vivienda 4"}', 4),
+				(5, 'CUH C001', 90.0, 90.0, NULL, NULL, 10, '{"otros_detalles": "Información adicional para la vivienda 5"}', 5),
+				(1, 'CUH C002', 100.0, 100.0, NULL, 12, NULL, '{"otros_detalles": "Información adicional para la vivienda 6"}', 1),
+				(2, 'CUH C002', 110.0, 110.0, NULL, 15, NULL, '{"otros_detalles": "Información adicional para la vivienda 7"}', 2),
+				(3, 'CUH C002', 120.0, 120.0, NULL, 18, NULL, '{"otros_detalles": "Información adicional para la vivienda 8"}', 3),
+				(4, 'CUH C002', 125.0, 125.0, NULL, 20, NULL, '{"otros_detalles": "Información adicional para la vivienda 9"}', 4),
+				(5, 'CUH C002', 135.0, 135.0, NULL, 22, NULL, '{"otros_detalles": "Información adicional para la vivienda 10"}', 5);
+
 
 -- CLIENTES
 INSERT INTO clientes (nombres, apellidos, documento_tipo, documento_nro, estado_civil, iddistrito, direccion, idusuario)
@@ -156,18 +177,14 @@ INSERT INTO clientes (nombres, apellidos, documento_tipo, documento_nro, estado_
 SELECT * FROM clientes;
 
 -- CONTRATOS
-INSERT INTO contratos (
-    idlote, idcliente, idrepresentante, precio_total, cuota_inicial, bono, financiamiento, 
-    plazo_entrega, penalidad_moneda, penalidad_periodo, penalidad, tipo_cambio, estado, 
-    fecha_contrato, create_at, idusuario
-) 
-	VALUES (
-		2, 1, 3, 150000.00, 20000.00, 5000.00, 125000.00, '2024-03-10', 'SOLES', 'MES', 0.03, 3.50, 
-		'Activo', '2024-03-10', '2024-03-08', 1
-	), (
-		5, 2, 4, 180000.00, 25000.00, 6000.00, 149000.00, '2024-03-15', 'DOLARES', 'DIA', 0.025, 3.65, 
-		'Activo', '2024-03-15', '2024-03-08', 2
-	);
+INSERT INTO contratos (idcliente, idconyugue, idrepresentante_primario, idrepresentante_secundario, tipo_cambio, estado, fecha_contrato, idusuario)
+			VALUES
+				(1, NULL, 1, NULL, 3.500, 'VIGENTE', '2024-03-10', 1),
+				(2, NULL, 2, NULL, 3.500, 'VIGENTE', '2024-03-11', 2),
+				(3, NULL, 2, NULL, 3.500, 'VIGENTE', '2024-03-12', 3),
+				(1, NULL, 1, NULL, 3.500, 'VIGENTE', '2024-03-13', 4),
+				(2, NULL, 1, NULL, 3.500, 'VIGENTE', '2024-03-14', 5);
+
 SELECT * FROM contratos;
 
 -- VENDEDORES REPRESENTANTE
@@ -179,7 +196,7 @@ SELECT * FROM vend_representantes;
 
 -- SEPARACIONES
 INSERT INTO separaciones (
-    idlote, idvend_representante, idcliente, separacion, fecha_pago,
+    idactivo, idvend_representante, idcliente, separacion, fecha_pago,
     penalidad_porcent, estado, create_at, idusuario
 	) 
 		VALUES (
@@ -188,7 +205,7 @@ INSERT INTO separaciones (
 		);
         
 INSERT INTO separaciones (
-    idlote, idvend_representante, idcliente, separacion, fecha_pago,
+    idactivo, idvend_representante, idcliente, separacion, fecha_pago,
     penalidad_porcent, estado, create_at, idusuario
 	) 
 		VALUES (
@@ -196,7 +213,7 @@ INSERT INTO separaciones (
 		5, 'Activo', '2024-03-08', 1
 		);
 INSERT INTO separaciones (
-    idlote, idvend_representante, idcliente, separacion, fecha_pago,
+    idactivo, idvend_representante, idcliente, separacion, fecha_pago,
     penalidad_porcent, estado, create_at, idusuario
 	) 
 		VALUES (
@@ -224,14 +241,14 @@ INSERT INTO financieras (ruc, razon_social, direccion)
 SELECT * FROM financieras;
 
 -- DESEMBOLSOS
-INSERT INTO desembolsos (idfinanciera, idlote, monto_desemb, porcentaje, fecha_desembolso, idusuario)
+INSERT INTO desembolsos (idfinanciera, idactivo, monto_desemb, porcentaje, fecha_desembolso, idusuario)
 			VALUES 
 				(1, 2, 5000.00, 10, NOW(), 1),
 				(2, 5, 7000.00, 15, NOW(), 1);
 SELECT * FROM desembolsos;
 
 -- PRESUPUESTOS
-INSERT INTO presupuestos (idlote, descripcion, fecha_program, idusuario)
+INSERT INTO presupuestos (idactivo, descripcion, fecha_program, idusuario)
 			VALUES 
 				(2, 'Materiales de construcción', '2024-03-10', 1),
 				(5, 'Materiales de construcción', '2024-03-15', 1);
@@ -254,15 +271,15 @@ INSERT INTO detalle_gastos (idpresupuesto, tipo_gasto, nombre_gasto, descripcion
 SELECT * FROM detalle_gastos;
 
 -- CUOTAS
-INSERT INTO cuotas (idcontrato, monto_cuota, fecha_vencimiento, idusuario)
+INSERT INTO cuotas (idcontrato, monto_cuota, fecha_vencimiento, tipo_pago, entidad_bancaria, idusuario)
 			VALUES 
-				(1, 500.00, '2024-03-10', 1),
-				(1, 500.00, '2024-04-10', 1);
+				(1, 500.00, '2024-03-10', 'TRANSFERENCIA', 'BCP', 1),
+				(1, 500.00, '2024-04-10', 'TRANSFERENCIA', 'BCP', 1);
                 
-INSERT INTO cuotas (idcontrato, monto_cuota, fecha_vencimiento, idusuario)
+INSERT INTO cuotas (idcontrato, monto_cuota, fecha_vencimiento, tipo_pago, entidad_bancaria, idusuario)
 			VALUES 
-				(2, 500.00, '2024-03-18', 1),
-				(2, 500.00, '2024-04-13', 1);          
+				(2, 500.00, '2024-03-18','TRANSFERENCIA', 'BCP', 1),
+				(2, 500.00, '2024-04-13','TRANSFERENCIA', 'BCP',  1);          
 SELECT * FROM cuotas;
 
 -- SUTENTOS CUOTAS
