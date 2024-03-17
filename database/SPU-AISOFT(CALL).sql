@@ -27,31 +27,22 @@ CALL spu_list_drop_projects();
 CALL spu_list_drop_projects_by_code("b-20");
 CALL spu_restore_projects(6);
 
--- lotes
+-- ACTIVOS
 SELECT * FROM separaciones;
-CALL spu_list_lots_by_id(10); -- OBTENGO LOS LOTES POR ID
-CALL spu_list_lots_short();
-CALL spu_list_lots_short_by_code("LT0");
-CALL spu_inactive_list_short();
-CALL spu_inactive_list_short_by_code("LT");
-CALL spu_add_lots(1, 'VENDIDO', 'LT040', 1, 'Urbanización XYZ', '12.3456', '-78.9101', '{"puntos": [{"x": 1, "y": 2}, {"x": 3, "y": 4}, {"x": 5, "y": 6}]}', 'USD', 200.00, 'Número de partida eléctronica', 12);
-CALL spu_set_lots(16, 6, 'VENDIDO', 'LT070', 1, 'Urbanización XYA', '12.3456', '-78.9101', '{"puntos": [{"x": 1, "y": 2}, {"x": 3, "y": 4}, {"x": 5, "y": 6}]}', 'USD', 200.00, 'Número de partida eléctronica', 12);
-CALL spu_inactive_lots(2); -- DESACTIVA POR ID SI EL LOTE ESTA "NO VENDIDO"
-CALL spu_restore_lotes(2); -- RECUPERA LOS LOTES DESACTIVADOS POR IDLOTE
-SELECT *FROM lotes;
+CALL spu_list_assets_by_id(10); -- OBTENGO LOS ACTIVOS POR ID
+CALL spu_list_assets_short();
+CALL spu_list_assets_by_code("AC");
+CALL spu_list_inactive_assets();
+CALL spu_list_inactive_assets_by_code("LT");
+CALL spu_add_assets(1, 'lote', NULL, 'Disponible', 'AC00060', 12, 'Calle Principal 123', 'USD', 300.00, 10, 'Partida 001','-12.045678', '-77.032456', '{"perimetro": "100m"}', NULL, 80000.00, 1);
+CALL spu_set_assets(28, 1, 'lote', NULL, 'SIN VENDER', 'AC00060', 12, 'Calle Principal 123', 'USD', 300.00, 10, 'Partida 001','-12.045678', '-77.032456', '{"perimetro": "100m"}', NULL, 80000.00, 1);
+CALL spu_inactive_assets(2); -- DESACTIVA POR ID SI EL LOTE ESTA "NO VENDIDO"
+CALL spu_restore_assets(2); -- RECUPERA LOS LOTES DESACTIVADOS POR IDLOTE
 
-SELECT * FROM viviendas;
+SELECT * FROM activos;
 UPDATE lotes AS lt 
 INNER JOIN viviendas AS viv ON viv.idlote = lt.idlote
 SET estado_venta = "VENDIDO";
-
--- VIVIENDAS
-SELECT * FROM viviendas;
-CALL spu_add_houses(6,"", 'CHU 001', 200.00, 250.00, NULL, 5, 2, '{"detalle": "Información adicional"}', 1);
-CALL spu_set_houses(11, 7,"", 'CHU 001', 200.00, 250.00, NULL, 5, 2, '{"detalle": "Información adicional"}', 1);
-CALL spu_inactive_houses(9);
-CALL spu_restore_houses(9);
-SELECT * FROM presupuestos;
 
 -- CLIENTES
 CALL spu_list_clients();
@@ -65,17 +56,22 @@ SELECT * FROM clientes;
 
 -- CONTRATOS
 SELECT * FROM contratos;
-CALL spu_list_contracts_short(); -- > LISTA CORTA
-CALL spu_lits_contracts_short_by_code("LT001"); -- > OBTENGO EL CONTRATO POR EL CÓDIGO DEL LOTE (LISTA COMPLETA)
-CALL spu_lits_contracts_full_by_id(4); -- > OBTENGO EL CONTRATO COMPLETO POR EL IDCONTRATO
-CALL spu_add_contracts(3, 1, NULL, 2, NULL, 50000.00, 3.50, 'ACTIVO', 'VENTA', '{"detalle": "Información adicional"}', '2024-03-15', 1);
-CALL spu_set_contracts(7, 3, 1, NULL, 2, NULL, 50000.00, 3.50, 'ACTIVO', 'VENTA', '{"detalle": "Información adicional", "detalles construccion":"varios"}', '2024-03-15', 1);
-CALL set_inactive_contracts(3);
-CALL spu_list_inactive_contracts_short();
-CALL spu_list_inactive_contracts_short_by_code("LT");
+SELECT * FROM detalles_contratos;
+CALL spu_lits_contracts_full_by_id(10); -- > OBTENGO EL CONTRATO COMPLETO POR EL IDCONTRATO
+CALL spu_add_contracts(1, 0, 2, 0, '3.8', 'Activo', '{"detalle": "Información adicional", "detalles construccion":"varios"}', '2024-03-17',3);
+CALL spu_set_contracts(10, 1, 0, 2, 0, '3.2', 'Activo', '{"detalle": "Información confidencial", "detalles construccion":"varios"}', '2024-03-17',3);
+CALL set_inactive_contracts(1);
+
+-- DETALLE CONTRATOS
+SELECT * FROM detalles_contratos;
+CALL spu_list_det_contracts(20);
+CALL spu_add_det_contracts(20,1,1);
+CALL spu_inactive_det_contracts(15);
+DELETE FROM detalles_contratos;
 
 -- CUANDO RESTAURES UN CONTRATO ELIMINADO, PRIMERO VERIFFICA QUE NO EXISTA OTRO CONTRATO ACTIVO CON ESE LOTE
 CALL spu_resotres_contracts(3);
-SELECT * FROM contratos;
+SELECT * FROM activos WHERE idactivo = 11;
+UPDATE activos SET estado = "SEPARADO" WHERE idactivo <16 AND idactivo > 0 ;
 
     
