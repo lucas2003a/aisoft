@@ -1,6 +1,6 @@
 <?php
 
-require_once "../Models/Project.php";
+require_once "../Models/Asset.php";
 
 if(isset($_POST["action"])){
 
