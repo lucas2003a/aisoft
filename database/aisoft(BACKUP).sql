@@ -3,11 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1:3307
-<<<<<<< HEAD
--- Tiempo de generación: 14-03-2024 a las 07:22:30
-=======
--- Tiempo de generación: 12-03-2024 a las 08:11:35
->>>>>>> ca6099654595b5c98d022d8ed3f87d6dc84c0ba1
+-- Tiempo de generación: 19-03-2024 a las 09:15:43
 -- Versión del servidor: 11.2.2-MariaDB
 -- Versión de PHP: 8.2.13
 
@@ -29,32 +25,19 @@ DELIMITER $$
 --
 -- Procedimientos
 --
-DROP PROCEDURE IF EXISTS `set_inactive_contracts`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `set_inactive_contracts` (IN `_idcontrato` INT)   BEGIN
-	DECLARE _idlote INT;
-    
-    -- OBTENGO EL ID LOTE PARA SABER QUE LOTE MODIFICAR
-    SET _idlote = (
-		SELECT idlote 
-			FROM contratos
-            WHERE idcontrato = _idcontrato
-    );
-    
-    -- MODIFICO EL ESTADO DEL LOTE
-	UPDATE lotes 
-		SET
-			estado_venta = "NO VENDIO",
-            update_at = CURDATE()
-		WHERE
-			idlote = _idlote;
+DROP PROCEDURE IF EXISTS `spu_add_assets`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_add_assets` (IN `_idproyecto` INT, IN `_tipo_activo` VARCHAR(10), IN `_imagen` VARCHAR(100), IN `_estado` VARCHAR(10), IN `_codigo` CHAR(7), IN `_sublote` TINYINT, IN `_direccion` CHAR(70), IN `_moneda_venta` VARCHAR(10), IN `_area_terreno` DECIMAL(5,2), IN `_zcomunes_porcent` TINYINT, IN `_partida_elect` VARCHAR(100), IN `_latitud` VARCHAR(20), IN `_longitud` VARCHAR(20), IN `_perimetro` JSON, IN `_det_casa` JSON, IN `_precio_venta` DECIMAL(8,2), IN `_idusuario` INT)   BEGIN
+	INSERT INTO activos (
+						idproyecto, tipo_activo, imagen, estado, codigo, sublote, direccion, moneda_venta, area_terreno, zcomunes_porcent, partida_elect,
+						latitud, longitud, perimetro, det_casa, precio_venta, idusuario
+                        )
+			VALUES
+				(
+                _idproyecto, _tipo_activo, NULLIF(_imagen,""), _estado, _codigo, _sublote, _direccion, _moneda_venta, _area_terreno, _zcomunes_porcent, partida_elect,
+				NULLIF(_latitud,""), NULLIF(_longitud, ""), NULLIF(_perimetro,""), NULLIF(_det_casa,""), _precio_venta, _idusuario
+                );
 	
-    -- DESCATIVA EL LOTE
-	UPDATE contratos
-		SET
-			estado 		= "DEVOLUCIÓN", 
-			inactive_at = CURDATE()
-		WHERE
-			idcontrato = _idcontrato;
+    SELECT ROW_COUNT() AS filasAfect;
 END$$
 
 DROP PROCEDURE IF EXISTS `spu_add_clients`$$
@@ -62,67 +45,122 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_add_clients` (IN `_nombres` VAR
 	INSERT INTO clientes(nombres, apellidos, documento_tipo, documento_nro, estado_civil, iddistrito, direccion, idusuario)
 				VALUES
 					(_nombres, _apellidos, _documento_tipo, _documento_nro, _estado_civil, _iddistrito, _direccion, _idusuario);
+	
+    SELECT ROW_COUNT() AS filasAfect;
+    
 END$$
 
 DROP PROCEDURE IF EXISTS `spu_add_contracts`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_add_contracts` (IN `_idlote` INT, IN `_idcliente` INT, IN `_idcliente2` INT, IN `_idrepresentante` INT, IN `_idrepresentante2` INT, IN `_precio_total` DECIMAL(8,2), IN `_tipo_cambio` DECIMAL(4,3), IN `_estado` VARCHAR(10), IN `_tipo_contrato` VARCHAR(45), IN `_detalles` JSON, IN `_fecha_contrato` DATE, IN `_idusuario` INT)   BEGIN
-	DECLARE _loteSeparado TINYINT;
-    
-    -- VERFICO SI FUE SEPARADO EL LOTE
-    SET _loteSeparado = (
-			SELECT COUNT(*)
-				FROM separaciones
-                WHERE idlote = _idlote
-    );
-	-- CAMBIO EL ESTADO DEL LOTE A "VENDIDO"
-	UPDATE lotes
-		SET 
-			estado_venta = "VENDIDO",
-            update_at = CURDATE()
-		WHERE
-			idlote = _idlote;
-	
-    -- REGISTRA EL NUEVO CONTRATO
-    IF _loteSeparado = 1 THEN
-		INSERT INTO contratos(
-					idlote, idcliente, idcliente2, idrepresentante, idrepresentante2, precio_total, tipo_cambio, estado, tipo_contrato, 
-                    detalles, fecha_contrato, idusuario
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_add_contracts` (IN `_idcliente` INT, IN `_idconyugue` INT, IN `_idrepresentante_primario` INT, IN `_idrepresentante_secundario` INT, IN `_tipo_cambio` DECIMAL(4,3), IN `_estado` VARCHAR(10), IN `_detalles` JSON, IN `_fecha_contrato` DATE, IN `_idusuario` INT)   BEGIN
+
+	INSERT INTO contratos(
+				idcliente, idconyugue, idrepresentante_primario, idrepresentante_secundario, tipo_cambio, estado,
+                detalles, fecha_contrato, idusuario
 				)
-				VALUES(
-					_idlote, _idcliente, NULLIF(_idcliente2, 0), _idrepresentante, NULLIF(_idrepresentante2, 0), _precio_total, 
-                    _tipo_cambio, _estado, _tipo_contrato, _detalles, _fecha_contrato, _idusuario
+			VALUES(
+				_idcliente, NULLIF(_idconyugue, 0), _idrepresentante_primario, NULLIF(idrepresentante_secundario, 0), 
+                _tipo_cambio, _estado, NULLIF(_detalles,""), _fecha_contrato, _idusuario
 				);
-	ELSE
-		SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Error: separe el lote";
-    END IF;
+                
+	-- RETORNA EL ULTIMO IDCONTRATO
+    SELECT @@LAST_INSERT_ID "idusuario";
+
 END$$
 
-DROP PROCEDURE IF EXISTS `spu_add_houses`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_add_houses` (IN `_idlote` INT, IN `_imagen` VARCHAR(100), IN `_tipo_casa` CHAR(8), IN `_area_construccion` DECIMAL(5,2), IN `_area_techada` DECIMAL(5,2), IN `_airesm2` DECIMAL(5,2), IN `_zcomunes_porcent` TINYINT, IN `_estacionamiento_nro` TINYINT, IN `_detalles` JSON, IN `_idusuario` INT)   BEGIN
-	DECLARE _activos  TINYINT;
-    SET _activos  = (
-		SELECT COUNT(idlote) 
-        FROM viviendas WHERE idlote = _idlote
-        AND inactive_at IS NULL
+DROP PROCEDURE IF EXISTS `spu_add_det_contracts`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_add_det_contracts` (IN `_idactivo` INT, IN `_idcontrato` INT, IN `_idusuario` INT)   BEGIN	
+		DECLARE _tipo_activo	VARCHAR(10);
+		DECLARE _estadoActivo 	VARCHAR(10);
+        DECLARE _contratoActivo	TINYINT;
+        DECLARE _cantAct		TINYINT;
+        
+        -- EL CONTRATO ESTÁ ACTIVO?
+        SET _contratoActivo = (
+			SELECT COUNT(*) 
+				FROM contratos 
+                WHERE idcontrato = _idcontrato
+                AND inactive_at IS NULL
+		);
+        
+        -- CUANTOS REGISTROS  EXISTEN CON ESTE ACTIVO?
+        SET _cantAct = (
+			SELECT COUNT(*)
+				FROM detalles_contratos
+                WHERE idactivo = _idactivo
+                AND inactive_at IS NULL
         );
+    
+		-- VERFICO EL TIPO DE ACTIVO
+        SET _tipo_activo = (
+			SELECT tipo_activo 
+				FROM activos
+				WHERE idactivo = _idactivo
+                AND inactive_at IS NULL
+        );
+		
+        -- VERFICO SI FUE SEPARADO EL ACTIVO(LOTE)
+		SET _estadoActivo = (
+			SELECT estado
+				FROM activos
+                WHERE idactivo = _idactivo
+                AND inactive_at IS NULL
+		);
+        -- /////////////////////////////////////////////////////////////////////////
+		IF _contratoActivo > 0 THEN
+			-- /////////////////////////////////////////////////////////////////////////
+			IF _cantAct = 0 THEN
+				
+                -- /////////////////////////////////////////////////////////////////////////
+				IF _tipo_activo = "LOTE" THEN
+					
+                    -- /////////////////////////////////////////////////////////////////////////
+					IF 	_estadoActivo = "SEPARADO" 	THEN
+					                            
+							-- INGRESA EL NUEVO REGISTRO
+							INSERT INTO detalles_contratos(idactivo, idcontrato, idusuario)
+										VALUES
+										(_idactivo, _idcontrato, _idusuario);
+			
+							-- CAMBIO EL ESTADO DEL ACTIVO A "VENDIDO"
+							UPDATE activos
+								SET 
+									estado = "VENDIDO",
+									update_at = CURDATE()
+								WHERE
+									idactivo = _idactivo;
+                                    
+							SELECT ROW_COUNT() AS filasAfect;
+					ELSE 
+						SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Error: separe el lote/ o verfique si hay duplicidad";
+					END IF;
+					-- /////////////////////////////////////////////////////////////////////////
+				ELSE
+					
+					-- INGRESA EL NUEVO REGISTRO
+					INSERT INTO detalles_contratos(idactivo, idcontrato, idusuario)
+								VALUES
+								(_idactivo, _idcontrato, _idusuario);
+			
+					-- CAMBIO EL ESTADO DEL ACTIVO A "VENDIDO"
+					UPDATE activos
+						SET 
+							estado = "VENDIDO",
+							update_at = CURDATE()
+						WHERE
+							idactivo = _idactivo;
+					
+                    SELECT ROW_COUNT() AS filasAfect;
+				END IF;
+				-- /////////////////////////////////////////////////////////////////////////
+			ELSE 
+				SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Error: ya existe un registro";
+			END IF;
+            -- /////////////////////////////////////////////////////////////////////////
         
-        IF _activos = 0 THEN
-        
-			INSERT INTO viviendas(idlote, imagen, tipo_casa, area_construccion, area_techada, airesm2, zcomunes_porcent, estacionamiento_nro, detalles, idusuario)
-					VALUES
-						(_idlote, NULLIF(_imagen, ""),  _tipo_casa, _area_construccion, _area_techada, _airesm2, _zcomunes_porcent, _estacionamiento_nro, _detalles, _idusuario);
-		ELSE 
-			SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT ="Error, ya hay un registro con ese nombre";
-        END IF ;
-END$$
-
-DROP PROCEDURE IF EXISTS `spu_add_lots`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_add_lots` (IN `_idproyecto` INT, IN `_estado_venta` VARCHAR(10), IN `_codigo` CHAR(5), IN `_sublote` TINYINT, IN `_urbanizacion` VARCHAR(70), IN `_latitud` VARCHAR(20), IN `_longitud` VARCHAR(20), IN `_perimetro` JSON, IN `_moneda_venta` VARCHAR(10), IN `_area_terreno` DECIMAL(5,2), IN `_partida_elect` VARCHAR(100), IN `_idusuario` INT)   BEGIN
-	INSERT INTO lotes ( idproyecto, estado_venta, codigo, sublote, urbanizacion, latitud, longitud, perimetro, moneda_venta, area_terreno, 
-						partida_elect, idusuario)
-			VALUES
-				(_idproyecto, _estado_venta, _codigo, _sublote, NULLIF(_urbanizacion, ""),NULLIF(_latitud, ""), NULLIF(_longitud, ""), NULLIF(perimetro,""), _moneda_venta, _area_terreno, 
-                _partida_elect, _idusuario);
+        ELSE
+			SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Error: verifique el contrato";
+        END IF;
+        -- /////////////////////////////////////////////////////////////////////////
 END$$
 
 DROP PROCEDURE IF EXISTS `spu_add_projects`$$
@@ -130,88 +168,92 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_add_projects` (IN `_imagen` VAR
 	INSERT INTO proyectos(imagen, iddireccion, codigo, denominacion, latitud, longitud, perimetro, iddistrito, direccion, idusuario)
 			VALUES
 				(NULLIF(_imagen,""), _iddireccion, _codigo, _denominacion, NULLIF(_latitud, ""), NULLIF(_longitud, ""), NULLIF(_perimetro, ""), _iddistrito, _direccion, _idusuario);
-END$$
-
-DROP PROCEDURE IF EXISTS `spu_inactive_houses`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_inactive_houses` (IN `_idvivienda` INT)   BEGIN
-	
-    DECLARE _idlote INT;
-    DECLARE _registros TINYINT;
     
-    -- 	OBTENGO EL IDLOTE
-    SET _idlote = (SELECT idlote FROM viviendas WHERE idvivienda = _idvivienda);
-    
-    -- VERIFICO SI EXISTE ALGUNN REGISTRO EN LOS PRESUPUESTOS
-     SET _registros = (
-		SELECT COUNT(*) FROM presupuestos
-        WHERE idlote = _idlote
-        AND inactive_at IS NULL
-     );
-     
-	IF _registros = 0 THEN
-		UPDATE viviendas
-			SET
-				inactive_at = CURDATE()
-			WHERE
-				idvivienda = _idvivienda;
-	ELSE 
-		SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Error: la vivienda cuenta con un presupuesto";
-    END IF;
+    -- FILAS AFECTADAS (SERVIRÀ PARA CAPTURAR UN ERROR)
+	SELECT ROW_COUNT() AS filasAfect;
 END$$
 
-DROP PROCEDURE IF EXISTS `spu_inactive_list_short`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_inactive_list_short` ()   BEGIN
-	SELECT * FROM vws_list_inactive_lots_short;
-END$$
-
-DROP PROCEDURE IF EXISTS `spu_inactive_list_short_by_code`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_inactive_list_short_by_code` (IN `_codigo` CHAR(5))   BEGIN
-	SELECT * 
-		FROM vws_list_inactive_lots_short
-        WHERE codigo LIKE CONCAT(_codigo,"%");
-END$$
-
-DROP PROCEDURE IF EXISTS `spu_inactive_lots`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_inactive_lots` (IN `_idlote` INT)   BEGIN
-	DECLARE _estadoLote VARCHAR(10);
+DROP PROCEDURE IF EXISTS `spu_inactive_assets`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_inactive_assets` (IN `_idactivo` INT)   BEGIN
+	DECLARE _estadoActivo VARCHAR(10);
     
     -- CONSULTAR SI EL LOTE ESTA VENDIDO O SEPARDAO
-    SET _estadoLote = (
-		SELECT estado_venta 
-			FROM lotes 
-			WHERE idlote = _idlote
+    SET _estadoActivo = (
+		SELECT estado
+			FROM activos 
+			WHERE idactivo = _idactivo
     );
     
-	IF _estadoLote = "NO VENDIDO" THEN
-		UPDATE lotes
+	IF _estadoActivo = "SIN VENDER" THEN
+		UPDATE activos
 			SET
 				inactive_at = CURDATE()
-			WHERE idlote = _idlote;
+			WHERE idactivo = _idactivo;
+	
+    SELECT ROW_COUNT() AS filasAfect;
 	ELSE
 		SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Error: el lote tiene un cliente";
     END IF;
 END$$
 
+DROP PROCEDURE IF EXISTS `spu_inactive_contracts`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_inactive_contracts` (IN `_idcontrato` INT)   BEGIN
+
+	DECLARE _numCot TINYINT;
+    
+    SET _numCot = (
+		SELECT COUNT(*)
+			FROM detalles_contratos
+            WHERE idcontrato = _idcontrato
+            AND inactive_at IS NULL
+    );
+    -- DESCATIVA EL LOTE
+    
+    IF _numCot = 0 THEN
+    
+		UPDATE contratos
+			SET
+				inactive_at = CURDATE()
+			WHERE
+				idcontrato = _idcontrato;
+		
+        SELECT ROW_COUNT() AS filasAfect;
+	ELSE 
+		SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Error : existe información relacionada al contrato";
+    END IF;
+END$$
+
+DROP PROCEDURE IF EXISTS `spu_inactive_det_contracts`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_inactive_det_contracts` (IN `_iddetalle_contrato` INT)   BEGIN
+	UPDATE detalles_contratos
+		SET
+			inactive_at = CURDATE()
+		WHERE
+			iddetalle_contrato = _iddetalle_contrato;
+END$$
+
 DROP PROCEDURE IF EXISTS `spu_inactive_projects`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_inactive_projects` (IN `_idproyecto` INT)   BEGIN
-	DECLARE _lotes SMALLINT;
+	DECLARE _activos SMALLINT;
     
     -- CUENTA SI EL PROJECTO NO TIENE LOTES
-    SET _lotes = (
+    SET _activos = (
 		SELECT COUNT(*) 
-        FROM lotes 
+        FROM activos 
         WHERE idproyecto = _idproyecto
         AND inactive_at IS NULL
     );
     
-    IF _lotes = 0 THEN
+    IF _activos = 0 THEN
 		UPDATE proyectos
 			SET
 				inactive_at = CURDATE()
 			WHERE
 				idproyecto = _idproyecto;
+		
+        SELECT ROW_COUNT() AS filasAfect;
 	ELSE 
-		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error: El proyecto tiene lotes';
+		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error: El proyecto tiene activos';
 	END IF;
 END$$
 
@@ -237,12 +279,14 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_inactve_clients` (IN `_idclient
     
     -- EJECUTO EL PROCEDIMIENTO
     
-    IF _clienContrato  = 0 OR _clienSeparacion = 0 THEN
+    IF _clienContrato  = 0 AND _clienSeparacion = 0 THEN
 		UPDATE clientes
 			SET
 				inactive_at = CURDATE()
 			WHERE
 				idcliente = _idcliente;
+		
+        SELECT ROW_COUNT() AS filasAfect;
 	ELSE 
 		SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Error: tiene registros este cliente";
 	END IF;
@@ -292,6 +336,55 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_list_addresses_ruc` (IN `_ruc` 
         WHERE direcc.idempresa = _idempresa;
 END$$
 
+DROP PROCEDURE IF EXISTS `spu_list_assets_by_code`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_list_assets_by_code` (IN `_idproyecto` INT, IN `_codigo` CHAR(7))   BEGIN
+	SELECT * 
+		FROM vws_list_assets_short
+        WHERE codigo LIKE CONCAT(_codigo,"%")
+        AND idproyecto = _idproyecto;
+END$$
+
+DROP PROCEDURE IF EXISTS `spu_list_assets_idAsset`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_list_assets_idAsset` (IN `_idactivo` INT)   BEGIN
+		SELECT 
+		act.idactivo,
+        act.tipo_activo,
+        proy.denominacion,
+        act.imagen,
+        act.estado,
+        act.codigo,
+        act.sublote,
+        act.direccion,
+        dist.distrito,
+        prov.provincia,
+        dept.departamento,
+        act.moneda_venta,
+        act.area_terreno,
+        act.zcomunes_porcent,
+        act.partida_elect,
+        act.latitud,
+        act.longitud,
+        act.perimetro,
+        act.det_casa,
+        act.precio_venta,
+        usu.nombres AS usuario
+		FROM activos AS act
+        INNER JOIN proyectos AS proy ON proy.idproyecto = act.idproyecto
+        INNER JOIN distritos AS dist ON dist.iddistrito = proy.iddistrito
+        INNER JOIN provincias AS prov ON prov.idprovincia = dist.idprovincia
+        INNER JOIN departamentos AS dept ON dept.iddepartamento = prov.iddepartamento
+        INNER JOIN usuarios AS usu ON usu.idusuario = act.idusuario
+        WHERE act.idactivo = _idactivo
+        AND act.inactive_at IS NULL
+        ORDER BY proy.denominacion;
+END$$
+
+DROP PROCEDURE IF EXISTS `spu_list_assets_idProject`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_list_assets_idProject` (IN `_idproyecto` INT)   BEGIN
+	SELECT * FROM vws_list_assets_short
+    WHERE idproyecto = _idproyecto;
+END$$
+
 DROP PROCEDURE IF EXISTS `spu_list_clients`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_list_clients` ()   BEGIN
 	SELECT * FROM vws_list_clients;
@@ -316,15 +409,41 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_list_companies_ruc` (IN `_ruc` 
     ORDER BY 2;
 END$$
 
-DROP PROCEDURE IF EXISTS `spu_list_contracts_short`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_list_contracts_short` ()   BEGIN
-	SELECT * FROM vws_list_contracts_short;
-END$$
-
 DROP PROCEDURE IF EXISTS `spu_list_departaments`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_list_departaments` ()   BEGIN
 	SELECT * FROM departamentos
     ORDER BY 2 ASC;
+END$$
+
+DROP PROCEDURE IF EXISTS `spu_list_det_contracts`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_list_det_contracts` (IN `_idactivo` INT)   BEGIN
+	DECLARE _idCont INT;
+    
+    -- OBTENGO EL IDCONTRATO
+    SET _idCont =(
+		SELECT idcontrato 
+			FROM detalles_contratos
+            WHERE idactivo = _idactivo
+            AND inactive_at IS NULL
+    );
+    
+	SELECT 
+		dtc.iddetalle_contrato,
+        act.idactivo,
+		act.tipo_activo,
+        act.sublote,
+        act.direccion,
+        act.moneda_venta,
+        cont.idcontrato,
+        cont.tipo_cambio,
+        cont.estado,
+        cont.fecha_contrato
+		FROM detalles_contratos AS dtc
+        INNER JOIN activos AS act ON act.idactivo = dtc.idactivo
+        INNER JOIN contratos AS cont ON cont.idcontrato = dtc.idcontrato
+        WHERE dtc.inactive_at IS NULL
+        AND dtc.idcontrato = _idCont
+        ORDER BY 3;
 END$$
 
 DROP PROCEDURE IF EXISTS `spu_list_districts`$$
@@ -346,32 +465,27 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_list_drop_projects_by_code` (IN
         WHERE codigo LIKE CONCAT("%", _codigo,"%");
 END$$
 
+DROP PROCEDURE IF EXISTS `spu_list_inactive_assets`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_list_inactive_assets` ()   BEGIN
+	SELECT * FROM vws_list_inactive_assets ;
+END$$
+
+DROP PROCEDURE IF EXISTS `spu_list_inactive_assets_by_code`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_list_inactive_assets_by_code` (IN `_codigo` CHAR(7))   BEGIN
+	SELECT * 
+		FROM vws_list_inactive_assets
+        WHERE codigo LIKE CONCAT(_codigo,"%");
+END$$
+
 DROP PROCEDURE IF EXISTS `spu_list_inactive_clients`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_list_inactive_clients` ()   BEGIN
 	SELECT * FROM vws_list_inactive_clients;
 END$$
 
-DROP PROCEDURE IF EXISTS `spu_list_inactive_contracts_short`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_list_inactive_contracts_short` ()   BEGIN
-	SELECT * FROM vws_list_inactive_contracts_short;
-END$$
-
-DROP PROCEDURE IF EXISTS `spu_list_lots_by_id`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_list_lots_by_id` (IN `_idlote` INT)   BEGIN
-	SELECT * FROM vws_list_lots
-    WHERE idlote = _idlote;
-END$$
-
-DROP PROCEDURE IF EXISTS `spu_list_lots_short`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_list_lots_short` ()   BEGIN
-	SELECT * FROM vws_list_lots_short;
-END$$
-
-DROP PROCEDURE IF EXISTS `spu_list_lots_short_by_code`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_list_lots_short_by_code` (IN `_codigo` CHAR(5))   BEGIN
-	SELECT * 
-		FROM vws_list_lots_short
-        WHERE codigo LIKE CONCAT(_codigo,"%");
+DROP PROCEDURE IF EXISTS `spu_list_inactive_clients_docNro`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_list_inactive_clients_docNro` (IN `_documento_nro` VARCHAR(12))   BEGIN
+	SELECT * FROM vws_list_inactive_clients
+    WHERE documento_nro LIKE CONCAT("%",_documento_nro, "%");
 END$$
 
 DROP PROCEDURE IF EXISTS `spu_list_projects`$$
@@ -395,48 +509,165 @@ END$$
 
 DROP PROCEDURE IF EXISTS `spu_lits_contracts_full_by_id`$$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_lits_contracts_full_by_id` (IN `_idcontrato` INT)   BEGIN
-	SELECT * 
-		FROM vws_list_contracts_full
-        WHERE idcontrato = _idcontrato;
+	-- CTE (EPRESION DE TABLA COMUN) ESTRUCTURA TEMPORAL QUE SE PUEDE USAR DENTRO DE UNA CONSULTA
+    -- RECOLECTAMOS LA DATA
+    
+    -- DATA CLEINTE 1
+	WITH ubigeo1 AS(
+		SELECT 
+			dist.iddistrito,
+            dist.distrito,
+            prov.provincia,
+            dept.departamento
+		FROM distritos AS dist
+        INNER JOIN provincias AS prov ON prov.idprovincia = dist.idprovincia
+        INNER JOIN departamentos AS dept ON dept.iddepartamento = prov.iddepartamento
+    ),
+    Client1 AS(
+		SELECT 
+			clien.idcliente,
+            clien.nombres,
+            clien.apellidos,
+            clien.documento_tipo,
+            clien.documento_nro,
+            clien.estado_civil,
+            ubdata.*,
+            clien.direccion
+			FROM clientes AS clien
+            INNER JOIN ubigeo1 AS ubdata ON ubdata.iddistrito = clien.iddistrito
+    ),
+    
+    -- DATA CLIENTE 2
+    ubigeo2 AS(
+		SELECT 
+			dist.iddistrito AS iddistritoCL2,
+            dist.distrito AS distrito2,
+            prov.provincia AS provincia2,
+            dept.departamento AS departamento2
+		FROM distritos AS dist
+        INNER JOIN provincias AS prov ON prov.idprovincia = dist.idprovincia
+        INNER JOIN departamentos AS dept ON dept.iddepartamento = prov.iddepartamento
+    ),
+	Client2 AS(
+		SELECT 
+			clien.idcliente AS idconyugue,
+            clien.nombres AS nombre2,
+            clien.apellidos AS apellido2,
+            clien.documento_tipo AS documento_tipo2,
+            clien.documento_nro AS documento_nro2,
+            clien.estado_civil AS estado_civil2,
+            ubdata2.*,
+            clien.direccion AS direccion2
+			FROM clientes AS clien
+            INNER JOIN ubigeo2 AS ubdata2 ON ubdata2.iddistritoCL2 = clien.iddistrito
+    ),
+    
+    -- DATA REPRESENTANTE 1
+	ubigeor1 AS(
+		SELECT 
+			dist.iddistrito AS iddistritoUB,
+            dist.distrito AS distritor1,
+            prov.provincia AS provinciar1,
+            dept.departamento AS departamentor1
+		FROM distritos AS dist
+        INNER JOIN provincias AS prov ON prov.idprovincia = dist.idprovincia
+        INNER JOIN departamentos AS dept ON dept.iddepartamento = prov.iddepartamento
+    ),
+    represen1 AS(
+		SELECT 
+				usu.idusuario AS idrepresentante_rpr,
+				usu.nombres AS nombres_rpr,
+                usu.apellidos AS apellidos_rpr,
+                usu.documento_tipo AS documento_tipo_rpr,
+                usu.documento_nro AS documento_nro_rpr,
+                ubr1.*,
+                usu.direccion AS direccion_rpr,
+                usu.partida_elect AS partida_elect_rpr
+			FROM vend_representantes AS vend  
+            INNER JOIN usuarios AS usu ON usu.idusuario = vend.idrepresentante
+            INNER JOIN ubigeor1 AS ubr1 ON ubr1.iddistritoUB = usu.iddistrito
+		
+    ),
+    
+    -- DATA REPRESENTANTE 2
+	ubigeor2 AS(
+		SELECT 
+			dist.iddistrito AS iddistritoUB2,
+            dist.distrito AS distritor2,
+            prov.provincia AS provinciar2,
+            dept.departamento AS departamentor2
+		FROM distritos AS dist
+        INNER JOIN provincias AS prov ON prov.idprovincia = dist.idprovincia
+        INNER JOIN departamentos AS dept ON dept.iddepartamento = prov.iddepartamento
+        ORDER BY dept.departamento ASC
+    ),
+	represen2 AS(
+		SELECT 
+				usu.idusuario AS idrepresentante_rps,
+				usu.nombres AS nombres_rps,
+                usu.apellidos AS apellidos_rps,
+                usu.documento_tipo AS documento_tipo_rps,
+                usu.documento_nro AS documento_nro_rps,
+                ubr2.*,
+                usu.direccion AS direccion_rps,
+                usu.partida_elect AS partida_elect_rps
+			FROM vend_representantes AS vend  
+            INNER JOIN usuarios AS usu ON usu.idusuario = vend.idrepresentante
+            INNER JOIN ubigeor2 AS ubr2 ON ubr2.iddistritoUB2 = usu.iddistrito
+
+    )
+    
+	SELECT 
+		dtc.iddetalle_contrato,
+		cont.idcontrato,
+        cont.tipo_cambio,
+        cont.estado,        
+		clien1.*, -- * IGUAL QUE SELECT * FROM INDICA TODOS LOS REGISTROS DE LA CTA
+        clien2.*,
+		rp1.*,
+        rp2.*,
+        proy.codigo,
+        proy.denominacion,
+        act.sublote,
+		act.direccion,
+        act.moneda_venta,
+        act.area_terreno,
+        act.zcomunes_porcent,
+        act.partida_elect,
+        act.det_casa,
+        act.precio_venta, -- CREO QUE SE DEBERIA CALCULAR
+        cont.detalles,
+        cont.fecha_contrato,
+        usu.nombres AS usuario
+		FROM detalles_contratos AS dtc
+        INNER JOIN contratos AS cont ON dtc.idcontrato = cont.idcontrato
+        INNER JOIN activos AS act ON act.idactivo = dtc.idactivo
+        INNER JOIN proyectos AS proy ON proy.idproyecto = act.idproyecto
+        
+        -- OBTENGO LOS DATOS DEL CLIENTE1 Y DEL CLIENTE2 (SI EXISTE)
+        INNER JOIN Client1 AS clien1 ON clien1.idcliente = cont.idcliente
+        LEFT JOIN Client2 AS clien2 ON clien2.idconyugue = cont.idconyugue
+        
+        -- OBTENGO LOS DATOS DEL REPRESENTANTE Y DEL REPRESENTANTE2 (SI EXISTE)
+        INNER JOIN represen1 AS rp1 ON rp1.idrepresentante_rpr = cont.idrepresentante_primario
+        LEFT JOIN represen2 AS rp2 ON rp2.idrepresentante_rps = cont.idrepresentante_secundario
+        
+        -- OBTENGO LOS DATOS DEL USUARIO 
+        INNER JOIN usuarios AS usu ON usu.idusuario = cont.idusuario
+        WHERE dtc.idcontrato = _idcontrato
+        AND cont.inactive_at IS NULL
+        ORDER BY denominacion;
 END$$
 
-DROP PROCEDURE IF EXISTS `spu_lits_contracts_short_by_code`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_lits_contracts_short_by_code` (IN `_codigo` VARCHAR(5))   BEGIN
-		SELECT * 
-			FROM vws_list_contracts_short
-			WHERE codigo LIKE CONCAT(_codigo,"%");
-END$$
-
-DROP PROCEDURE IF EXISTS `spu_resotres_contracts`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_resotres_contracts` (IN `_idcontrato` INT)   BEGIN
-	DECLARE _idlote SMALLINT;
-	DECLARE _contratosActivos SMALLINT;
-    
-    -- OBTENGO EL IDLOTE
-    SET _idlote = (
-		SELECT idlote FROM contratos
-        WHERE idcontrato = _idcontrato
-    );
-    
-    -- VEREIFICO SI EXISTE ALGUN CONTRTO ACTIVO CON ESE IDLOTE
-    SET _contratosActivos = (
-		SELECT COUNT(*) FROM contratos
-        WHERE idlote = _idlote
-        AND inactive_at IS NULL
-    );
-    
-    -- EJECUTO LA CONSULTA
-    IF _contratosActivos = 0 THEN
-		UPDATE contratos
-			SET
-				estado = "ACTIVO",
-                update_at = CURDATE(),
-                inactive_at =  NULL
-			WHERE 
-				idcontrato = _idcontrato;
-	ELSE
-		SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Error: Ya existe un contrato con este lote";
-    END IF;
+DROP PROCEDURE IF EXISTS `spu_restore_assets`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_restore_assets` (IN `_idactivo` INT)   BEGIN
+	UPDATE activos
+		SET 
+			inactive_at = NULL,
+            update_at 	= CURDATE()
+		WHERE idactivo = _idactivo;
+	
+    SELECT ROW_COUNT() AS filasAfect;
 END$$
 
 DROP PROCEDURE IF EXISTS `spu_restore_clientes`$$
@@ -447,40 +678,8 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_restore_clientes` (IN `_idclien
             update_at 	= CURDATE()
 		WHERE
 			idcliente = _idcliente;
-END$$
-
-DROP PROCEDURE IF EXISTS `spu_restore_houses`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_restore_houses` (IN `_idvivienda` INT)   BEGIN
-	DECLARE _activos TINYINT;
-    DECLARE _idlote TINYINT;
-    
-    SET _idlote = (SELECT idlote FROM viviendas WHERE idvivienda = _idvivienda);
-    
-    SET _activos = (
-		SELECT COUNT(*) FROM viviendas
-        WHERE idlote = _idlote
-        AND inactive_at IS NULL
-    );
-    
-    IF _activoS = 0 THEN
-        UPDATE viviendas
-			SET
-				inactive_at = NULL,
-				update_at = CURDATE()
-			WHERE
-				idvivienda = _idvivienda;
-    ELSE
-		SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Error, ya estiste otro registro con ese lote";
-    END IF;
-END$$
-
-DROP PROCEDURE IF EXISTS `spu_restore_lotes`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_restore_lotes` (IN `_idlote` INT)   BEGIN
-	UPDATE lotes
-		SET 
-			inactive_at = NULL,
-            update_at 	= CURDATE()
-		WHERE idlote = _idlote;
+	
+    SELECT ROW_COUNT() AS filasAfect;
 END$$
 
 DROP PROCEDURE IF EXISTS `spu_restore_projects`$$
@@ -491,6 +690,37 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_restore_projects` (IN `_idproye
             update_at = CURDATE()
 			WHERE
 				idproyecto = _idproyecto;
+	
+    SELECT ROW_COUNT() AS filasAfect;
+END$$
+
+DROP PROCEDURE IF EXISTS `spu_set_assets`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_set_assets` (IN `_idactivo` INT, IN `_idproyecto` INT, IN `_tipo_activo` VARCHAR(10), IN `_imagen` VARCHAR(100), IN `_estado` VARCHAR(10), IN `_codigo` CHAR(7), IN `_sublote` TINYINT, IN `_direccion` CHAR(70), IN `_moneda_venta` VARCHAR(10), IN `_area_terreno` DECIMAL(5,2), IN `_zcomunes_porcent` TINYINT, IN `_partida_elect` VARCHAR(100), IN `_latitud` VARCHAR(20), IN `_longitud` VARCHAR(20), IN `_perimetro` JSON, IN `_det_casa` JSON, IN `_precio_venta` DECIMAL(8,2), IN `_idusuario` INT)   BEGIN
+	UPDATE activos
+		SET
+			idproyecto		= _idproyecto,
+            idproyecto		= _idproyecto,
+            tipo_activo		= _tipo_activo,
+            imagen 			= NULLIF(_imagen,""),
+            estado			= _estado,
+            codigo 			= _codigo,
+            sublote 		= _sublote,
+            direccion 		= _direccion,
+            moneda_venta 	= _moneda_venta,
+            area_terreno	= _area_terreno,
+            zcomunes_porcent = _zcomunes_porcent,
+            partida_elect 	= _partida_elect,
+            latitud 		= NULLIF(_latitud,""),
+            longitud		= NULLIF(_longitud,""),
+            perimetro 		= NULLIF(_perimetro, ""),
+            det_casa		= NULLIF(_det_casa, ""),
+            precio_venta	= _precio_venta,
+            idusuario		= _idusuario,
+            update_at		= CURDATE() 
+		WHERE
+			idactivo = _idactivo;
+	
+    SELECT ROW_COUNT() AS filasAfect;
 END$$
 
 DROP PROCEDURE IF EXISTS `spu_set_clients`$$
@@ -508,67 +738,42 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_set_clients` (IN `_idcliente` I
             update_at		= CURDATE()
 		WHERE 
 			idcliente = _idcliente;
+	
+    SELECT ROW_COUNT() AS filasAfect;
 END$$
 
 DROP PROCEDURE IF EXISTS `spu_set_contracts`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_set_contracts` (IN `_idcontrato` INT, IN `_idlote` INT, IN `_idcliente` INT, IN `_idcliente2` INT, IN `_idrepresentante` INT, IN `_idrepresentante2` INT, IN `_precio_total` DECIMAL(8,2), IN `_tipo_cambio` DECIMAL(4,3), IN `_estado` VARCHAR(10), IN `_tipo_contrato` VARCHAR(45), IN `_detalles` JSON, IN `_fecha_contrato` DATE, IN `_idusuario` INT)   BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_set_contracts` (IN `_idcontrato` INT, IN `_idcliente` INT, IN `_idconyugue` INT, IN `_idrepresentante_primario` INT, IN `_idrepresentante_secundario` INT, IN `_tipo_cambio` DECIMAL(4,3), IN `_estado` VARCHAR(10), IN `_detalles` JSON, IN `_fecha_contrato` DATE, IN `_idusuario` INT)   BEGIN
+
 	UPDATE contratos
 		SET
-			idlote				= _idlote,
-            idcliente 			= _idcliente,
-            idcliente2			= NULLIF(_idcliente2,""),
-            idrepresentante 	= _idrepresentante,
-            idrepresentante2	= NULLIF(_idrepresentante2, ""),
-            precio_total		= _precio_total,
-            tipo_cambio			= _tipo_cambio,
-            estado 				= _estado,
-            tipo_contrato		= _tipo_contrato,
-            detalles			= NULLIF(_detalles,""),
-            fecha_contrato		= _fecha_contrato,
-            idusuario			= _idusuario,
-            update_at 			= CURDATE()
+			idcliente		= _idcliente,
+            idconyugue		= NULLIF(_idconyugue,0),
+            idrepresentante_primario = _idrepresentante_primario,
+            idrepresentante_secundario = NULLIF(_idrepresentante_secundario,0),
+            tipo_cambio		= _tipo_cambio,
+			estado			= _estado,
+            detalles 		= NULLIF(_detalles,""),
+            fecha_contrato 	= _fecha_contrato,
+            idusuario 		= _idusuario,
+            update_at 		= CURDATE()
         WHERE
 			idcontrato = _idcontrato;
+	
+    SELECT ROW_COUNT() AS filasAfect;
 END$$
 
-DROP PROCEDURE IF EXISTS `spu_set_houses`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_set_houses` (IN `_idvivienda` INT, IN `_idlote` INT, IN `_imagen` VARCHAR(100), IN `_tipo_casa` CHAR(8), IN `_area_construccion` DECIMAL(5,2), IN `_area_techada` DECIMAL(5,2), IN `_airesm2` DECIMAL(5,2), IN `_zcomunes_porcent` TINYINT, IN `_estacionamiento_nro` TINYINT, IN `_detalles` JSON, IN `_idusuario` INT)   BEGIN
-	UPDATE viviendas
+DROP PROCEDURE IF EXISTS `spu_set_det_contracts`$$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_set_det_contracts` (IN `_detalle_contrato` INT, IN `_idactivo` INT, IN `_idcontrato` INT, IN `_idusuario` INT)   BEGIN
+	UPDATE detalles_contratos 
 		SET
-			idlote 				= _idlote,
-			imagen 				= NULLIF(_imagen, ""),
-            tipo_casa			= _tipo_casa,
-            area_construccion 	= _area_construccion,
-			area_techada		= _area_techada,
-			airesm2				= _airesm2,
-			zcomunes_porcent 	= _zcomunes_porcent,
-			estacionamiento_nro =_estacionamiento_nro,
-            detalles			= _detalles,
-			idusuario 			= _idusuario,
-            update_at			= CURDATE()
-        WHERE
-			idvivienda = _idvivienda;
-END$$
-
-DROP PROCEDURE IF EXISTS `spu_set_lots`$$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_set_lots` (IN `_idlote` INT, IN `_idproyecto` INT, IN `_estado_venta` VARCHAR(10), IN `_codigo` CHAR(5), IN `_sublote` TINYINT, IN `_urbanizacion` VARCHAR(70), IN `_latitud` VARCHAR(20), IN `_longitud` VARCHAR(20), IN `_perimetro` JSON, IN `_moneda_venta` VARCHAR(10), IN `_area_terreno` DECIMAL(5,2), IN `_partida_elect` VARCHAR(100), IN `_idusuario` INT)   BEGIN
-	UPDATE lotes
-		SET
-			idproyecto		= _idproyecto,
-			estado_venta 	= _estado_venta,
-			codigo			= _codigo,
-			sublote			= _sublote,
-			urbanizacion	= NULLIF(_urbanizacion, ""),
-			latitud			= NULLIF(_latitud, ""),
-			longitud		= NULLIF(_longitud, ""),
-			perimetro		= NULLIF(_perimetro, ""),
-			moneda_venta	= _moneda_venta,
-			area_terreno 	= _area_terreno,
-			partida_elect	= _partida_elect,
-			idusuario 		= _idusuario,
-            update_at		= CURDATE()
+			idactivo 	= _idactivo,
+            idcontrato	= _idcontrato,
+            idusuario	= _idusuario
 		WHERE
-			idlote = _idlote;
+			detalle_contrato = _detalle_contrato;
+	
+    SELECT ROW_COUNT() AS filasAfect;
 END$$
 
 DROP PROCEDURE IF EXISTS `spu_set_projects`$$
@@ -588,9 +793,79 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_set_projects` (IN `_idproyecto`
             update_at	= CURDATE()
 		WHERE 
 			idproyecto = _idproyecto;
+            
+		SELECT ROW_COUNT() AS filasAfect;
 END$$
 
 DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `activos`
+--
+
+DROP TABLE IF EXISTS `activos`;
+CREATE TABLE IF NOT EXISTS `activos` (
+  `idactivo` int(11) NOT NULL AUTO_INCREMENT,
+  `idproyecto` int(11) NOT NULL,
+  `tipo_activo` varchar(10) NOT NULL,
+  `imagen` varchar(100) DEFAULT NULL,
+  `estado` varchar(10) NOT NULL DEFAULT 'SIN VENDER',
+  `codigo` char(7) DEFAULT NULL,
+  `sublote` tinyint(4) NOT NULL,
+  `direccion` varchar(60) DEFAULT NULL,
+  `moneda_venta` varchar(10) NOT NULL,
+  `area_terreno` decimal(5,2) NOT NULL,
+  `zcomunes_porcent` tinyint(4) DEFAULT NULL,
+  `partida_elect` varchar(100) NOT NULL,
+  `latitud` varchar(20) DEFAULT NULL,
+  `longitud` varchar(20) DEFAULT NULL,
+  `perimetro` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`perimetro`)),
+  `det_casa` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`det_casa`)),
+  `precio_venta` decimal(8,2) NOT NULL,
+  `create_at` date NOT NULL DEFAULT curdate(),
+  `update_at` date DEFAULT NULL,
+  `inactive_at` date DEFAULT NULL,
+  `idusuario` int(11) NOT NULL,
+  PRIMARY KEY (`idactivo`),
+  UNIQUE KEY `uk_codigo_lotes` (`codigo`),
+  UNIQUE KEY `uk_sublote_lotes` (`idproyecto`,`sublote`),
+  KEY `fk_idusuario_lotes` (`idusuario`)
+) ENGINE=InnoDB AUTO_INCREMENT=30 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Volcado de datos para la tabla `activos`
+--
+
+INSERT INTO `activos` (`idactivo`, `idproyecto`, `tipo_activo`, `imagen`, `estado`, `codigo`, `sublote`, `direccion`, `moneda_venta`, `area_terreno`, `zcomunes_porcent`, `partida_elect`, `latitud`, `longitud`, `perimetro`, `det_casa`, `precio_venta`, `create_at`, `update_at`, `inactive_at`, `idusuario`) VALUES
+(1, 1, 'lote', NULL, 'VENDIDO', 'AC00001', 1, 'Urbanización Alpha', 'USD', 300.00, NULL, 'Partida 001', NULL, NULL, NULL, NULL, 80000.00, '2024-03-16', '2024-03-17', NULL, 1),
+(2, 2, 'lote', NULL, 'SEPARADO', 'AC00003', 1, 'Urbanización Gamma', 'USD', 250.00, NULL, 'Partida 003', NULL, NULL, NULL, NULL, 100000.00, '2024-03-16', '2024-03-16', NULL, 1),
+(3, 1, 'lote', NULL, 'SEPARADO', 'AC00005', 3, 'Urbanización Epsilon', 'USD', 350.00, NULL, 'Partida 005', NULL, NULL, NULL, NULL, 90000.00, '2024-03-16', NULL, NULL, 1),
+(4, 3, 'lote', NULL, 'SEPARADO', 'AC00007', 2, 'Urbanización Eta', 'USD', 400.00, NULL, 'Partida 007', NULL, NULL, NULL, NULL, 120000.00, '2024-03-16', NULL, NULL, 3),
+(5, 2, 'lote', NULL, 'SEPARADO', 'AC00009', 3, 'Urbanización Iota', 'USD', 280.00, NULL, 'Partida 009', NULL, NULL, NULL, NULL, 110000.00, '2024-03-16', NULL, NULL, 2),
+(6, 3, 'lote', NULL, 'SEPARADO', 'AC00011', 5, 'Urbanización Lambda', 'USD', 320.00, NULL, 'Partida 011', NULL, NULL, NULL, NULL, 95000.00, '2024-03-16', NULL, NULL, 2),
+(7, 4, 'lote', NULL, 'SEPARADO', 'AC00013', 1, 'Urbanización Nu', 'USD', 300.00, NULL, 'Partida 013', NULL, NULL, NULL, NULL, 85000.00, '2024-03-16', NULL, NULL, 2),
+(8, 4, 'lote', NULL, 'SEPARADO', 'AC00015', 3, 'Urbanización Omicron', 'USD', 380.00, NULL, 'Partida 015', NULL, NULL, NULL, NULL, 110000.00, '2024-03-16', NULL, NULL, 1),
+(9, 1, 'lote', NULL, 'SEPARADO', 'AC00017', 7, 'Urbanización Rho', 'USD', 420.00, NULL, 'Partida 017', NULL, NULL, NULL, NULL, 105000.00, '2024-03-16', NULL, NULL, 3),
+(10, 2, 'lote', NULL, 'SEPARADO', 'AC00019', 9, 'Urbanización Tau', 'USD', 450.00, NULL, 'Partida 019', NULL, NULL, NULL, NULL, 115000.00, '2024-03-16', '2024-03-17', NULL, 3),
+(11, 3, 'lote', NULL, 'SEPARADO', 'AC00021', 11, 'Urbanización Phi', 'USD', 480.00, NULL, 'Partida 021', NULL, NULL, NULL, NULL, 100000.00, '2024-03-16', '2024-03-17', NULL, 2),
+(12, 4, 'lote', NULL, 'SEPARADO', 'AC00023', 13, 'Urbanización Psi', 'USD', 500.00, NULL, 'Partida 023', NULL, NULL, NULL, NULL, 120000.00, '2024-03-16', NULL, NULL, 2),
+(13, 1, 'lote', NULL, 'SEPARADO', 'AC00025', 15, 'Urbanización Beta', 'USD', 300.00, NULL, 'Partida 025', NULL, NULL, NULL, NULL, 90000.00, '2024-03-16', '2024-03-17', NULL, 2),
+(14, 1, 'casa', NULL, 'SEPARADO', 'AC00002', 2, 'Urbanización Beta', 'USD', 200.00, NULL, 'Partida 002', NULL, NULL, NULL, NULL, 150000.00, '2024-03-16', NULL, NULL, 1),
+(15, 2, 'casa', NULL, 'VENDIDO', 'AC00004', 2, 'Urbanización Delta', 'USD', 220.00, NULL, 'Partida 004', NULL, NULL, NULL, NULL, 180000.00, '2024-03-16', '2024-03-17', NULL, 1),
+(16, 1, 'casa', NULL, 'SEPARADO', 'AC00006', 4, 'Urbanización Zeta', 'USD', 180.00, NULL, 'Partida 006', NULL, NULL, NULL, NULL, 120000.00, '2024-03-16', NULL, NULL, 2),
+(17, 3, 'casa', NULL, 'SEPARADO', 'AC00008', 3, 'Urbanización Theta', 'USD', 250.00, NULL, 'Partida 008', NULL, NULL, NULL, NULL, 200000.00, '2024-03-16', NULL, NULL, 2),
+(18, 2, 'casa', NULL, 'VENDIDO', 'AC00010', 4, 'Urbanización Kappa', 'USD', 230.00, NULL, 'Partida 010', NULL, NULL, NULL, NULL, 190000.00, '2024-03-16', '2024-03-17', NULL, 2),
+(19, 3, 'casa', NULL, 'VENDIDO', 'AC00012', 6, 'Urbanización Mu', 'USD', 210.00, NULL, 'Partida 012', NULL, NULL, NULL, NULL, 160000.00, '2024-03-16', '2024-03-17', NULL, 2),
+(20, 4, 'casa', NULL, 'VENDIDO', 'AC00014', 2, 'Urbanización Xi', 'USD', 240.00, NULL, 'Partida 014', NULL, NULL, NULL, NULL, 175000.00, '2024-03-16', '2024-03-17', NULL, 2),
+(21, 4, 'casa', NULL, 'SIN VENDER', 'AC00016', 4, 'Urbanización Pi', 'USD', 260.00, NULL, 'Partida 016', NULL, NULL, NULL, NULL, 220000.00, '2024-03-16', NULL, NULL, 3),
+(22, 1, 'casa', NULL, 'SIN VENDER', 'AC00018', 8, 'Urbanización Sigma', 'USD', 280.00, NULL, 'Partida 018', NULL, NULL, NULL, NULL, 200000.00, '2024-03-16', NULL, NULL, 3),
+(23, 2, 'casa', NULL, 'SIN VENDER', 'AC00020', 10, 'Urbanización Upsilon', 'USD', 300.00, NULL, 'Partida 020', NULL, NULL, NULL, NULL, 210000.00, '2024-03-16', NULL, NULL, 3),
+(24, 3, 'casa', NULL, 'SIN VENDER', 'AC00022', 12, 'Urbanización Chi', 'USD', 320.00, NULL, 'Partida 022', NULL, NULL, NULL, NULL, 180000.00, '2024-03-16', NULL, NULL, 2),
+(25, 4, 'casa', NULL, 'VENDIDO', 'AC00024', 14, 'Urbanización Omega', 'USD', 350.00, NULL, 'Partida 024', NULL, NULL, NULL, NULL, 190000.00, '2024-03-16', '2024-03-17', NULL, 2),
+(28, 1, 'lote', NULL, 'SIN VENDER', 'AC00060', 12, 'Calle Principal 123', 'USD', 300.00, 10, 'Partida 001', '-12.045678', '-77.032456', '{\"perimetro\": \"100m\",\"medidaAdicional\":\"12\"}', NULL, 80000.00, '2024-03-16', '2024-03-16', NULL, 1),
+(29, 1, 'CASA', 'imagen.77', 'SIN VENDER', 'AC00080', 30, 'AV SP SIN PRUEBA', 'SOLES', 12.50, 12, '', '20', '20', '30', '15', 12.85, '2024-03-17', NULL, NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -616,7 +891,7 @@ CREATE TABLE IF NOT EXISTS `clientes` (
   UNIQUE KEY `uk_documento_nro_cli` (`documento_nro`),
   KEY `fk_iddistrito_cli` (`iddistrito`),
   KEY `fk_idusuario_cli` (`idusuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Volcado de datos para la tabla `clientes`
@@ -625,7 +900,7 @@ CREATE TABLE IF NOT EXISTS `clientes` (
 INSERT INTO `clientes` (`idcliente`, `nombres`, `apellidos`, `documento_tipo`, `documento_nro`, `estado_civil`, `iddistrito`, `direccion`, `create_at`, `update_at`, `inactive_at`, `idusuario`) VALUES
 (1, 'Juan Carlos', 'Pérez García', 'DNI', '12345678', 'Soltero', 1007, 'Av. Primavera 123', '2024-03-13', NULL, NULL, 1),
 (2, 'María Luisa', 'Gómez Fernández', 'DNI', '23456789', 'Casada', 1007, 'Calle Flores 456', '2024-03-13', NULL, NULL, 2),
-(3, 'Pedro José', 'Ramírez Sánchez', 'DNI', '34567890', 'Soltero', 1007, 'Jr. Libertad 789', '2024-03-13', '2024-03-14', NULL, 3),
+(3, 'Pedro José', 'Ramírez Sánchez', 'DNI', '34567890', 'Soltero', 1007, 'Jr. Libertad 789', '2024-03-13', '2024-03-16', NULL, 3),
 (4, 'Juan Carlos', ' Perez Gomez', 'DNI', '77345678', 'Soltero', 1, 'Calle 123', '2024-03-14', NULL, NULL, 1);
 
 -- --------------------------------------------------------
@@ -637,41 +912,32 @@ INSERT INTO `clientes` (`idcliente`, `nombres`, `apellidos`, `documento_tipo`, `
 DROP TABLE IF EXISTS `contratos`;
 CREATE TABLE IF NOT EXISTS `contratos` (
   `idcontrato` int(11) NOT NULL AUTO_INCREMENT,
-  `idlote` int(11) NOT NULL,
   `idcliente` int(11) NOT NULL,
-  `idcliente2` int(11) DEFAULT NULL,
-  `idrepresentante` int(11) NOT NULL,
-  `idrepresentante2` int(11) DEFAULT NULL,
-  `precio_total` decimal(8,2) NOT NULL,
+  `idconyugue` int(11) DEFAULT NULL,
+  `idrepresentante_primario` int(11) NOT NULL,
+  `idrepresentante_secundario` int(11) DEFAULT NULL,
   `tipo_cambio` decimal(4,3) NOT NULL,
   `estado` varchar(10) NOT NULL,
-  `tipo_contrato` varchar(45) NOT NULL,
-  `detalles` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`detalles`)),
+  `detalles` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`detalles`)),
   `fecha_contrato` date NOT NULL,
   `create_at` date NOT NULL DEFAULT curdate(),
   `update_at` date DEFAULT NULL,
   `inactive_at` date DEFAULT NULL,
   `idusuario` int(11) NOT NULL,
   PRIMARY KEY (`idcontrato`),
-  UNIQUE KEY `uk_cliente_lote_contra` (`idlote`,`idcliente`),
   KEY `fk_idcliente_cont` (`idcliente`),
-  KEY `fk_idcliente2_cont` (`idcliente2`),
-  KEY `fk_idrepresentante_cont` (`idrepresentante`),
-  KEY `fk_idrepresentante2_cont` (`idrepresentante2`),
+  KEY `fk_idcliente2_cont` (`idconyugue`),
+  KEY `fk_idrepresentante_cont` (`idrepresentante_primario`),
+  KEY `fk_idrepresentante2_cont` (`idrepresentante_secundario`),
   KEY `fk_idusuario_cont` (`idusuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Volcado de datos para la tabla `contratos`
 --
 
-INSERT INTO `contratos` (`idcontrato`, `idlote`, `idcliente`, `idcliente2`, `idrepresentante`, `idrepresentante2`, `precio_total`, `tipo_cambio`, `estado`, `tipo_contrato`, `detalles`, `fecha_contrato`, `create_at`, `update_at`, `inactive_at`, `idusuario`) VALUES
-(1, 1, 1, NULL, 1, NULL, 150000.00, 3.500, 'VIGENTE', 'FINANCIAMIENTO', '{\"cuota_inicial\":5000.00,\"bono\":1500.00,\"financiamiento\":8000.00,\"plazo_entrega\":\"2024-12-31\",\"penalidad_moneda\":\"USD\",\"penalidad_periodo\":\"mensual\",\"penalidad\":100.00}', '2024-03-10', '2024-03-13', NULL, NULL, 1),
-(2, 2, 2, NULL, 2, NULL, 120000.00, 3.500, 'VIGENTE', 'FINANCIAMIENTO', '{\"cuota_inicial\":5000.00,\"bono\":1500.00,\"financiamiento\":8000.00,\"plazo_entrega\":\"2024-12-31\",\"penalidad_moneda\":\"USD\",\"penalidad_periodo\":\"mensual\",\"penalidad\":100.00}', '2024-03-11', '2024-03-13', NULL, NULL, 2),
-(3, 3, 3, NULL, 3, NULL, 135000.00, 3.500, 'DEVOLUCIÓN', 'FINANCIAMIENTO', '{\"cuota_inicial\":5000.00,\"bono\":1500.00,\"financiamiento\":8000.00,\"plazo_entrega\":\"2024-12-31\",\"penalidad_moneda\":\"USD\",\"penalidad_periodo\":\"mensual\",\"penalidad\":100.00}', '2024-03-12', '2024-03-13', NULL, '2024-03-14', 3),
-(4, 4, 1, NULL, 4, NULL, 145000.00, 3.500, 'VIGENTE', 'FINANCIAMIENTO', '{\"cuota_inicial\":5000.00,\"bono\":1500.00,\"financiamiento\":8000.00,\"plazo_entrega\":\"2024-12-31\",\"penalidad_moneda\":\"USD\",\"penalidad_periodo\":\"mensual\",\"penalidad\":100.00}', '2024-03-13', '2024-03-13', NULL, NULL, 4),
-(5, 5, 2, NULL, 5, NULL, 160000.00, 3.500, 'VIGENTE', 'FINANCIAMIENTO', '{\"cuota_inicial\":5000.00,\"bono\":1500.00,\"financiamiento\":8000.00,\"plazo_entrega\":\"2024-12-31\",\"penalidad_moneda\":\"USD\",\"penalidad_periodo\":\"mensual\",\"penalidad\":100.00}', '2024-03-14', '2024-03-13', NULL, NULL, 5),
-(7, 3, 1, NULL, 2, NULL, 50000.00, 3.500, 'ACTIVO', 'VENTA', '{\"detalle\": \"Información adicional\", \"detalles construccion\":\"varios\"}', '2024-03-15', '2024-03-14', '2024-03-14', NULL, 1);
+INSERT INTO `contratos` (`idcontrato`, `idcliente`, `idconyugue`, `idrepresentante_primario`, `idrepresentante_secundario`, `tipo_cambio`, `estado`, `detalles`, `fecha_contrato`, `create_at`, `update_at`, `inactive_at`, `idusuario`) VALUES
+(1, 1, NULL, 2, NULL, 3.800, 'Activo', '{\"detalle\": \"Información adicional\", \"detalles construccion\":\"varios\"}', '2024-03-17', '2024-03-17', NULL, NULL, 3);
 
 -- --------------------------------------------------------
 
@@ -687,8 +953,8 @@ CREATE TABLE IF NOT EXISTS `cuotas` (
   `fecha_vencimiento` date NOT NULL,
   `fecha_pago` date DEFAULT NULL,
   `detalles` varchar(100) DEFAULT NULL,
-  `tipo_pago` varchar(20) DEFAULT NULL,
-  `entidad_bancaria` varchar(20) DEFAULT NULL,
+  `tipo_pago` varchar(20) NOT NULL,
+  `entidad_bancaria` varchar(20) NOT NULL,
   `create_at` date NOT NULL DEFAULT curdate(),
   `update_at` date DEFAULT NULL,
   `inactive_at` date DEFAULT NULL,
@@ -696,17 +962,7 @@ CREATE TABLE IF NOT EXISTS `cuotas` (
   PRIMARY KEY (`idcuota`),
   KEY `fk_idcontrato_cuotas` (`idcontrato`),
   KEY `fk_idusuario_cuotas` (`idusuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-
---
--- Volcado de datos para la tabla `cuotas`
---
-
-INSERT INTO `cuotas` (`idcuota`, `idcontrato`, `monto_cuota`, `fecha_vencimiento`, `fecha_pago`, `detalles`, `tipo_pago`, `entidad_bancaria`, `create_at`, `update_at`, `inactive_at`, `idusuario`) VALUES
-(1, 1, 500.00, '2024-03-10', NULL, NULL, NULL, NULL, '2024-03-13', NULL, NULL, 1),
-(2, 1, 500.00, '2024-04-10', NULL, NULL, NULL, NULL, '2024-03-13', NULL, NULL, 1),
-(3, 2, 500.00, '2024-03-18', NULL, NULL, NULL, NULL, '2024-03-13', NULL, NULL, 1),
-(4, 2, 500.00, '2024-04-13', NULL, NULL, NULL, NULL, '2024-03-13', NULL, NULL, 1);
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
 
@@ -763,7 +1019,7 @@ DROP TABLE IF EXISTS `desembolsos`;
 CREATE TABLE IF NOT EXISTS `desembolsos` (
   `iddesembolso` int(11) NOT NULL AUTO_INCREMENT,
   `idfinanciera` int(11) NOT NULL,
-  `idlote` int(11) NOT NULL,
+  `idactivo` int(11) NOT NULL,
   `monto_desemb` decimal(8,2) NOT NULL,
   `porcentaje` tinyint(4) NOT NULL,
   `fecha_desembolso` datetime NOT NULL,
@@ -773,7 +1029,7 @@ CREATE TABLE IF NOT EXISTS `desembolsos` (
   `idusuario` int(11) NOT NULL,
   PRIMARY KEY (`iddesembolso`),
   KEY `fk_idfinanciera_desemb` (`idfinanciera`),
-  KEY `fk_idlote_desemb` (`idlote`),
+  KEY `fk_idactivo_desemb` (`idactivo`),
   KEY `fk_idusuario_desemb` (`idusuario`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
@@ -781,9 +1037,40 @@ CREATE TABLE IF NOT EXISTS `desembolsos` (
 -- Volcado de datos para la tabla `desembolsos`
 --
 
-INSERT INTO `desembolsos` (`iddesembolso`, `idfinanciera`, `idlote`, `monto_desemb`, `porcentaje`, `fecha_desembolso`, `create_at`, `update_at`, `inactive_at`, `idusuario`) VALUES
-(1, 1, 2, 5000.00, 10, '2024-03-13 21:31:02', '2024-03-13', NULL, NULL, 1),
-(2, 2, 5, 7000.00, 15, '2024-03-13 21:31:02', '2024-03-13', NULL, NULL, 1);
+INSERT INTO `desembolsos` (`iddesembolso`, `idfinanciera`, `idactivo`, `monto_desemb`, `porcentaje`, `fecha_desembolso`, `create_at`, `update_at`, `inactive_at`, `idusuario`) VALUES
+(1, 1, 2, 5000.00, 10, '2024-03-16 23:55:50', '2024-03-16', NULL, NULL, 1),
+(2, 2, 5, 7000.00, 15, '2024-03-16 23:55:50', '2024-03-16', NULL, NULL, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `detalles_contratos`
+--
+
+DROP TABLE IF EXISTS `detalles_contratos`;
+CREATE TABLE IF NOT EXISTS `detalles_contratos` (
+  `iddetalle_contrato` int(11) NOT NULL AUTO_INCREMENT,
+  `idactivo` int(11) NOT NULL,
+  `idcontrato` int(11) NOT NULL,
+  `create_at` date NOT NULL DEFAULT curdate(),
+  `update_at` date DEFAULT NULL,
+  `inactive_at` date DEFAULT NULL,
+  `idusuario` int(11) NOT NULL,
+  PRIMARY KEY (`iddetalle_contrato`),
+  KEY `fk_idactivo_dt_contratos` (`idactivo`),
+  KEY `fk_idcontrato_dt_contratos` (`idcontrato`),
+  KEY `fk_idusuario_dt_contrato` (`idusuario`)
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Volcado de datos para la tabla `detalles_contratos`
+--
+
+INSERT INTO `detalles_contratos` (`iddetalle_contrato`, `idactivo`, `idcontrato`, `create_at`, `update_at`, `inactive_at`, `idusuario`) VALUES
+(15, 25, 1, '2024-03-17', NULL, '2024-03-17', 1),
+(17, 20, 1, '2024-03-17', NULL, NULL, 1),
+(18, 19, 1, '2024-03-17', NULL, NULL, 1),
+(19, 18, 1, '2024-03-17', NULL, NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -814,14 +1101,14 @@ CREATE TABLE IF NOT EXISTS `detalle_gastos` (
 --
 
 INSERT INTO `detalle_gastos` (`iddetalle_gasto`, `idpresupuesto`, `tipo_gasto`, `nombre_gasto`, `descripcion`, `cantidad`, `precio_unitario`, `create_at`, `update_at`, `inactive_at`, `idusuario`) VALUES
-(1, 1, 'COSTO DIRECTO', 'Materiales de construcción', 'Compra de ladrillos', 100, 0.50, '2024-03-13', NULL, NULL, 1),
-(2, 1, 'COSTO INDIRECTO', 'Gastos administrativos', 'Alquiler de oficina', 1, 300.00, '2024-03-13', NULL, NULL, 1),
-(3, 1, 'COSTO DIRECTO', 'Materiales de construcción', 'Compra de cemento', 50, 8.00, '2024-03-13', NULL, NULL, 1),
-(4, 1, 'COSTO INDIRECTO', 'Gastos administrativos', 'Pago de servicios', 1, 150.00, '2024-03-13', NULL, NULL, 1),
-(5, 2, 'COSTO DIRECTO', 'Pago de mano de obra', 'Jornal de albañiles', 5, 50.00, '2024-03-13', NULL, NULL, 1),
-(6, 2, 'COSTO INDIRECTO', 'Accesorios de baño', 'Compra de grifería', 3, 120.00, '2024-03-13', NULL, NULL, 1),
-(7, 2, 'COSTO DIRECTO', 'Pago de mano de obra', 'Jornal de carpinteros', 3, 60.00, '2024-03-13', NULL, NULL, 1),
-(8, 2, 'COSTO INDIRECTO', 'Gastos de supervisión', 'Honorarios de arquitecto', 1, 500.00, '2024-03-13', NULL, NULL, 1);
+(1, 1, 'COSTO DIRECTO', 'Materiales de construcción', 'Compra de ladrillos', 100, 0.50, '2024-03-16', NULL, NULL, 1),
+(2, 1, 'COSTO INDIRECTO', 'Gastos administrativos', 'Alquiler de oficina', 1, 300.00, '2024-03-16', NULL, NULL, 1),
+(3, 1, 'COSTO DIRECTO', 'Materiales de construcción', 'Compra de cemento', 50, 8.00, '2024-03-16', NULL, NULL, 1),
+(4, 1, 'COSTO INDIRECTO', 'Gastos administrativos', 'Pago de servicios', 1, 150.00, '2024-03-16', NULL, NULL, 1),
+(5, 2, 'COSTO DIRECTO', 'Pago de mano de obra', 'Jornal de albañiles', 5, 50.00, '2024-03-16', NULL, NULL, 1),
+(6, 2, 'COSTO INDIRECTO', 'Accesorios de baño', 'Compra de grifería', 3, 120.00, '2024-03-16', NULL, NULL, 1),
+(7, 2, 'COSTO DIRECTO', 'Pago de mano de obra', 'Jornal de carpinteros', 3, 60.00, '2024-03-16', NULL, NULL, 1),
+(8, 2, 'COSTO INDIRECTO', 'Gastos de supervisión', 'Honorarios de arquitecto', 1, 500.00, '2024-03-16', NULL, NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -2795,7 +3082,7 @@ CREATE TABLE IF NOT EXISTS `financieras` (
   `direccion` varchar(70) NOT NULL,
   PRIMARY KEY (`idfinanciera`),
   UNIQUE KEY `uk_ruc_finans` (`ruc`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Volcado de datos para la tabla `financieras`
@@ -2804,73 +3091,6 @@ CREATE TABLE IF NOT EXISTS `financieras` (
 INSERT INTO `financieras` (`idfinanciera`, `ruc`, `razon_social`, `direccion`) VALUES
 (1, '12345678901', 'Financiera ABC', 'Calle Principal 123'),
 (2, '98765432109', 'Financiera XYZ', 'Avenida Secundaria 456');
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `lotes`
---
-
-DROP TABLE IF EXISTS `lotes`;
-CREATE TABLE IF NOT EXISTS `lotes` (
-  `idlote` int(11) NOT NULL AUTO_INCREMENT,
-  `idproyecto` int(11) NOT NULL,
-  `estado_venta` varchar(10) NOT NULL DEFAULT 'SIN VENDER',
-  `codigo` char(5) NOT NULL,
-  `sublote` tinyint(4) NOT NULL,
-  `urbanizacion` varchar(70) NOT NULL,
-  `latitud` varchar(20) DEFAULT NULL,
-  `longitud` varchar(20) DEFAULT NULL,
-  `perimetro` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`perimetro`)),
-  `moneda_venta` varchar(10) NOT NULL,
-  `area_terreno` decimal(5,2) NOT NULL,
-  `partida_elect` varchar(100) NOT NULL,
-  `create_at` date NOT NULL DEFAULT curdate(),
-  `update_at` date DEFAULT NULL,
-  `inactive_at` date DEFAULT NULL,
-  `idusuario` int(11) NOT NULL,
-  PRIMARY KEY (`idlote`),
-  UNIQUE KEY `uk_codigo_lotes` (`codigo`),
-  UNIQUE KEY `uk_sublote_lotes` (`idproyecto`,`sublote`),
-  KEY `fk_idusuario_lotes` (`idusuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=34 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-
---
--- Volcado de datos para la tabla `lotes`
---
-
-INSERT INTO `lotes` (`idlote`, `idproyecto`, `estado_venta`, `codigo`, `sublote`, `urbanizacion`, `latitud`, `longitud`, `perimetro`, `moneda_venta`, `area_terreno`, `partida_elect`, `create_at`, `update_at`, `inactive_at`, `idusuario`) VALUES
-(1, 1, 'VENDIDO', 'LT001', 17, 'SUB LOTE A-17 ZONA CALLE PROGRESO N°137', NULL, NULL, NULL, 'USD', 70.02, '11077471 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '2024-03-13', '2024-03-14', NULL, 1),
-(2, 1, 'VENDIDO', 'LT002', 2, 'URBANIZACIÓN EL ROSAL', NULL, NULL, NULL, 'USD', 80.00, '11077472 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '2024-03-13', NULL, NULL, 2),
-(3, 1, 'NO VENDIO', 'LT003', 3, 'LAS ACACIAS', NULL, NULL, NULL, 'USD', 65.75, '11077473 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '2024-03-13', '2024-03-14', NULL, 3),
-(4, 1, 'VENDIDO', 'LT004', 4, 'VISTA HERMOSA', NULL, NULL, NULL, 'USD', 75.50, '11077474 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '2024-03-13', NULL, NULL, 4),
-(5, 1, 'VENDIDO', 'LT005', 5, 'SAN MIGUEL', NULL, NULL, NULL, 'USD', 90.20, '11077475 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '2024-03-13', NULL, NULL, 5),
-(6, 2, 'NO VENDIDO', 'LT006', 6, 'AVENIDA PRINCIPAL', NULL, NULL, NULL, 'USD', 100.00, '11077476 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '2024-03-13', NULL, NULL, 1),
-(7, 2, 'SEPARADO', 'LT007', 7, 'CALLE ESPERANZA', NULL, NULL, NULL, 'USD', 85.50, '11077477 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '2024-03-13', NULL, NULL, 2),
-(8, 2, 'VENDIDO', 'LT008', 8, 'PASEO DEL SOL', NULL, NULL, NULL, 'USD', 95.75, '11077478 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '2024-03-13', NULL, NULL, 3),
-(9, 3, 'NO VENDIDO', 'LT009', 9, 'AVENIDA DEL MAR', NULL, NULL, NULL, 'USD', 110.25, '11077479 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '2024-03-13', NULL, NULL, 4),
-(10, 3, 'SEPARADO', 'LT010', 10, 'CALLE SAN JUAN', NULL, NULL, NULL, 'USD', 120.00, '11077480 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '2024-03-13', NULL, NULL, 5),
-(11, 3, 'VENDIDO', 'LT011', 11, 'PASEO DEL BOSQUE', NULL, NULL, NULL, 'USD', 130.50, '11077481 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '2024-03-13', NULL, NULL, 1),
-(12, 3, 'NO VENDIDO', 'LT012', 12, 'CALLE NUEVA', NULL, NULL, NULL, 'USD', 145.75, '11077482 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '2024-03-13', NULL, NULL, 2),
-(13, 4, 'SEPARADO', 'LT013', 13, 'AVENIDA LIBERTAD', NULL, NULL, NULL, 'USD', 155.25, '11077483 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '2024-03-13', NULL, NULL, 3),
-(14, 4, 'VENDIDO', 'LT020', 14, 'PASEO DE LA LUNA', NULL, NULL, NULL, 'USD', 160.00, '11077484 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '2024-03-13', NULL, NULL, 4),
-(15, 4, 'NO VENDIDO', 'LT021', 15, 'CALLE PRINCIPAL', NULL, NULL, NULL, 'USD', 170.50, '11077485 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '2024-03-13', NULL, NULL, 5),
-(16, 6, 'VENDIDO', 'LT070', 1, 'Urbanización XYA', '12.3456', '-78.9101', '{\"puntos\": [{\"x\": 1, \"y\": 2}, {\"x\": 3, \"y\": 4}, {\"x\": 5, \"y\": 6}]}', 'USD', 200.00, 'Número de partida eléctronica', '2024-03-13', '2024-03-14', NULL, 12),
-(17, 5, 'VENDIDO', 'LT023', 17, 'PASEO DE LAS ESTRELLAS', NULL, NULL, NULL, 'USD', 190.25, '11077487 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '2024-03-13', NULL, NULL, 2),
-(18, 5, 'NO VENDIDO', 'LT024', 19, 'CALLE LA LUNA', NULL, NULL, NULL, 'USD', 200.50, '11077488 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '2024-03-13', NULL, NULL, 3),
-(19, 5, 'SEPARADO', 'LT025', 20, 'AVENIDA DEL SOL', NULL, NULL, NULL, 'USD', 210.00, '11077489 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '2024-03-13', NULL, NULL, 4),
-(20, 5, 'VENDIDO', 'LT026', 21, 'PASEO DE LA TIERRA', NULL, NULL, NULL, 'USD', 220.25, '11077490 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '2024-03-13', NULL, NULL, 5),
-(21, 5, 'SEPARADO', 'LT027', 22, 'AVENIDA DEL CIELO', NULL, NULL, NULL, 'USD', 180.75, '11077486 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '2024-03-13', NULL, NULL, 1),
-(22, 5, 'VENDIDO', 'LT028', 23, 'PASEO DE LAS ESTRELLAS', NULL, NULL, NULL, 'USD', 190.25, '11077487 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '2024-03-13', NULL, NULL, 2),
-(23, 5, 'NO VENDIDO', 'LT029', 24, 'CALLE LA LUNA', NULL, NULL, NULL, 'USD', 200.50, '11077488 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '2024-03-13', NULL, NULL, 3),
-(24, 5, 'SEPARADO', 'LT030', 25, 'AVENIDA DEL SOL', NULL, NULL, NULL, 'USD', 210.00, '11077489 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '2024-03-13', NULL, NULL, 4),
-(25, 5, 'VENDIDO', 'LT031', 26, 'PASEO DE LA TIERRA', NULL, NULL, NULL, 'USD', 220.25, '11077490 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '2024-03-13', NULL, NULL, 5),
-(26, 2, 'NO VENDIDO', 'LT032', 27, 'CALLE NUEVA ESPERANZA', NULL, NULL, NULL, 'USD', 230.50, '11077491 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '2024-03-13', NULL, NULL, 1),
-(27, 3, 'SEPARADO', 'LT033', 28, 'AVENIDA PRINCIPAL', NULL, NULL, NULL, 'USD', 240.75, '11077492 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '2024-03-13', NULL, NULL, 2),
-(28, 4, 'VENDIDO', 'LT034', 29, 'PASEO DEL PARQUE', NULL, NULL, NULL, 'USD', 250.00, '11077493 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '2024-03-13', NULL, NULL, 3),
-(29, 2, 'NO VENDIDO', 'LT035', 30, 'CALLE DE LA ESPERANZA', NULL, NULL, NULL, 'USD', 260.25, '11077494 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '2024-03-13', NULL, NULL, 4),
-(30, 3, 'SEPARADO', 'LT036', 31, 'AVENIDA DEL PROGRESO', NULL, NULL, NULL, 'USD', 270.50, '11077495 del Registro de Propiedad Inmueble Zona Registral N: XI- Sede Ica', '2024-03-13', NULL, NULL, 5),
-(33, 1, 'VENDIDO', 'LT040', 1, 'Urbanización XYZ', '12.3456', '-78.9101', NULL, 'USD', 200.00, 'Número de partida eléctronica', '2024-03-14', NULL, NULL, 12);
 
 -- --------------------------------------------------------
 
@@ -2929,7 +3149,7 @@ INSERT INTO `permisos` (`idpermiso`, `idrol`, `modulo`, `create_at`, `update_at`
 DROP TABLE IF EXISTS `presupuestos`;
 CREATE TABLE IF NOT EXISTS `presupuestos` (
   `idpresupuesto` int(11) NOT NULL AUTO_INCREMENT,
-  `idlote` int(11) NOT NULL,
+  `idactivo` int(11) NOT NULL,
   `descripcion` varchar(70) NOT NULL,
   `fecha_program` date NOT NULL,
   `create_at` date NOT NULL DEFAULT curdate(),
@@ -2937,7 +3157,7 @@ CREATE TABLE IF NOT EXISTS `presupuestos` (
   `inactive_at` date DEFAULT NULL,
   `idusuario` int(11) NOT NULL,
   PRIMARY KEY (`idpresupuesto`),
-  KEY `fk_idlote_presup` (`idlote`),
+  KEY `fk_idactivo_presup` (`idactivo`),
   KEY `fk_idusuario_presup` (`idusuario`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
@@ -2945,9 +3165,9 @@ CREATE TABLE IF NOT EXISTS `presupuestos` (
 -- Volcado de datos para la tabla `presupuestos`
 --
 
-INSERT INTO `presupuestos` (`idpresupuesto`, `idlote`, `descripcion`, `fecha_program`, `create_at`, `update_at`, `inactive_at`, `idusuario`) VALUES
-(1, 2, 'Materiales de construcción', '2024-03-10', '2024-03-13', NULL, NULL, 1),
-(2, 5, 'Materiales de construcción', '2024-03-15', '2024-03-13', NULL, NULL, 1);
+INSERT INTO `presupuestos` (`idpresupuesto`, `idactivo`, `descripcion`, `fecha_program`, `create_at`, `update_at`, `inactive_at`, `idusuario`) VALUES
+(1, 2, 'Materiales de construcción', '2024-03-10', '2024-03-16', NULL, NULL, 1),
+(2, 5, 'Materiales de construcción', '2024-03-15', '2024-03-16', NULL, NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -3194,19 +3414,21 @@ CREATE TABLE IF NOT EXISTS `proyectos` (
   KEY `fk_iddireccion_proyects` (`iddireccion`),
   KEY `fk_iddistrito_proyects` (`iddistrito`),
   KEY `fk_idusuario_proyects` (`idusuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Volcado de datos para la tabla `proyectos`
 --
 
 INSERT INTO `proyectos` (`idproyecto`, `imagen`, `iddireccion`, `codigo`, `denominacion`, `latitud`, `longitud`, `perimetro`, `iddistrito`, `direccion`, `create_at`, `update_at`, `inactive_at`, `idusuario`) VALUES
-(1, NULL, 1, 'A-12 SAN BLAS', 'RESIDENCIAL SAN BLAS', NULL, NULL, NULL, 1007, 'Dirección A-12 SAN BLAS', '2024-03-13', NULL, NULL, 1),
-(2, NULL, 1, 'A-17 SAN PEDRO', 'RESIDENCIAL SAN PABLO', NULL, NULL, NULL, 1007, 'Dirección A-17 SAN PEDRO', '2024-03-13', NULL, NULL, 2),
+(1, 'san_blas', 1, 'A-12 SAN BLAS', 'RESIDENCIAL SAN BLAS', NULL, NULL, NULL, 1007, 'Dirección A-12 SAN BLAS', '2024-03-13', NULL, NULL, 1),
+(2, 'santo_domingo', 1, 'A-17 SAN PEDRO', 'RESIDENCIAL SAN PABLO', NULL, NULL, NULL, 1007, 'Dirección A-17 SAN PEDRO', '2024-03-13', NULL, NULL, 2),
 (3, NULL, 1, 'A-13 Santo Domingo', 'RESIDENCIAL Santo Domingo', NULL, NULL, NULL, 1007, 'Dirección Santo Domingo', '2024-03-13', NULL, NULL, 3),
 (4, NULL, 1, 'A-14 Centenario II', 'RESIDENCIAL Centenario II', NULL, NULL, NULL, 1007, 'Dirección Centenario II', '2024-03-13', NULL, NULL, 4),
 (5, NULL, 1, 'A-15 Kalea Playa', 'Kalea Playa', NULL, NULL, NULL, 1007, 'Dirección Kalea Playa', '2024-03-13', NULL, NULL, 5),
-(6, NULL, 3, 'B-20 PUERTO RICO', 'GRAN RESIDENCIAL PUERTO RICO', NULL, NULL, NULL, 15, 'CALLE LOS ROSALES 123', '2024-03-14', '2024-03-14', NULL, 3);
+(6, NULL, 3, 'B-20 PUERTO RICO', 'GRAN RESIDENCIAL PUERTO RICO', NULL, NULL, NULL, 15, 'CALLE LOS ROSALES 123', '2024-03-14', '2024-03-17', NULL, 3),
+(8, NULL, 3, 'B-21 N SAN BLAS', 'RESIDENCIAL NUEVA SAN BLAS', NULL, NULL, NULL, 15, 'CALLE LOS ROSALES 123', '2024-03-17', NULL, NULL, 3),
+(9, NULL, 1, 'SN-12 San Juan ', 'Residencial San Juan Nuevo', NULL, NULL, NULL, 1, 'av san juan', '2024-03-17', '2024-03-17', NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -3247,7 +3469,7 @@ INSERT INTO `roles` (`idrol`, `rol`, `estado`, `create_at`, `update_at`, `inacti
 DROP TABLE IF EXISTS `separaciones`;
 CREATE TABLE IF NOT EXISTS `separaciones` (
   `idseparacion` int(11) NOT NULL AUTO_INCREMENT,
-  `idlote` int(11) NOT NULL,
+  `idactivo` int(11) NOT NULL,
   `idvend_representante` int(11) NOT NULL,
   `idcliente` int(11) NOT NULL,
   `separacion` decimal(5,2) NOT NULL,
@@ -3260,21 +3482,20 @@ CREATE TABLE IF NOT EXISTS `separaciones` (
   `inactive_at` date DEFAULT NULL,
   `idusuario` int(11) NOT NULL,
   PRIMARY KEY (`idseparacion`),
-  KEY `fk_idlote_sep` (`idlote`),
+  KEY `fk_idactivo_sep` (`idactivo`),
   KEY `fk_idvend_representante_sep` (`idvend_representante`),
   KEY `fk_idcliente_sep` (`idcliente`),
   KEY `fk_idusuario_sep` (`idusuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Volcado de datos para la tabla `separaciones`
 --
 
-INSERT INTO `separaciones` (`idseparacion`, `idlote`, `idvend_representante`, `idcliente`, `separacion`, `fecha_pago`, `penalidad_porcent`, `fecha_devolucion`, `estado`, `create_at`, `update_at`, `inactive_at`, `idusuario`) VALUES
+INSERT INTO `separaciones` (`idseparacion`, `idactivo`, `idvend_representante`, `idcliente`, `separacion`, `fecha_pago`, `penalidad_porcent`, `fecha_devolucion`, `estado`, `create_at`, `update_at`, `inactive_at`, `idusuario`) VALUES
 (1, 1, 1, 1, 150.50, '2024-03-08', 5, NULL, 'Activo', '2024-03-08', NULL, NULL, 1),
 (2, 5, 1, 1, 150.50, '2024-03-08', 5, NULL, 'Activo', '2024-03-08', NULL, NULL, 1),
-(3, 6, 1, 1, 150.50, '2024-03-08', 5, NULL, 'Activo', '2024-03-08', NULL, NULL, 1),
-(4, 3, 1, 1, 150.50, '2024-03-08', 5, NULL, 'Activo', '2024-03-08', NULL, NULL, 1);
+(3, 6, 1, 1, 150.50, '2024-03-08', 5, NULL, 'Activo', '2024-03-08', NULL, NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -3294,21 +3515,7 @@ CREATE TABLE IF NOT EXISTS `sustentos_cuotas` (
   PRIMARY KEY (`idsustento_cuota`),
   KEY `fk_idcuota_sust_cuo` (`idcuota`),
   KEY `fk_idusuario_sust_cuo` (`idusuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-
---
--- Volcado de datos para la tabla `sustentos_cuotas`
---
-
-INSERT INTO `sustentos_cuotas` (`idsustento_cuota`, `idcuota`, `ruta`, `create_at`, `update_at`, `inactive_at`, `idusuario`) VALUES
-(1, 1, '/ruta/imagen1.jpg', '2024-03-13', NULL, NULL, 1),
-(2, 1, '/ruta/imagen2.jpg', '2024-03-13', NULL, NULL, 1),
-(3, 2, '/ruta/imagen1.jpg', '2024-03-13', NULL, NULL, 1),
-(4, 2, '/ruta/imagen2.jpg', '2024-03-13', NULL, NULL, 1),
-(5, 3, '/ruta/imagen1.jpg', '2024-03-13', NULL, NULL, 2),
-(6, 3, '/ruta/imagen2.jpg', '2024-03-13', NULL, NULL, 2),
-(7, 4, '/ruta/imagen1.jpg', '2024-03-13', NULL, NULL, 2),
-(8, 4, '/ruta/imagen2.jpg', '2024-03-13', NULL, NULL, 2);
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
 
@@ -3335,10 +3542,10 @@ CREATE TABLE IF NOT EXISTS `sustentos_sep` (
 --
 
 INSERT INTO `sustentos_sep` (`idsustento_sep`, `idseparacion`, `ruta`, `create_at`, `update_at`, `inactive_at`, `idusuario`) VALUES
-(1, 1, '/ruta/del/sustento1.pdf', '2024-03-13', NULL, NULL, 1),
-(2, 1, '/ruta/del/sustento2.pdf', '2024-03-13', NULL, NULL, 2),
-(3, 1, '/ruta/del/sustento3.pdf', '2024-03-13', NULL, NULL, 1),
-(4, 1, '/ruta/del/sustento4.pdf', '2024-03-13', NULL, NULL, 2);
+(1, 1, '/ruta/del/sustento1.pdf', '2024-03-16', NULL, NULL, 1),
+(2, 1, '/ruta/del/sustento2.pdf', '2024-03-16', NULL, NULL, 2),
+(3, 1, '/ruta/del/sustento3.pdf', '2024-03-16', NULL, NULL, 1),
+(4, 1, '/ruta/del/sustento4.pdf', '2024-03-16', NULL, NULL, 2);
 
 -- --------------------------------------------------------
 
@@ -3426,46 +3633,23 @@ INSERT INTO `vend_representantes` (`idvend_representante`, `idvendedor`, `idrepr
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `viviendas`
+-- Estructura Stand-in para la vista `vws_list_assets_short`
+-- (Véase abajo para la vista actual)
 --
-
-DROP TABLE IF EXISTS `viviendas`;
-CREATE TABLE IF NOT EXISTS `viviendas` (
-  `idvivienda` int(11) NOT NULL AUTO_INCREMENT,
-  `idlote` int(11) NOT NULL,
-  `imagen` varchar(100) DEFAULT NULL,
-  `tipo_casa` char(8) NOT NULL,
-  `area_construccion` decimal(5,2) NOT NULL,
-  `area_techada` decimal(5,2) NOT NULL,
-  `airesm2` decimal(5,2) DEFAULT NULL,
-  `zcomunes_porcent` tinyint(4) DEFAULT NULL,
-  `estacionamiento_nro` tinyint(4) DEFAULT NULL,
-  `detalles` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL CHECK (json_valid(`detalles`)),
-  `create_at` date NOT NULL DEFAULT curdate(),
-  `update_at` date DEFAULT NULL,
-  `inactive_at` date DEFAULT NULL,
-  `idusuario` int(11) NOT NULL,
-  PRIMARY KEY (`idvivienda`),
-  KEY `fk_idlote_vivien` (`idlote`),
-  KEY `fk_idusuario_vinve` (`idusuario`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-
---
--- Volcado de datos para la tabla `viviendas`
---
-
-INSERT INTO `viviendas` (`idvivienda`, `idlote`, `imagen`, `tipo_casa`, `area_construccion`, `area_techada`, `airesm2`, `zcomunes_porcent`, `estacionamiento_nro`, `detalles`, `create_at`, `update_at`, `inactive_at`, `idusuario`) VALUES
-(1, 1, NULL, 'CUH C001', 70.00, 70.00, NULL, NULL, 5, '{\"otros_detalles\": \"Información adicional para la vivienda 1\"}', '2024-03-13', NULL, NULL, 1),
-(2, 2, NULL, 'CUH C001', 55.25, 55.25, NULL, NULL, 6, '{\"otros_detalles\": \"Información adicional para la vivienda 2\"}', '2024-03-13', NULL, NULL, 2),
-(3, 3, NULL, 'CUH C001', 65.75, 65.75, NULL, 8, NULL, '{\"otros_detalles\": \"Información adicional para la vivienda 3\"}', '2024-03-13', NULL, NULL, 3),
-(4, 4, NULL, 'CUH C001', 80.25, 80.25, NULL, NULL, 8, '{\"otros_detalles\": \"Información adicional para la vivienda 4\"}', '2024-03-13', NULL, NULL, 4),
-(5, 5, NULL, 'CUH C001', 90.00, 90.00, NULL, NULL, 10, '{\"otros_detalles\": \"Información adicional para la vivienda 5\"}', '2024-03-13', NULL, NULL, 5),
-(6, 1, NULL, 'CUH C002', 100.00, 100.00, NULL, 12, NULL, '{\"otros_detalles\": \"Información adicional para la vivienda 6\"}', '2024-03-13', NULL, NULL, 1),
-(7, 2, NULL, 'CUH C002', 110.00, 110.00, NULL, 15, NULL, '{\"otros_detalles\": \"Información adicional para la vivienda 7\"}', '2024-03-13', NULL, NULL, 2),
-(8, 3, NULL, 'CUH C002', 120.00, 120.00, NULL, 18, NULL, '{\"otros_detalles\": \"Información adicional para la vivienda 8\"}', '2024-03-13', NULL, NULL, 3),
-(9, 4, NULL, 'CUH C002', 125.00, 125.00, NULL, 20, NULL, '{\"otros_detalles\": \"Información adicional para la vivienda 9\"}', '2024-03-13', NULL, '2024-03-14', 4),
-(10, 5, NULL, 'CUH C002', 135.00, 135.00, NULL, 22, NULL, '{\"otros_detalles\": \"Información adicional para la vivienda 10\"}', '2024-03-13', NULL, NULL, 5),
-(11, 7, NULL, 'CHU 001', 200.00, 250.00, NULL, 5, 2, '{\"detalle\": \"Información adicional\"}', '2024-03-14', '2024-03-14', NULL, 1);
+DROP VIEW IF EXISTS `vws_list_assets_short`;
+CREATE TABLE IF NOT EXISTS `vws_list_assets_short` (
+`idactivo` int(11)
+,`idproyecto` int(11)
+,`denominacion` varchar(30)
+,`codigo` char(7)
+,`estado` varchar(10)
+,`sublote` tinyint(4)
+,`direccion` varchar(60)
+,`distrito` varchar(45)
+,`provincia` varchar(45)
+,`departamento` varchar(45)
+,`usuario` varchar(40)
+);
 
 -- --------------------------------------------------------
 
@@ -3505,100 +3689,6 @@ CREATE TABLE IF NOT EXISTS `vws_list_companies` (
 -- --------------------------------------------------------
 
 --
--- Estructura Stand-in para la vista `vws_list_contracts_full`
--- (Véase abajo para la vista actual)
---
-DROP VIEW IF EXISTS `vws_list_contracts_full`;
-CREATE TABLE IF NOT EXISTS `vws_list_contracts_full` (
-`idcontrato` int(11)
-,`denominacion` varchar(30)
-,`codigo` char(5)
-,`sublote` tinyint(4)
-,`idcliente` int(11)
-,`nombres` varchar(40)
-,`apellidos` varchar(40)
-,`documento_tipo` varchar(20)
-,`documento_nro` varchar(12)
-,`estado_civil` varchar(20)
-,`iddistrito` int(11)
-,`distrito` varchar(45)
-,`provincia` varchar(45)
-,`departamento` varchar(45)
-,`direccion` varchar(70)
-,`idcliente2` int(11)
-,`nombre2` varchar(40)
-,`apellido2` varchar(40)
-,`documento_tipo2` varchar(20)
-,`documento_nro2` varchar(12)
-,`estado_civil2` varchar(20)
-,`iddistritoCL2` int(11)
-,`distrito2` varchar(45)
-,`provincia2` varchar(45)
-,`departamento2` varchar(45)
-,`direccion2` varchar(70)
-,`idrepresentante1` int(11)
-,`nom_represent1` varchar(40)
-,`ap_represent1` varchar(20)
-,`dt_represent1` varchar(20)
-,`dn_represent1` varchar(12)
-,`iddistritoUB` int(11)
-,`distritor1` varchar(45)
-,`provinciar1` varchar(45)
-,`departamentor1` varchar(45)
-,`dir_represent1` varchar(60)
-,`part_represent1` varchar(60)
-,`idrepresentante2` int(11)
-,`nom_represent2` varchar(40)
-,`ap_represent2` varchar(20)
-,`dt_represent2` varchar(20)
-,`dn_represent2` varchar(12)
-,`iddistritoUB2` int(11)
-,`distritor2` varchar(45)
-,`provinciar2` varchar(45)
-,`departamentor2` varchar(45)
-,`dir_represent2` varchar(60)
-,`part_represent2` varchar(60)
-,`precio_total` decimal(8,2)
-,`tipo_cambio` decimal(4,3)
-,`idvivienda` int(11)
-,`loteid` int(11)
-,`imagen` varchar(100)
-,`tipo_casa` char(8)
-,`area_construccion` decimal(5,2)
-,`area_techada` decimal(5,2)
-,`airesm2` decimal(5,2)
-,`zcomunes_porcent` tinyint(4)
-,`estacionamiento_nro` tinyint(4)
-,`detalles` longtext
-,`estado` varchar(10)
-,`fecha_contrato` date
-,`usuario` varchar(40)
-);
-
--- --------------------------------------------------------
-
---
--- Estructura Stand-in para la vista `vws_list_contracts_short`
--- (Véase abajo para la vista actual)
---
-DROP VIEW IF EXISTS `vws_list_contracts_short`;
-CREATE TABLE IF NOT EXISTS `vws_list_contracts_short` (
-`idcontrato` int(11)
-,`tipo_contrato` varchar(45)
-,`denominacion` varchar(30)
-,`codigo` char(5)
-,`sublote` tinyint(4)
-,`clien_nombres` varchar(40)
-,`clien_apellidos` varchar(40)
-,`cony_apellidos` varchar(40)
-,`cony_nombres` varchar(40)
-,`estado` varchar(10)
-,`usuario` varchar(40)
-);
-
--- --------------------------------------------------------
-
---
 -- Estructura Stand-in para la vista `vws_list_drop_projects`
 -- (Véase abajo para la vista actual)
 --
@@ -3612,6 +3702,26 @@ CREATE TABLE IF NOT EXISTS `vws_list_drop_projects` (
 ,`provincia` varchar(45)
 ,`departamento` varchar(45)
 ,`direccion` varchar(70)
+,`usuario` varchar(40)
+);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura Stand-in para la vista `vws_list_inactive_assets`
+-- (Véase abajo para la vista actual)
+--
+DROP VIEW IF EXISTS `vws_list_inactive_assets`;
+CREATE TABLE IF NOT EXISTS `vws_list_inactive_assets` (
+`idactivo` int(11)
+,`denominacion` varchar(30)
+,`codigo` char(7)
+,`estado` varchar(10)
+,`sublote` tinyint(4)
+,`direccion` varchar(60)
+,`distrito` varchar(45)
+,`provincia` varchar(45)
+,`departamento` varchar(45)
 ,`usuario` varchar(40)
 );
 
@@ -3633,100 +3743,6 @@ CREATE TABLE IF NOT EXISTS `vws_list_inactive_clients` (
 ,`provincia` varchar(45)
 ,`departamento` varchar(45)
 ,`direccion` varchar(70)
-,`usuario` varchar(40)
-);
-
--- --------------------------------------------------------
-
---
--- Estructura Stand-in para la vista `vws_list_inactive_contracts_short`
--- (Véase abajo para la vista actual)
---
-DROP VIEW IF EXISTS `vws_list_inactive_contracts_short`;
-CREATE TABLE IF NOT EXISTS `vws_list_inactive_contracts_short` (
-`idcontrato` int(11)
-,`tipo_contrato` varchar(45)
-,`denominacion` varchar(30)
-,`codigo` char(5)
-,`sublote` tinyint(4)
-,`clien_nombres` varchar(40)
-,`clien_apellidos` varchar(40)
-,`cony_apellidos` varchar(40)
-,`cony_nombres` varchar(40)
-,`estado` varchar(10)
-,`usuario` varchar(40)
-);
-
--- --------------------------------------------------------
-
---
--- Estructura Stand-in para la vista `vws_list_inactive_lots_short`
--- (Véase abajo para la vista actual)
---
-DROP VIEW IF EXISTS `vws_list_inactive_lots_short`;
-CREATE TABLE IF NOT EXISTS `vws_list_inactive_lots_short` (
-`idlote` int(11)
-,`denominacion` varchar(30)
-,`estado_venta` varchar(10)
-,`sublote` tinyint(4)
-,`urbanizacion` varchar(70)
-,`distrito` varchar(45)
-,`provincia` varchar(45)
-,`departamento` varchar(45)
-,`usuario` varchar(40)
-);
-
--- --------------------------------------------------------
-
---
--- Estructura Stand-in para la vista `vws_list_lots`
--- (Véase abajo para la vista actual)
---
-DROP VIEW IF EXISTS `vws_list_lots`;
-CREATE TABLE IF NOT EXISTS `vws_list_lots` (
-`idlote` int(11)
-,`denominacion` varchar(30)
-,`codigo` char(5)
-,`estado_venta` varchar(10)
-,`distrito` varchar(45)
-,`provincia` varchar(45)
-,`departamento` varchar(45)
-,`moneda_venta` varchar(10)
-,`area_terreno` decimal(5,2)
-,`partida_elect` varchar(100)
-,`idvivienda` int(11)
-,`loteid` int(11)
-,`imagen` varchar(100)
-,`tipo_casa` char(8)
-,`area_construccion` decimal(5,2)
-,`area_techada` decimal(5,2)
-,`airesm2` decimal(5,2)
-,`zcomunes_porcent` tinyint(4)
-,`estacionamiento_nro` tinyint(4)
-,`detalles` longtext
-,`usuarioH` varchar(40)
-,`usuario` varchar(40)
-);
-
--- --------------------------------------------------------
-
---
--- Estructura Stand-in para la vista `vws_list_lots_short`
--- (Véase abajo para la vista actual)
---
-DROP VIEW IF EXISTS `vws_list_lots_short`;
-CREATE TABLE IF NOT EXISTS `vws_list_lots_short` (
-`idlote` int(11)
-,`denominacion` varchar(30)
-,`codigo` char(5)
-,`estado_venta` varchar(10)
-,`sublote` tinyint(4)
-,`urbanizacion` varchar(70)
-,`distrito` varchar(45)
-,`provincia` varchar(45)
-,`departamento` varchar(45)
-,`clien_nombres` varchar(40)
-,`clien_apellidos` varchar(40)
 ,`usuario` varchar(40)
 );
 
@@ -3770,6 +3786,16 @@ CREATE TABLE IF NOT EXISTS `vws_ubigeo` (
 -- --------------------------------------------------------
 
 --
+-- Estructura para la vista `vws_list_assets_short`
+--
+DROP TABLE IF EXISTS `vws_list_assets_short`;
+
+DROP VIEW IF EXISTS `vws_list_assets_short`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vws_list_assets_short`  AS SELECT `act`.`idactivo` AS `idactivo`, `proy`.`idproyecto` AS `idproyecto`, `proy`.`denominacion` AS `denominacion`, `act`.`codigo` AS `codigo`, `act`.`estado` AS `estado`, `act`.`sublote` AS `sublote`, `act`.`direccion` AS `direccion`, `dist`.`distrito` AS `distrito`, `prov`.`provincia` AS `provincia`, `dept`.`departamento` AS `departamento`, `usu`.`nombres` AS `usuario` FROM (((((`activos` `act` join `proyectos` `proy` on(`proy`.`idproyecto` = `act`.`idproyecto`)) join `distritos` `dist` on(`dist`.`iddistrito` = `proy`.`iddistrito`)) join `provincias` `prov` on(`prov`.`idprovincia` = `dist`.`idprovincia`)) join `departamentos` `dept` on(`dept`.`iddepartamento` = `prov`.`iddepartamento`)) join `usuarios` `usu` on(`usu`.`idusuario` = `act`.`idusuario`)) WHERE `act`.`tipo_activo` = 'LOTE' ORDER BY `proy`.`denominacion` ASC ;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura para la vista `vws_list_clients`
 --
 DROP TABLE IF EXISTS `vws_list_clients`;
@@ -3790,32 +3816,22 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 -- --------------------------------------------------------
 
 --
--- Estructura para la vista `vws_list_contracts_full`
---
-DROP TABLE IF EXISTS `vws_list_contracts_full`;
-
-DROP VIEW IF EXISTS `vws_list_contracts_full`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vws_list_contracts_full`  AS WITH ubigeo1 AS (SELECT `dist`.`iddistrito` AS `iddistrito`, `dist`.`distrito` AS `distrito`, `prov`.`provincia` AS `provincia`, `dept`.`departamento` AS `departamento` FROM ((`distritos` `dist` join `provincias` `prov` on(`prov`.`idprovincia` = `dist`.`idprovincia`)) join `departamentos` `dept` on(`dept`.`iddepartamento` = `prov`.`iddepartamento`))), Client1 AS (SELECT `clien`.`idcliente` AS `idcliente`, `clien`.`nombres` AS `nombres`, `clien`.`apellidos` AS `apellidos`, `clien`.`documento_tipo` AS `documento_tipo`, `clien`.`documento_nro` AS `documento_nro`, `clien`.`estado_civil` AS `estado_civil`, `ubdata`.`iddistrito` AS `iddistrito`, `ubdata`.`distrito` AS `distrito`, `ubdata`.`provincia` AS `provincia`, `ubdata`.`departamento` AS `departamento`, `clien`.`direccion` AS `direccion` FROM (`clientes` `clien` join `ubigeo1` `ubdata` on(`ubdata`.`iddistrito` = `clien`.`iddistrito`))), ubigeo2 AS (SELECT `dist`.`iddistrito` AS `iddistritoCL2`, `dist`.`distrito` AS `distrito2`, `prov`.`provincia` AS `provincia2`, `dept`.`departamento` AS `departamento2` FROM ((`distritos` `dist` join `provincias` `prov` on(`prov`.`idprovincia` = `dist`.`idprovincia`)) join `departamentos` `dept` on(`dept`.`iddepartamento` = `prov`.`iddepartamento`))), Client2 AS (SELECT `clien`.`idcliente` AS `idcliente2`, `clien`.`nombres` AS `nombre2`, `clien`.`apellidos` AS `apellido2`, `clien`.`documento_tipo` AS `documento_tipo2`, `clien`.`documento_nro` AS `documento_nro2`, `clien`.`estado_civil` AS `estado_civil2`, `ubdata2`.`iddistritoCL2` AS `iddistritoCL2`, `ubdata2`.`distrito2` AS `distrito2`, `ubdata2`.`provincia2` AS `provincia2`, `ubdata2`.`departamento2` AS `departamento2`, `clien`.`direccion` AS `direccion2` FROM (`clientes` `clien` join `ubigeo2` `ubdata2` on(`ubdata2`.`iddistritoCL2` = `clien`.`iddistrito`))), ubigeor1 AS (SELECT `dist`.`iddistrito` AS `iddistritoUB`, `dist`.`distrito` AS `distritor1`, `prov`.`provincia` AS `provinciar1`, `dept`.`departamento` AS `departamentor1` FROM ((`distritos` `dist` join `provincias` `prov` on(`prov`.`idprovincia` = `dist`.`idprovincia`)) join `departamentos` `dept` on(`dept`.`iddepartamento` = `prov`.`iddepartamento`))), represen1 AS (SELECT `usu`.`idusuario` AS `idrepresentante1`, `usu`.`nombres` AS `nom_represent1`, `usu`.`apellidos` AS `ap_represent1`, `usu`.`documento_tipo` AS `dt_represent1`, `usu`.`documento_nro` AS `dn_represent1`, `ubr1`.`iddistritoUB` AS `iddistritoUB`, `ubr1`.`distritor1` AS `distritor1`, `ubr1`.`provinciar1` AS `provinciar1`, `ubr1`.`departamentor1` AS `departamentor1`, `usu`.`direccion` AS `dir_represent1`, `usu`.`partida_elect` AS `part_represent1` FROM (`usuarios` `usu` join `ubigeor1` `ubr1` on(`ubr1`.`iddistritoUB` = `usu`.`iddistrito`))), ubigeor2 AS (SELECT `dist`.`iddistrito` AS `iddistritoUB2`, `dist`.`distrito` AS `distritor2`, `prov`.`provincia` AS `provinciar2`, `dept`.`departamento` AS `departamentor2` FROM ((`distritos` `dist` join `provincias` `prov` on(`prov`.`idprovincia` = `dist`.`idprovincia`)) join `departamentos` `dept` on(`dept`.`iddepartamento` = `prov`.`iddepartamento`)) ORDER BY `dept`.`departamento` ASC), represen2 AS (SELECT `usu`.`idusuario` AS `idrepresentante2`, `usu`.`nombres` AS `nom_represent2`, `usu`.`apellidos` AS `ap_represent2`, `usu`.`documento_tipo` AS `dt_represent2`, `usu`.`documento_nro` AS `dn_represent2`, `ubr2`.`iddistritoUB2` AS `iddistritoUB2`, `ubr2`.`distritor2` AS `distritor2`, `ubr2`.`provinciar2` AS `provinciar2`, `ubr2`.`departamentor2` AS `departamentor2`, `usu`.`direccion` AS `dir_represent2`, `usu`.`partida_elect` AS `part_represent2` FROM (`usuarios` `usu` join `ubigeor2` `ubr2` on(`ubr2`.`iddistritoUB2` = `usu`.`iddistrito`))), dataHouse AS (SELECT `viv`.`idvivienda` AS `idvivienda`, `viv`.`idlote` AS `loteid`, `viv`.`imagen` AS `imagen`, `viv`.`tipo_casa` AS `tipo_casa`, `viv`.`area_construccion` AS `area_construccion`, `viv`.`area_techada` AS `area_techada`, `viv`.`airesm2` AS `airesm2`, `viv`.`zcomunes_porcent` AS `zcomunes_porcent`, `viv`.`estacionamiento_nro` AS `estacionamiento_nro`, `viv`.`detalles` AS `detalles` FROM `viviendas` AS `viv` WHERE `viv`.`inactive_at` is null)  SELECT `cont`.`idcontrato` AS `idcontrato`, `proy`.`denominacion` AS `denominacion`, `lt`.`codigo` AS `codigo`, `lt`.`sublote` AS `sublote`, `clien1`.`idcliente` AS `idcliente`, `clien1`.`nombres` AS `nombres`, `clien1`.`apellidos` AS `apellidos`, `clien1`.`documento_tipo` AS `documento_tipo`, `clien1`.`documento_nro` AS `documento_nro`, `clien1`.`estado_civil` AS `estado_civil`, `clien1`.`iddistrito` AS `iddistrito`, `clien1`.`distrito` AS `distrito`, `clien1`.`provincia` AS `provincia`, `clien1`.`departamento` AS `departamento`, `clien1`.`direccion` AS `direccion`, `clien2`.`idcliente2` AS `idcliente2`, `clien2`.`nombre2` AS `nombre2`, `clien2`.`apellido2` AS `apellido2`, `clien2`.`documento_tipo2` AS `documento_tipo2`, `clien2`.`documento_nro2` AS `documento_nro2`, `clien2`.`estado_civil2` AS `estado_civil2`, `clien2`.`iddistritoCL2` AS `iddistritoCL2`, `clien2`.`distrito2` AS `distrito2`, `clien2`.`provincia2` AS `provincia2`, `clien2`.`departamento2` AS `departamento2`, `clien2`.`direccion2` AS `direccion2`, `rp1`.`idrepresentante1` AS `idrepresentante1`, `rp1`.`nom_represent1` AS `nom_represent1`, `rp1`.`ap_represent1` AS `ap_represent1`, `rp1`.`dt_represent1` AS `dt_represent1`, `rp1`.`dn_represent1` AS `dn_represent1`, `rp1`.`iddistritoUB` AS `iddistritoUB`, `rp1`.`distritor1` AS `distritor1`, `rp1`.`provinciar1` AS `provinciar1`, `rp1`.`departamentor1` AS `departamentor1`, `rp1`.`dir_represent1` AS `dir_represent1`, `rp1`.`part_represent1` AS `part_represent1`, `rp2`.`idrepresentante2` AS `idrepresentante2`, `rp2`.`nom_represent2` AS `nom_represent2`, `rp2`.`ap_represent2` AS `ap_represent2`, `rp2`.`dt_represent2` AS `dt_represent2`, `rp2`.`dn_represent2` AS `dn_represent2`, `rp2`.`iddistritoUB2` AS `iddistritoUB2`, `rp2`.`distritor2` AS `distritor2`, `rp2`.`provinciar2` AS `provinciar2`, `rp2`.`departamentor2` AS `departamentor2`, `rp2`.`dir_represent2` AS `dir_represent2`, `rp2`.`part_represent2` AS `part_represent2`, `cont`.`precio_total` AS `precio_total`, `cont`.`tipo_cambio` AS `tipo_cambio`, `dth`.`idvivienda` AS `idvivienda`, `dth`.`loteid` AS `loteid`, `dth`.`imagen` AS `imagen`, `dth`.`tipo_casa` AS `tipo_casa`, `dth`.`area_construccion` AS `area_construccion`, `dth`.`area_techada` AS `area_techada`, `dth`.`airesm2` AS `airesm2`, `dth`.`zcomunes_porcent` AS `zcomunes_porcent`, `dth`.`estacionamiento_nro` AS `estacionamiento_nro`, `dth`.`detalles` AS `detalles`, `cont`.`estado` AS `estado`, `cont`.`fecha_contrato` AS `fecha_contrato`, `usu`.`nombres` AS `usuario` FROM ((((((((`contratos` `cont` join `lotes` `lt` on(`lt`.`idlote` = `cont`.`idlote`)) join `proyectos` `proy` on(`proy`.`idproyecto` = `lt`.`idproyecto`)) join `client1` `clien1` on(`clien1`.`idcliente` = `cont`.`idcliente`)) left join `client2` `clien2` on(`clien2`.`idcliente2` = `cont`.`idcliente2`)) join `represen1` `rp1` on(`rp1`.`idrepresentante1` = `cont`.`idrepresentante`)) left join `represen2` `rp2` on(`rp2`.`idrepresentante2` = `cont`.`idrepresentante2`)) left join `datahouse` `dth` on(`dth`.`loteid` = `lt`.`idlote`)) join `usuarios` `usu` on(`usu`.`idusuario` = `cont`.`idusuario`)) WHERE `cont`.`inactive_at` is null ORDER BY `proy`.`denominacion` ASC`denominacion`  ;
-
--- --------------------------------------------------------
-
---
--- Estructura para la vista `vws_list_contracts_short`
---
-DROP TABLE IF EXISTS `vws_list_contracts_short`;
-
-DROP VIEW IF EXISTS `vws_list_contracts_short`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vws_list_contracts_short`  AS SELECT `cont`.`idcontrato` AS `idcontrato`, `cont`.`tipo_contrato` AS `tipo_contrato`, `proy`.`denominacion` AS `denominacion`, `lt`.`codigo` AS `codigo`, `lt`.`sublote` AS `sublote`, `clien`.`nombres` AS `clien_nombres`, `clien`.`apellidos` AS `clien_apellidos`, `clien2`.`apellidos` AS `cony_apellidos`, `clien2`.`nombres` AS `cony_nombres`, `cont`.`estado` AS `estado`, `usurep1`.`nombres` AS `usuario` FROM (((((((`contratos` `cont` join `lotes` `lt` on(`lt`.`idlote` = `cont`.`idlote`)) join `proyectos` `proy` on(`proy`.`idproyecto` = `lt`.`idproyecto`)) join `clientes` `clien` on(`clien`.`idcliente` = `cont`.`idcliente`)) left join `clientes` `clien2` on(`clien2`.`idcliente` = `cont`.`idcliente2`)) join `usuarios` `usurep1` on(`usurep1`.`idusuario` = `cont`.`idrepresentante`)) left join `usuarios` `usurep2` on(`usurep2`.`idusuario` = `cont`.`idrepresentante2`)) join `usuarios` `usu` on(`usu`.`idusuario` = `proy`.`idusuario`)) WHERE `cont`.`inactive_at` is null ORDER BY `proy`.`denominacion` ASC ;
-
--- --------------------------------------------------------
-
---
 -- Estructura para la vista `vws_list_drop_projects`
 --
 DROP TABLE IF EXISTS `vws_list_drop_projects`;
 
 DROP VIEW IF EXISTS `vws_list_drop_projects`;
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vws_list_drop_projects`  AS SELECT `proy`.`idproyecto` AS `idproyecto`, `proy`.`imagen` AS `imagen`, `proy`.`codigo` AS `codigo`, `proy`.`denominacion` AS `denominacion`, `dist`.`distrito` AS `distrito`, `prov`.`provincia` AS `provincia`, `dept`.`departamento` AS `departamento`, `proy`.`direccion` AS `direccion`, `usu`.`nombres` AS `usuario` FROM ((((`proyectos` `proy` join `distritos` `dist` on(`dist`.`iddistrito` = `proy`.`iddistrito`)) join `provincias` `prov` on(`prov`.`idprovincia` = `dist`.`idprovincia`)) join `departamentos` `dept` on(`dept`.`iddepartamento` = `prov`.`iddepartamento`)) join `usuarios` `usu` on(`usu`.`idusuario` = `proy`.`idusuario`)) WHERE `proy`.`inactive_at` is not null ORDER BY `proy`.`codigo` ASC ;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura para la vista `vws_list_inactive_assets`
+--
+DROP TABLE IF EXISTS `vws_list_inactive_assets`;
+
+DROP VIEW IF EXISTS `vws_list_inactive_assets`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vws_list_inactive_assets`  AS SELECT `act`.`idactivo` AS `idactivo`, `proy`.`denominacion` AS `denominacion`, `act`.`codigo` AS `codigo`, `act`.`estado` AS `estado`, `act`.`sublote` AS `sublote`, `act`.`direccion` AS `direccion`, `dist`.`distrito` AS `distrito`, `prov`.`provincia` AS `provincia`, `dept`.`departamento` AS `departamento`, `usu`.`nombres` AS `usuario` FROM (((((`activos` `act` join `proyectos` `proy` on(`proy`.`idproyecto` = `act`.`idproyecto`)) join `distritos` `dist` on(`dist`.`iddistrito` = `proy`.`iddistrito`)) join `provincias` `prov` on(`prov`.`idprovincia` = `dist`.`idprovincia`)) join `departamentos` `dept` on(`dept`.`iddepartamento` = `prov`.`iddepartamento`)) join `usuarios` `usu` on(`usu`.`idusuario` = `act`.`idusuario`)) WHERE `act`.`tipo_activo` = 'LOTE' AND `act`.`inactive_at` is not null ORDER BY `proy`.`denominacion` ASC ;
 
 -- --------------------------------------------------------
 
@@ -3830,52 +3846,12 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 -- --------------------------------------------------------
 
 --
--- Estructura para la vista `vws_list_inactive_contracts_short`
---
-DROP TABLE IF EXISTS `vws_list_inactive_contracts_short`;
-
-DROP VIEW IF EXISTS `vws_list_inactive_contracts_short`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vws_list_inactive_contracts_short`  AS SELECT `cont`.`idcontrato` AS `idcontrato`, `cont`.`tipo_contrato` AS `tipo_contrato`, `proy`.`denominacion` AS `denominacion`, `lt`.`codigo` AS `codigo`, `lt`.`sublote` AS `sublote`, `clien`.`nombres` AS `clien_nombres`, `clien`.`apellidos` AS `clien_apellidos`, `clien2`.`apellidos` AS `cony_apellidos`, `clien2`.`nombres` AS `cony_nombres`, `cont`.`estado` AS `estado`, `usurep1`.`nombres` AS `usuario` FROM (((((((`contratos` `cont` join `lotes` `lt` on(`lt`.`idlote` = `cont`.`idlote`)) join `proyectos` `proy` on(`proy`.`idproyecto` = `lt`.`idproyecto`)) join `clientes` `clien` on(`clien`.`idcliente` = `cont`.`idcliente`)) left join `clientes` `clien2` on(`clien2`.`idcliente` = `cont`.`idcliente2`)) join `usuarios` `usurep1` on(`usurep1`.`idusuario` = `cont`.`idrepresentante`)) left join `usuarios` `usurep2` on(`usurep2`.`idusuario` = `cont`.`idrepresentante2`)) join `usuarios` `usu` on(`usu`.`idusuario` = `proy`.`idusuario`)) WHERE `cont`.`inactive_at` is not null ORDER BY `proy`.`denominacion` ASC ;
-
--- --------------------------------------------------------
-
---
--- Estructura para la vista `vws_list_inactive_lots_short`
---
-DROP TABLE IF EXISTS `vws_list_inactive_lots_short`;
-
-DROP VIEW IF EXISTS `vws_list_inactive_lots_short`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vws_list_inactive_lots_short`  AS SELECT `lt`.`idlote` AS `idlote`, `proy`.`denominacion` AS `denominacion`, `lt`.`estado_venta` AS `estado_venta`, `lt`.`sublote` AS `sublote`, `lt`.`urbanizacion` AS `urbanizacion`, `dist`.`distrito` AS `distrito`, `prov`.`provincia` AS `provincia`, `dept`.`departamento` AS `departamento`, `usu`.`nombres` AS `usuario` FROM (((((`lotes` `lt` join `proyectos` `proy` on(`proy`.`idproyecto` = `lt`.`idproyecto`)) join `distritos` `dist` on(`dist`.`iddistrito` = `proy`.`iddistrito`)) join `provincias` `prov` on(`prov`.`idprovincia` = `dist`.`idprovincia`)) join `departamentos` `dept` on(`dept`.`iddepartamento` = `prov`.`iddepartamento`)) join `usuarios` `usu` on(`usu`.`idusuario` = `lt`.`idusuario`)) WHERE `lt`.`inactive_at` is not null ORDER BY `proy`.`denominacion` ASC ;
-
--- --------------------------------------------------------
-
---
--- Estructura para la vista `vws_list_lots`
---
-DROP TABLE IF EXISTS `vws_list_lots`;
-
-DROP VIEW IF EXISTS `vws_list_lots`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vws_list_lots`  AS WITH dataHouse AS (SELECT `viv`.`idvivienda` AS `idvivienda`, `viv`.`idlote` AS `loteid`, `viv`.`imagen` AS `imagen`, `viv`.`tipo_casa` AS `tipo_casa`, `viv`.`area_construccion` AS `area_construccion`, `viv`.`area_techada` AS `area_techada`, `viv`.`airesm2` AS `airesm2`, `viv`.`zcomunes_porcent` AS `zcomunes_porcent`, `viv`.`estacionamiento_nro` AS `estacionamiento_nro`, `viv`.`detalles` AS `detalles`, `usu`.`nombres` AS `usuarioH` FROM (`viviendas` `viv` join `usuarios` `usu` on(`usu`.`idusuario` = `viv`.`idusuario`)) WHERE `viv`.`inactive_at` is null)  SELECT `lt`.`idlote` AS `idlote`, `proy`.`denominacion` AS `denominacion`, `lt`.`codigo` AS `codigo`, `lt`.`estado_venta` AS `estado_venta`, `dist`.`distrito` AS `distrito`, `prov`.`provincia` AS `provincia`, `dept`.`departamento` AS `departamento`, `lt`.`moneda_venta` AS `moneda_venta`, `lt`.`area_terreno` AS `area_terreno`, `lt`.`partida_elect` AS `partida_elect`, `dth`.`idvivienda` AS `idvivienda`, `dth`.`loteid` AS `loteid`, `dth`.`imagen` AS `imagen`, `dth`.`tipo_casa` AS `tipo_casa`, `dth`.`area_construccion` AS `area_construccion`, `dth`.`area_techada` AS `area_techada`, `dth`.`airesm2` AS `airesm2`, `dth`.`zcomunes_porcent` AS `zcomunes_porcent`, `dth`.`estacionamiento_nro` AS `estacionamiento_nro`, `dth`.`detalles` AS `detalles`, `dth`.`usuarioH` AS `usuarioH`, `usu`.`nombres` AS `usuario` FROM ((((((`lotes` `lt` join `proyectos` `proy` on(`proy`.`idproyecto` = `lt`.`idproyecto`)) join `distritos` `dist` on(`dist`.`iddistrito` = `proy`.`iddistrito`)) join `provincias` `prov` on(`prov`.`idprovincia` = `dist`.`idprovincia`)) join `departamentos` `dept` on(`dept`.`iddepartamento` = `prov`.`iddepartamento`)) join `usuarios` `usu` on(`usu`.`idusuario` = `lt`.`idusuario`)) left join `datahouse` `dth` on(`dth`.`loteid` = `lt`.`idlote`)) WHERE `lt`.`inactive_at` is null ORDER BY `proy`.`denominacion` ASC`denominacion`  ;
-
--- --------------------------------------------------------
-
---
--- Estructura para la vista `vws_list_lots_short`
---
-DROP TABLE IF EXISTS `vws_list_lots_short`;
-
-DROP VIEW IF EXISTS `vws_list_lots_short`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vws_list_lots_short`  AS SELECT `lt`.`idlote` AS `idlote`, `proy`.`denominacion` AS `denominacion`, `lt`.`codigo` AS `codigo`, `lt`.`estado_venta` AS `estado_venta`, `lt`.`sublote` AS `sublote`, `lt`.`urbanizacion` AS `urbanizacion`, `dist`.`distrito` AS `distrito`, `prov`.`provincia` AS `provincia`, `dept`.`departamento` AS `departamento`, CASE WHEN `lt`.`estado_venta` = 'SEPARADO' THEN (select `clien`.`nombres` from (`separaciones` `sep` left join `clientes` `clien` on(`clien`.`idcliente` = `sep`.`idcliente`)) where `sep`.`idlote` = `lt`.`idlote`) WHEN `lt`.`estado_venta` = 'VENDIDO' THEN (select `clien`.`nombres` from (`contratos` `cont` left join `clientes` `clien` on(`clien`.`idcliente` = `cont`.`idcliente`)) where `cont`.`idlote` = `lt`.`idlote`) END AS `clien_nombres`, CASE WHEN `lt`.`estado_venta` = 'SEPARADO' THEN (select `clien`.`apellidos` from (`separaciones` `sep` left join `clientes` `clien` on(`clien`.`idcliente` = `sep`.`idcliente`)) where `sep`.`idlote` = `lt`.`idlote`) WHEN `lt`.`estado_venta` = 'VENDIDO' THEN (select `clien`.`apellidos` from (`contratos` `cont` left join `clientes` `clien` on(`clien`.`idcliente` = `cont`.`idcliente`)) where `cont`.`idlote` = `lt`.`idlote`) END AS `clien_apellidos`, `usu`.`nombres` AS `usuario` FROM (((((`lotes` `lt` join `proyectos` `proy` on(`proy`.`idproyecto` = `lt`.`idproyecto`)) join `distritos` `dist` on(`dist`.`iddistrito` = `proy`.`iddistrito`)) join `provincias` `prov` on(`prov`.`idprovincia` = `dist`.`idprovincia`)) join `departamentos` `dept` on(`dept`.`iddepartamento` = `prov`.`iddepartamento`)) join `usuarios` `usu` on(`usu`.`idusuario` = `lt`.`idusuario`)) ORDER BY `proy`.`denominacion` ASC ;
-
--- --------------------------------------------------------
-
---
 -- Estructura para la vista `vws_list_projects`
 --
 DROP TABLE IF EXISTS `vws_list_projects`;
 
 DROP VIEW IF EXISTS `vws_list_projects`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vws_list_projects`  AS SELECT `proy`.`idproyecto` AS `idproyecto`, `proy`.`imagen` AS `imagen`, `proy`.`codigo` AS `codigo`, `proy`.`denominacion` AS `denominacion`, `dist`.`distrito` AS `distrito`, `prov`.`provincia` AS `provincia`, `dept`.`departamento` AS `departamento`, `proy`.`direccion` AS `direccion`, (select count(0) from `lotes` where `lotes`.`idproyecto` = `proy`.`idproyecto` and `lotes`.`inactive_at` is null) AS `total_lotes`, (select count(0) from `lotes` where `lotes`.`idproyecto` = `proy`.`idproyecto` and `lotes`.`estado_venta` = 'VENDIDO' and `lotes`.`inactive_at` is null) AS `lotes_vendidos`, (select count(0) from `lotes` where `lotes`.`idproyecto` = `proy`.`idproyecto` and `lotes`.`estado_venta` = 'NO VENDIDO' and `lotes`.`inactive_at` is null) AS `lotes_NoVendidos`, (select count(0) from `lotes` where `lotes`.`idproyecto` = `proy`.`idproyecto` and `lotes`.`estado_venta` = 'SEPARADO' and `lotes`.`inactive_at` is null) AS `lotes_separados`, `usu`.`nombres` AS `usuario` FROM ((((`proyectos` `proy` join `distritos` `dist` on(`dist`.`iddistrito` = `proy`.`iddistrito`)) join `provincias` `prov` on(`prov`.`idprovincia` = `dist`.`idprovincia`)) join `departamentos` `dept` on(`dept`.`iddepartamento` = `prov`.`iddepartamento`)) join `usuarios` `usu` on(`usu`.`idusuario` = `proy`.`idusuario`)) WHERE `proy`.`inactive_at` is null ORDER BY `proy`.`codigo` ASC ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vws_list_projects`  AS SELECT `proy`.`idproyecto` AS `idproyecto`, `proy`.`imagen` AS `imagen`, `proy`.`codigo` AS `codigo`, `proy`.`denominacion` AS `denominacion`, `dist`.`distrito` AS `distrito`, `prov`.`provincia` AS `provincia`, `dept`.`departamento` AS `departamento`, `proy`.`direccion` AS `direccion`, (select count(0) from `activos` where `activos`.`idproyecto` = `proy`.`idproyecto` and `activos`.`tipo_activo` = 'LOTE' and `activos`.`inactive_at` is null) AS `total_lotes`, (select count(0) from `activos` where `activos`.`idproyecto` = `proy`.`idproyecto` and `activos`.`tipo_activo` = 'LOTE' and `activos`.`estado` = 'VENDIDO' and `activos`.`inactive_at` is null) AS `lotes_vendidos`, (select count(0) from `activos` where `activos`.`idproyecto` = `proy`.`idproyecto` and `activos`.`tipo_activo` = 'LOTE' and `activos`.`estado` = 'NO VENDIDO' and `activos`.`inactive_at` is null) AS `lotes_NoVendidos`, (select count(0) from `activos` where `activos`.`idproyecto` = `proy`.`idproyecto` and `activos`.`tipo_activo` = 'LOTE' and `activos`.`estado` = 'SEPARADO' and `activos`.`inactive_at` is null) AS `lotes_separados`, `usu`.`nombres` AS `usuario` FROM ((((`proyectos` `proy` join `distritos` `dist` on(`dist`.`iddistrito` = `proy`.`iddistrito`)) join `provincias` `prov` on(`prov`.`idprovincia` = `dist`.`idprovincia`)) join `departamentos` `dept` on(`dept`.`iddepartamento` = `prov`.`iddepartamento`)) join `usuarios` `usu` on(`usu`.`idusuario` = `proy`.`idusuario`)) WHERE `proy`.`inactive_at` is null ORDER BY `proy`.`codigo` ASC ;
 
 -- --------------------------------------------------------
 
@@ -3892,6 +3868,13 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 --
 
 --
+-- Filtros para la tabla `activos`
+--
+ALTER TABLE `activos`
+  ADD CONSTRAINT `fk_idproyecto_lotes` FOREIGN KEY (`idproyecto`) REFERENCES `proyectos` (`idproyecto`),
+  ADD CONSTRAINT `fk_idusuario_lotes` FOREIGN KEY (`idusuario`) REFERENCES `usuarios` (`idusuario`);
+
+--
 -- Filtros para la tabla `clientes`
 --
 ALTER TABLE `clientes`
@@ -3902,11 +3885,10 @@ ALTER TABLE `clientes`
 -- Filtros para la tabla `contratos`
 --
 ALTER TABLE `contratos`
-  ADD CONSTRAINT `fk_idcliente2_cont` FOREIGN KEY (`idcliente2`) REFERENCES `clientes` (`idcliente`),
+  ADD CONSTRAINT `fk_idcliente2_cont` FOREIGN KEY (`idconyugue`) REFERENCES `clientes` (`idcliente`),
   ADD CONSTRAINT `fk_idcliente_cont` FOREIGN KEY (`idcliente`) REFERENCES `clientes` (`idcliente`),
-  ADD CONSTRAINT `fk_idlote_cont` FOREIGN KEY (`idlote`) REFERENCES `lotes` (`idlote`),
-  ADD CONSTRAINT `fk_idrepresentante2_cont` FOREIGN KEY (`idrepresentante2`) REFERENCES `usuarios` (`idusuario`),
-  ADD CONSTRAINT `fk_idrepresentante_cont` FOREIGN KEY (`idrepresentante`) REFERENCES `usuarios` (`idusuario`),
+  ADD CONSTRAINT `fk_idrepresentante2_cont` FOREIGN KEY (`idrepresentante_secundario`) REFERENCES `vend_representantes` (`idvend_representante`),
+  ADD CONSTRAINT `fk_idrepresentante_cont` FOREIGN KEY (`idrepresentante_primario`) REFERENCES `vend_representantes` (`idvend_representante`),
   ADD CONSTRAINT `fk_idusuario_cont` FOREIGN KEY (`idusuario`) REFERENCES `usuarios` (`idusuario`);
 
 --
@@ -3920,9 +3902,17 @@ ALTER TABLE `cuotas`
 -- Filtros para la tabla `desembolsos`
 --
 ALTER TABLE `desembolsos`
+  ADD CONSTRAINT `fk_idactivo_desemb` FOREIGN KEY (`idactivo`) REFERENCES `activos` (`idactivo`),
   ADD CONSTRAINT `fk_idfinanciera_desemb` FOREIGN KEY (`idfinanciera`) REFERENCES `financieras` (`idfinanciera`),
-  ADD CONSTRAINT `fk_idlote_desemb` FOREIGN KEY (`idlote`) REFERENCES `lotes` (`idlote`),
   ADD CONSTRAINT `fk_idusuario_desemb` FOREIGN KEY (`idusuario`) REFERENCES `usuarios` (`idusuario`);
+
+--
+-- Filtros para la tabla `detalles_contratos`
+--
+ALTER TABLE `detalles_contratos`
+  ADD CONSTRAINT `fk_idactivo_dt_contratos` FOREIGN KEY (`idactivo`) REFERENCES `activos` (`idactivo`),
+  ADD CONSTRAINT `fk_idcontrato_dt_contratos` FOREIGN KEY (`idcontrato`) REFERENCES `contratos` (`idcontrato`),
+  ADD CONSTRAINT `fk_idusuario_dt_contrato` FOREIGN KEY (`idusuario`) REFERENCES `usuarios` (`idusuario`);
 
 --
 -- Filtros para la tabla `detalle_gastos`
@@ -3945,13 +3935,6 @@ ALTER TABLE `distritos`
   ADD CONSTRAINT `fk_idprovincia_distr` FOREIGN KEY (`idprovincia`) REFERENCES `provincias` (`idprovincia`);
 
 --
--- Filtros para la tabla `lotes`
---
-ALTER TABLE `lotes`
-  ADD CONSTRAINT `fk_idproyecto_lotes` FOREIGN KEY (`idproyecto`) REFERENCES `proyectos` (`idproyecto`),
-  ADD CONSTRAINT `fk_idusuario_lotes` FOREIGN KEY (`idusuario`) REFERENCES `usuarios` (`idusuario`);
-
---
 -- Filtros para la tabla `permisos`
 --
 ALTER TABLE `permisos`
@@ -3961,7 +3944,7 @@ ALTER TABLE `permisos`
 -- Filtros para la tabla `presupuestos`
 --
 ALTER TABLE `presupuestos`
-  ADD CONSTRAINT `fk_idlote_presup` FOREIGN KEY (`idlote`) REFERENCES `lotes` (`idlote`),
+  ADD CONSTRAINT `fk_idactivo_presup` FOREIGN KEY (`idactivo`) REFERENCES `activos` (`idactivo`),
   ADD CONSTRAINT `fk_idusuario_presup` FOREIGN KEY (`idusuario`) REFERENCES `usuarios` (`idusuario`);
 
 --
@@ -3982,8 +3965,8 @@ ALTER TABLE `proyectos`
 -- Filtros para la tabla `separaciones`
 --
 ALTER TABLE `separaciones`
+  ADD CONSTRAINT `fk_idactivo_sep` FOREIGN KEY (`idactivo`) REFERENCES `activos` (`idactivo`),
   ADD CONSTRAINT `fk_idcliente_sep` FOREIGN KEY (`idcliente`) REFERENCES `clientes` (`idcliente`),
-  ADD CONSTRAINT `fk_idlote_sep` FOREIGN KEY (`idlote`) REFERENCES `lotes` (`idlote`),
   ADD CONSTRAINT `fk_idusuario_sep` FOREIGN KEY (`idusuario`) REFERENCES `usuarios` (`idusuario`),
   ADD CONSTRAINT `fk_idvend_representante_sep` FOREIGN KEY (`idvend_representante`) REFERENCES `vend_representantes` (`idvend_representante`);
 
@@ -4016,13 +3999,6 @@ ALTER TABLE `vend_representantes`
   ADD CONSTRAINT `fk_idrepresent_vend_represents` FOREIGN KEY (`idrepresentante`) REFERENCES `usuarios` (`idusuario`),
   ADD CONSTRAINT `fk_idusuario_vend_represents` FOREIGN KEY (`idusuario`) REFERENCES `usuarios` (`idusuario`),
   ADD CONSTRAINT `fk_idvendor_vend_represents` FOREIGN KEY (`idvendedor`) REFERENCES `usuarios` (`idusuario`);
-
---
--- Filtros para la tabla `viviendas`
---
-ALTER TABLE `viviendas`
-  ADD CONSTRAINT `fk_idlote_vivien` FOREIGN KEY (`idlote`) REFERENCES `lotes` (`idlote`),
-  ADD CONSTRAINT `fk_idusuario_vinve` FOREIGN KEY (`idusuario`) REFERENCES `usuarios` (`idusuario`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

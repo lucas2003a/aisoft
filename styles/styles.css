@@ -1,0 +1,109 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap");
+:root{
+    --header-height: 3rem;
+    --nav-width: 250px;
+    --first-color: #003473;
+    --second-color: #FF284A;
+    --third-color: #FFD200;
+    --first-color-light: #8fb5e4;
+    --white-color: #F7F6FB;
+    --body-font: 'Nunito', sans-serif;
+    --normal-font-size: 1rem;
+    --z-fixed: 100
+}
+
+.header-gradient{
+
+    background-image: linear-gradient(to right, var(--first-color), var(--second-color));
+}
+
+.card {
+    display: flex;
+    flex-direction: row;
+    max-width: 800px; /* Ancho máximo del card */
+    margin: 20px; /* Margen exterior */
+    border: 1px solid #dee2e6; /* Borde del card */
+    border-radius: 8px; /* Radio de borde */
+    overflow: hidden; /* Evita que la imagen sobresalga del card */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra */
+  }
+  
+  .card-img {
+    width: 400px; /* Ancho de la imagen */
+    height: auto; /* Altura automática */
+    object-fit: cover; /* Ajustar imagen para cubrir */
+  }
+  
+  .card-body {
+    flex: 1; /* Ocupa el espacio restante */
+    padding: 20px; /* Relleno interior */
+    width: 100%;
+  }
+  
+  .card-title {
+    font-size: 1.25rem; /* Tamaño de la fuente del título */
+    margin-bottom: 0.75rem; /* Margen inferior del título */
+  }
+  
+  .card-text {
+    margin-bottom: 1rem; /* Margen inferior del texto */
+  }
+
+  .button-verinfo {
+    display: inline-block;
+    padding: 10px 20px;
+    width: 100%;
+    background-color: #fff;
+    color: var(--first-color);
+    font-size: 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: color 0.3s;
+    border-radius: 20px; /* Redondea los bordes del botón */
+    border: 2px solid; /* Establece un borde sólido */
+    border-image: linear-gradient(to right, var(--first-color), var(--second-color)); /* Utiliza un degradado como imagen de borde */
+    border-image-slice: 1; 
+  }
+  
+  .button-verinfo:hover {
+    color: #368fef;  
+  }
+
+    /*Móviles*/
+  @media (min-width:320px) and (max-width:480px){
+
+    .card-img{
+        display: none;
+    }
+
+    #body-pd{
+        width: 100%;
+    }
+
+}
+
+/*Tabletas*/
+@media (min-width:481px) and (max-width:768px){
+
+    .card-img{
+        display: none;
+    }
+}
+  
+/*Portatiles*/ 
+@media (min-width:769px) and (max-width:1024px){
+
+    .card-img{
+
+        display: none;
+    }
+}
+
+/*Pc de Escritorio*/
+@media (min-width:1025px) and (max-width:1200px){
+
+    .card-img{
+
+        display: none;
+    }
+}
