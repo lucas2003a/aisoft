@@ -29,7 +29,7 @@
   }
   
   .card-img {
-    width: 400px; /* Ancho de la imagen */
+    width: 250px; /* Ancho de la imagen */
     height: auto; /* Altura automática */
     object-fit: cover; /* Ajustar imagen para cubrir */
   }

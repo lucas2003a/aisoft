@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 
     HButton.addEventListener("click", ()=>{
         navbar.classList.toggle("open");
-        console.log(navbar.style);
+        //console.log(navbar.style);
     });
 
     const dropdown = document.getElementsByName("dropdown-btn");
