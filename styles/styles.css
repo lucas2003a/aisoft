@@ -3,7 +3,9 @@
     --header-height: 3rem;
     --nav-width: 250px;
     --first-color: #003473;
+    --first-color-hover:#01234d;
     --second-color: #FF284A;
+    --second-color-hover: #af2136;
     --third-color: #FFD200;
     --first-color-light: #8fb5e4;
     --white-color: #F7F6FB;
@@ -69,6 +71,130 @@
     color: #368fef;  
   }
 
+  .input-form{
+    display: inline-block;
+    padding: 5px 10px;
+    width: 40%;
+    background-color: #fff;
+    color: var(--first-color);
+    font-size: 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: color 0.3s;
+    border: 2px solid; /* Establece un borde sólido */
+    border-image: linear-gradient(to right, var(--first-color), var(--second-color)); /* Utiliza un degradado como imagen de borde */
+    border-image-slice: 1; 
+  }
+
+  .button-admin{
+    display: flex;
+    padding: 15px 15px;
+    margin: 6px;
+    background-color: transparent; /* Hace transparente el color de fondo para mostrar la imagen */
+    color: var(--first-color);
+    font-size: 12px;
+    border: none;
+    align-items: center;
+    cursor: pointer;
+    background-image: url(../iconos/lapiz-blue.png); /* Agrega una imagen de fondo */
+    background-repeat: no-repeat; /* Evita la repetición de la imagen de fondo */
+    background-size: cover; /* Ajusta el tamaño de la imagen para cubrir completamente el botón */
+    background-position: center; /* Centra la imagen de fondo */
+  }
+
+  .modal-project .show{
+    position: fixed; /* Fija el fondo modal en una posición fija */
+    top: 0;
+    left: 0;
+    width: 100%; /* Cubre todo el ancho de la ventana */
+    height: 100%; /* Cubre toda la altura de la ventana */
+    background-color: rgba(0, 0, 0, 0.5); /* Color de fondo oscuro con opacidad */
+    z-index: 999; /* Asegura que el fondo modal esté por encima del resto del contenido */
+    display: flex;
+    justify-content: center; /* Centra horizontalmente el contenido */
+    align-items: center; 
+  }
+
+ 
+
+  .modal-content{
+    background-color: var(--white-color);
+    width: 40%;
+    border-radius: 20px;
+    padding: 2rem;
+  }
+
+  .modal-head{
+    text-transform: uppercase;
+    font-size: 2rem;
+    font-weight: bold;
+  }
+
+  .input-form-modal{
+    display: flex;
+    justify-content: center; /* Centra horizontalmente el contenido */
+    align-items: center; 
+    padding: 5px 5px;
+    margin-top: 1rem;
+    width: 100%;
+    background-color: #fff;
+    color: var(--first-color);
+    font-size: 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: color 0.3s;
+    border: 2px solid; /* Establece un borde sólido */
+    border-image:  var(--first-color);  
+    border-image-slice: 1; 
+  }
+
+  .modal-footer{
+
+    margin-top: 1rem;
+  }
+
+  .close{
+
+    float: right;
+    border: none;
+    border-radius: 20px;
+    font-size: 1rem
+  }
+
+  .btn-guardar{
+
+    width: 50%;
+    height: 3rem;
+    color: var(--white-color);
+    border: none;
+    background-color: var(--first-color);
+  }
+  .btn-guardar:hover{
+
+    width: 50%;
+    height: 3rem;
+    color: var(--white-color);
+    border: none;
+    background-color: var(--first-color-hover);
+  }
+
+  .btn-cerrar{
+
+    width: 50%;
+    height: 3rem;
+    border: none;
+    color: var(--white-color);
+    background-color: var(--second-color);
+  }
+  .btn-cerrar:hover{
+
+    width: 50%;
+    height: 3rem;
+    border: none;
+    color: var(--white-color);
+    background-color: var(--second-color-hover);
+  }
+
     /*Móviles*/
   @media (min-width:320px) and (max-width:480px){
 
@@ -78,6 +204,11 @@
 
     #body-pd{
         width: 100%;
+    }
+
+    .input-form{
+
+      width: 100%;
     }
 
 }
