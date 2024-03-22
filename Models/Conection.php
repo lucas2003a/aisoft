@@ -3,7 +3,7 @@
 class Conection{
     
     private $server     = "localhost";
-    private $port       = "3306";
+    private $port       = "3307";
     private $dataBase   = "AISOFT";
     private $user       = "root";
     private $password   = "";

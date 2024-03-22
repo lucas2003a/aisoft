@@ -10,9 +10,10 @@ require_once "../sidebar/sidebar.php";
                 <h2 class="m-2 text-white"><strong>PROYECTOS</strong></h1>
             </div>
 
-            <div class="content m-4">
+            <div class="content ma-4">
                 <!-- CAJA DE BUSQUEDA -->
                 <div class="m-4">
+                    
                     <form action="">
                         <input type="text" id="in-codigo" class="input-form"  placeholder="Ingrese el código del proyecto">
                         <!-- <div class="p-4 form-check form-switch">
@@ -55,6 +56,13 @@ require_once "../sidebar/sidebar.php";
                 </div>
                 <div class="modal-body">
                     <form action="">
+                        <div class="form-group">
+                            <label for="in-imagen" class="label-img">
+                                <i class="material-icons"></i>
+                                <span class="title">Agregar imagen</span>
+                                <input type="file" accept=".jpg" id="in-imagen">
+                            </label>
+                        </div>
                         <div class="row">
                             <div class="col-md-4">
                                 <input type="text" id="in-codigo" class="input-form-modal"  placeholder="Ingrese el código del proyecto" autofocus>
@@ -64,11 +72,8 @@ require_once "../sidebar/sidebar.php";
                             </div>
                         </div>
                         <div>
-                            <input type="file" accept=".jpg" id="in-imagen" class="input-form-modal">
-                        </div>
-                        <div>
                             <select name="" id="in-direccion" class="input-form-modal">
-                                <option value="0">Sede</option>
+                                <option value="0">Direccion sede</option>
                             </select>                                            
                         </div>
 
@@ -81,7 +86,7 @@ require_once "../sidebar/sidebar.php";
                             </div>
                         </div>
                         <div>
-                            <input type="text" id="in-perimetro" class="input-form-modal"  placeholder="Ingrese el perìmetro (JSON)" autofocus>
+                            <input type="text" id="in-perimetro" class="input-form-modal"  placeholder="Ingrese el perímetro (JSON)" autofocus>
                         </div>
                         <div class="row">
                             <div class="col-md-4">
@@ -354,11 +359,11 @@ require_once "../sidebar/sidebar.php";
 
         });
 
-        /* $("#in-codigo").addEventListener("input",()=>{
+        $("#cerrar").addEventListener("click", ()=>{
 
-            console.log($("#in-codigo").value);
+            $(".modal-project").classList.remove("show");
+
         });
- */
         //OBSERVADOR => 2 PARÁMETROS
 
         const observer = new IntersectionObserver((entries, obser)=>{
@@ -391,6 +396,7 @@ require_once "../sidebar/sidebar.php";
             rootMargin: "0% 0% 0% 0%", //TAMAÑO DEL VIEWPORT => PANTALLA VISUAL 
             threshold: 0.2  
         });
+
         listProyects();
 
         

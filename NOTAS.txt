@@ -1,0 +1,12 @@
+REALIZAR LOS TRIGGERS PARA LA TABLA PROJECTOS(CALCULO DE LOTES VENDIDOS, NO VENDIDOS, SEPARADOS Y TOTAL DE LOTES)
+
+        CREA OTRA TABLA "MÉTRICAS"
+
+CREATE TABLLE metricas(
+    idmetrica       INT PRIMARY KEY AUTO_INCREMENT,
+    idpoyecto       INT NOT NULL,
+    l_vendido       INT NULL,
+    l_NoVendido     INT NULL,
+    l_separado      INT NULL
+    update_at       DATE    DEFAULT(CURDATE)
+) ENGINE = INNODB;
