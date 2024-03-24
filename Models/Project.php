@@ -30,6 +30,24 @@ class Project extends Conection{
     }
 
     /**
+     * Método para listar los proyectos activos por id
+     */
+    public function listProjectId($idproyecto = 0){
+
+        try{
+
+
+            $query = $this->conection->prepare("CALL spu_list_projects_id(?)");
+            $query->execute(array($idproyecto));
+
+            return $query->fetch(PDO::FETCH_ASSOC);
+
+        }catch(Exception $e){
+            die($e->getMessage());
+        }
+    }
+
+    /**
      * Método para listar los proyectos activos (busqueda por código)
      */
     public function listProjectCode($code = ""){

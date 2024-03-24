@@ -26,11 +26,15 @@
             <div> 
                 <a href="#" class="nav_logo">
                     <img src="../../iconos/Logo_Blanco.png" style="width: 210px;" alt="" id="img-logo"> </a>
-            <div class="nav_list"> 
-                <a href="#" class="nav_link active" style="margin-top: 4rem;"><i class='bx bx-grid-alt nav_icon'></i><span class="nav_name">Dashboard</span></a> 
-                <a href="#" class="nav_link"> <i class='bx bx-user nav_icon'></i> <span class="nav_name">Users</span></a> 
-                <a href="#" class="nav_link"> <i class='bx bx-message-square-detail nav_icon'></i> <span class="nav_name">Messages</span></a> <a href="#" class="nav_link"> <i class='bx bx-bookmark nav_icon'></i> <span class="nav_name">Bookmark</span> </a> <a href="#" class="nav_link"> <i class='bx bx-folder nav_icon'></i> <span class="nav_name">Files</span> </a> <a href="#" class="nav_link"> <i class='bx bx-bar-chart-alt-2 nav_icon'></i> <span class="nav_name">Stats</span> </a> </div>
+                <div class="nav_list"> 
+                    <a href="#" class="nav_link active" style="margin-top: 4rem;"><i class='bx bx-grid-alt nav_icon'></i><span class="nav_name">Proyectos</span></a> 
+                    <a href="#" class="nav_link"> <i class='bx bx-user nav_icon'></i> <span class="nav_name">Usuarios</span></a> 
+                    <a href="#" class="nav_link"> <i class='bx bx-message-square-detail nav_icon'></i> <span class="nav_name">Clientes</span></a> 
+                    <a href="#" class="nav_link"> <i class='bx bx-bookmark nav_icon'></i> <span class="nav_name">Cuotas</span> </a> 
+                    <a href="#" class="nav_link"> <i class='bx bx-folder nav_icon'></i> <span class="nav_name">Separaciones</span> </a> 
+                    <a href="#" class="nav_link"> <i class='bx bx-bar-chart-alt-2 nav_icon'></i> <span class="nav_name">Presupuesto</span> </a> 
+                </div>
             </div> 
-                <a href="#" class="nav_link"> <i class='bx bx-log-out nav_icon'></i> <span class="nav_name">SignOut</span> </a>
+                <a href="#" class="nav_link"> <i class='bx bx-log-out nav_icon'></i> <span class="nav_name">Cerrar sesión</span> </a>
         </nav>
     </div>

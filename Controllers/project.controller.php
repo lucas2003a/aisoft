@@ -13,6 +13,13 @@ if(isset($_POST["action"])){
                 echo json_encode($project->listProject());
             
             break;
+        case "listProjectId": 
+            
+                $idProyecto = $_POST["idproyecto"];
+
+                echo json_encode($project->listProject($idProyecto));
+            
+            break;
         
         case "listProjectCode": 
 

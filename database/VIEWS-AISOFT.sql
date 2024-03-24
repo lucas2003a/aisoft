@@ -43,39 +43,17 @@ CREATE VIEW vws_list_projects AS
 			prov.provincia,
 			dept.departamento,
 			proy.direccion,
-		(SELECT COUNT(*) 
-			FROM activos 
-			WHERE idproyecto = proy.idproyecto 
-            AND tipo_activo = "LOTE"
-            AND inactive_at IS NULL
-		) AS total_lotes,
-        (SELECT COUNT(*) 
-			FROM activos 
-            WHERE idproyecto = proy.idproyecto
-            AND tipo_activo = "LOTE"
-            AND estado = "VENDIDO" 
-            AND inactive_at IS NULL
-		)AS lotes_vendidos,
-        (SELECT COUNT(*)
-			FROM activos
-			WHERE idproyecto = proy.idproyecto
-            AND tipo_activo = "LOTE"
-            AND estado = "NO VENDIDO" 
-            AND inactive_at IS NULL
-        ) AS lotes_NoVendidos,
-        (SELECT COUNT(*)
-			FROM activos
-            WHERE idproyecto = proy.idproyecto
-            AND tipo_activo = "LOTE"
-            AND estado = "SEPARADO" 
-            AND inactive_at IS NULL
-        ) AS lotes_separados,
+			met.l_vendidos,
+            met.l_noVendidos,
+            met.l_separados,
+            (met.l_vendidos + met.l_noVendidos + met.l_separados) as l_total,
 			usu.nombres AS usuario
         FROM proyectos AS proy
         INNER JOIN distritos AS dist ON dist.iddistrito = proy.iddistrito
         INNER JOIN provincias AS prov ON prov.idprovincia = dist.idprovincia
         INNER JOIN departamentos AS dept ON dept.iddepartamento = prov.iddepartamento
         INNER JOIN usuarios AS usu ON usu.idusuario = proy.idusuario
+        INNER JOIN metricas AS met ON met.idproyecto = proy.idproyecto
         WHERE proy.inactive_at IS NULL
         ORDER BY codigo ASC;
 $$

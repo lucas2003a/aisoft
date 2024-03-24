@@ -111,6 +111,7 @@ INSERT INTO proyectos(iddireccion, codigo, denominacion, iddistrito,direccion, i
 				(1, 'A-15 Kalea Playa', 'Kalea Playa', 1007, 'Dirección Kalea Playa', 5);
                 
 SELECT * FROM PROYECTOS;
+SELECT * FROM metricas;
 
 -- ACTIVOS
 ALTER TABLE activos AUTO_INCREMENT = 0; 
@@ -151,21 +152,6 @@ VALUES
 
 
 SELECT * FROM activos;
-
--- VIVIENDAS
-INSERT INTO viviendas (idactivo, tipo_casa, area_construccion, area_techada, airesm2, zcomunes_porcent, estacionamiento_nro, detalles, idusuario)
-			VALUES
-				(1, 'CUH C001', 70.0, 70.0, NULL, NULL, 5, '{"otros_detalles": "Información adicional para la vivienda 1"}', 1),
-				(2, 'CUH C001', 55.25, 55.25, NULL, NULL, 6, '{"otros_detalles": "Información adicional para la vivienda 2"}', 2),
-				(3, 'CUH C001', 65.75, 65.75, NULL, 8, NULL, '{"otros_detalles": "Información adicional para la vivienda 3"}', 3),
-				(4, 'CUH C001', 80.25, 80.25, NULL, NULL, 8, '{"otros_detalles": "Información adicional para la vivienda 4"}', 4),
-				(5, 'CUH C001', 90.0, 90.0, NULL, NULL, 10, '{"otros_detalles": "Información adicional para la vivienda 5"}', 5),
-				(1, 'CUH C002', 100.0, 100.0, NULL, 12, NULL, '{"otros_detalles": "Información adicional para la vivienda 6"}', 1),
-				(2, 'CUH C002', 110.0, 110.0, NULL, 15, NULL, '{"otros_detalles": "Información adicional para la vivienda 7"}', 2),
-				(3, 'CUH C002', 120.0, 120.0, NULL, 18, NULL, '{"otros_detalles": "Información adicional para la vivienda 8"}', 3),
-				(4, 'CUH C002', 125.0, 125.0, NULL, 20, NULL, '{"otros_detalles": "Información adicional para la vivienda 9"}', 4),
-				(5, 'CUH C002', 135.0, 135.0, NULL, 22, NULL, '{"otros_detalles": "Información adicional para la vivienda 10"}', 5);
-
 
 -- CLIENTES
 INSERT INTO clientes (nombres, apellidos, documento_tipo, documento_nro, estado_civil, iddistrito, direccion, idusuario)
@@ -273,24 +259,24 @@ SELECT * FROM detalle_gastos;
 -- CUOTAS
 INSERT INTO cuotas (idcontrato, monto_cuota, fecha_vencimiento, tipo_pago, entidad_bancaria, idusuario)
 			VALUES 
-				(1, 500.00, '2024-03-10', 'TRANSFERENCIA', 'BCP', 1),
-				(1, 500.00, '2024-04-10', 'TRANSFERENCIA', 'BCP', 1);
+				(6, 500.00, '2024-03-10', 'TRANSFERENCIA', 'BCP', 7),
+				(6, 500.00, '2024-04-10', 'TRANSFERENCIA', 'BCP', 7);
                 
 INSERT INTO cuotas (idcontrato, monto_cuota, fecha_vencimiento, tipo_pago, entidad_bancaria, idusuario)
 			VALUES 
-				(2, 500.00, '2024-03-18','TRANSFERENCIA', 'BCP', 1),
-				(2, 500.00, '2024-04-13','TRANSFERENCIA', 'BCP',  1);          
+				(7, 500.00, '2024-03-18','TRANSFERENCIA', 'BCP', 6),
+				(7, 500.00, '2024-04-13','TRANSFERENCIA', 'BCP',  6);          
 SELECT * FROM cuotas;
 
 -- SUTENTOS CUOTAS
 INSERT INTO sustentos_cuotas (idcuota, ruta, idusuario)
 			VALUES 
-				(1, '/ruta/imagen1.jpg', 1),
-				(1, '/ruta/imagen2.jpg', 1),
-                (2, '/ruta/imagen1.jpg', 1),
-				(2, '/ruta/imagen2.jpg', 1),
-                (3, '/ruta/imagen1.jpg', 2),
-				(3, '/ruta/imagen2.jpg', 2),
-                (4, '/ruta/imagen1.jpg', 2),
-				(4, '/ruta/imagen2.jpg', 2);
+				(9, '/ruta/imagen1.jpg', 1),
+				(9, '/ruta/imagen2.jpg', 1),
+                (9, '/ruta/imagen1.jpg', 1),
+				(9, '/ruta/imagen2.jpg', 1),
+                (7, '/ruta/imagen1.jpg', 2),
+				(7, '/ruta/imagen2.jpg', 2),
+                (8, '/ruta/imagen1.jpg', 2),
+				(8, '/ruta/imagen2.jpg', 2);
 SELECT * FROM sustentos_cuotas;                

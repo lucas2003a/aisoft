@@ -18,7 +18,9 @@ CALL spu_list_addresses();
 CALL spu_list_addresses_ruc("12"); -- RUC EMPRESA
 
 -- PROYECTOS
+select * from proyectos;
 CALL spu_list_projects();
+CALL spu_list_projects_id(1);
 CALL spu_list_projects_by_code("san blas");
 CALL spu_add_projects("", 3, "B-20 PUERTO RICO", "RESIDENCIAL PUERTO RICO", "", "", "", 15, "CALLE LOS ROSALES 123", 3);
 CALL spu_set_projects(6, "", 3, "B-20 PUERTO RICO", "GRAN RESIDENCIAL PUERTO RICO", "", "", "", 15, "CALLE LOS ROSALES 123", 3);
@@ -64,11 +66,12 @@ CALL set_inactive_contracts(1);
 
 -- DETALLE CONTRATOS
 SELECT * FROM detalles_contratos;
-CALL spu_list_det_contracts(20);
-CALL spu_add_det_contracts(20,1,1);
+CALL spu_list_det_contracts(28);
+CALL spu_add_det_contracts(28,6,1);
 CALL spu_inactive_det_contracts(15);
-DELETE FROM detalles_contratos;
+SELECT * FROM METRICAS;
 
+update activos set estado = "SEPARADO" WHERE idactivo = 28;
 -- CUANDO RESTAURES UN CONTRATO ELIMINADO, PRIMERO VERIFFICA QUE NO EXISTA OTRO CONTRATO ACTIVO CON ESE LOTE
 CALL spu_resotres_contracts(3);
 SELECT * FROM activos WHERE idactivo = 11;

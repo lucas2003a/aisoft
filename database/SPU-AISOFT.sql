@@ -108,6 +108,14 @@ END $$
 DELIMITER ;
 
 DELIMITER $$
+CREATE PROCEDURE spu_list_projects_id(IN _idproyecto INT)
+BEGIN
+	SELECT * FROM vws_list_projects
+    WHERE idproyecto = _idproyecto;
+END $$
+DELIMITER ;
+
+DELIMITER $$
 CREATE PROCEDURE spu_list_projects_by_code(IN _codigo VARCHAR(20)) -- POR CÓDIGO DEL PROYECTO
 BEGIN
 		SELECT * FROM vws_list_projects
@@ -260,18 +268,20 @@ END $$
 DELIMITER ;
 
 DELIMITER $$
-CREATE PROCEDURE spu_list_assets_short()
+CREATE PROCEDURE spu_list_assets_short_idpr(IN _idproyecto INT)
 BEGIN
-	SELECT * FROM vws_list_assets_short;
+	SELECT * FROM vws_list_assets_short
+    WHERE idproyecto = _idproyecto;
 END $$
 DELIMITER ;
 
 DELIMITER $$
-CREATE PROCEDURE spu_list_assets_by_code(IN _codigo CHAR(5)) -- => POR CÓDIGO DE LOTE
+CREATE PROCEDURE spu_list_assets_by_code(IN _idproyecto INT, IN _codigo CHAR(5)) -- => POR CÓDIGO DE LOTE
 BEGIN
 	SELECT * 
 		FROM vws_list_assets_short
-        WHERE codigo LIKE CONCAT(_codigo,"%");
+        WHERE codigo LIKE CONCAT(_codigo,"%")
+        AND idporyecto = _idproyecto;
 END $$
 DELIMITER ;
 

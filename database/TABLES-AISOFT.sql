@@ -129,6 +129,18 @@ CREATE TABLE proyectos(
     CONSTRAINT fk_idusuario_proyects FOREIGN KEY(idusuario) REFERENCES usuarios(idusuario)
 )ENGINE = INNODB;
 
+-- MÉTRICAS => TABLA QUE TENDRA LA CANTIDAD DE LOTES VENDIDOS, NO VENDIDOS, 
+CREATE TABLE metricas(
+	idmetrica 			INT PRIMARY KEY AUTO_INCREMENT,
+    idproyecto			INT 		NOT NULL,
+    l_vendidos	 		INT 		NOT NULL DEFAULT 0,
+    l_noVendidos 		INT      	NOT NULL DEFAULT 0,
+    l_separados			INT 		NOT NULL DEFAULT 0,
+    update_at 			DATETIME 	NOT NULL DEFAULT(NOW()),
+    CONSTRAINT fk_idproyecto_metr FOREIGN KEY(idproyecto) REFERENCES proyectos(idproyecto)
+)ENGINE = INNODB;
+
+-- ALTER TABLE metricas CHANGE create_at update_at DATETIME	NOT NULL DEFAULT(NOW());
 -- ACTIVOS
 -- PUEDEN SER LOS LOTES O CASAS
 CREATE TABLE activos(
@@ -139,7 +151,7 @@ CREATE TABLE activos(
     estado 				VARCHAR(10) 		NOT  NULL 	DEFAULT "SIN VENDER", 
     codigo				CHAR(7)				NOT NULL,
     sublote 			TINYINT 			NOT NULL,
-    urbanizacion		VARCHAR(70) 		NOT NULL,
+    direccion			VARCHAR(70) 		NOT NULL,
     moneda_venta 		VARCHAR(10) 		NOT NULL,
     area_terreno   		DECIMAL(5,2) 		NOT NULL,
     zcomunes_porcent	TINYINT		 		NULL,

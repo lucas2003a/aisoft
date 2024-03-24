@@ -1,6 +1,6 @@
 <?php
 
-require_once "../Views"
+require_once "../sidebar/sidebar.php"
 ?>
     <!--EL CONTENIDO INICIA-->
     <div class="height-100 bg-light">
