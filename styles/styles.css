@@ -420,6 +420,14 @@
     cursor: pointer; /* Cursor al pasar el ratón */
   }
 
+  .button-addPlus{
+    border: none;
+    border-radius: 15px;
+    background-color: var(--green-color);
+    font-size: 25px;
+    color: white;
+  }
+
     /*Móviles*/
   @media (min-width:320px) and (max-width:480px){
 
