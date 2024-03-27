@@ -145,8 +145,15 @@ require_once "../sidebar/sidebar.php";
                                         <label for="perimetro" class="form-label">Perímetro (Coordenadas)</label>
                                         <hr>
                                         <div class="row">
-                                            <div class="col-md-11">
-                                                <input type="text" class="form-control form-coor" id="perimetro">
+                                            <div class="col-md-11" id="data-perim">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <input type="text" class="form-control perim-key" name="clave" id="clave">
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <input type="text" class="form-control perim-value" name="valor" id="valor">
+                                                    </div>
+                                                </div>                                               
                                             </div>
                                             <div class="col-md-1">
                                                 <button type="button" class="button-addPlus" id="add-textBox">+</button>
@@ -189,10 +196,117 @@ require_once "../sidebar/sidebar.php";
     integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
     crossorigin="anonymous"></script>
 
+    <!-- SWEET ALERT -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- SWEET ALERT CLASS -->
+    <script src="../../js/sweetAlert.js"></script>
+
     <script src="../../js/sidebar.js"></script>
     <script>
 
+    //INSTANCIA PARA LAS ALERTAS
+    const alert = new Alert();
+
     const $ = id => document.querySelector(id);
+
+    const dataPerim = $("#data-perim");
+
+
+    /**
+     * Función que verifica los campos vacíos
+     */
+    function checkValues(array){
+        let hasValue = false;
+
+
+        array.forEach(element =>{
+
+            if(element.value != ""){
+                console.log(element);
+                hasValue = true;
+
+            }else{
+
+                hasValue = false;
+                
+                //GENERA LA ALERTA
+                alert.sweetError("Campos vacíos","Debes de completa todos los campos");
+            }
+        });
+
+        return hasValue;
+    }
+
+    function renderInputs(){
+      
+        let buttonPluss = document.createElement("Button");
+        buttonPluss.classList.add("button-addPlus");
+        buttonPluss.setAttribute("id","add-textBox");
+        buttonPluss.setAttribute("type","button");
+        buttonPluss.innerText = "+";
+
+        let contentButton = document.createElement("div");
+        contentButton.classList.add("col-md-1");
+
+        let rowPatern = document.createElement("div");
+        rowPatern.classList.add("row");
+
+        contentButton.appendChild(buttonPluss);
+
+        let row = document.createElement("div");
+        row.classList.add("row");
+        
+        let containerKey = document.createElement("div");
+        containerKey.classList.add("col-md-6","mt-2");
+      
+        let containerValue = document.createElement("div");
+        containerValue.classList.add("col-md-6","mt-2");
+        
+        //CAJA DE TEXTO PARA LA CLAVE NUEVA EN EL INPUT
+        let newInputKey = document.createElement("input");
+        newInputKey.classList.add("form-control","perim-key"); 
+            
+        //CAJA DE TEXTO PARA EL NUEVO VALOR EN EL INPUT
+        let newInputValue = document.createElement("input");
+        newInputValue.classList.add("form-control","perim-value");
+            
+        containerKey.appendChild(newInputKey);
+        containerValue.appendChild(newInputValue);
+        
+
+        //POR CORREJIR
+        row.appendChild(containerKey);
+        row.appendChild(containerValue);
+
+        dataPerim.appendChild(row);
+
+        rowPatern.appendChild(dataPerim);
+        rowPatern.appendChild(contentButton);
+        
+
+    }
+
+    $("#add-textBox").addEventListener("click",()=>{
+
+        let perimData = false;
+        
+        //ITERACIÓN POR CADA INPUT (CLAVE)
+        let perimDataKey = document.querySelectorAll(".form-control.perim-key");
+        let dataKey = Array.from(perimDataKey);
+        console.log(dataKey.length);
+        let returnKey = checkValues(dataKey,".form-control.perim-key"); 
+
+        //ITERACIÓN POR CADA INPUT (CLAVE)
+        let perimDataValue = document.querySelectorAll(".form-control.perim-value");
+        let dataValue = Array.from(perimDataValue);
+        let returnValue = checkValues(dataValue);
+
+        if(returnKey && returnValue){
+            renderInputs();
+            
+        }
+    });
 
     // FUNCIÓN DE BOOTSTRAP PARA LAVALIDACIÓN
 

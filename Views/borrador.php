@@ -20,7 +20,12 @@ require_once "../sidebar/sidebar.php"
     integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
     crossorigin="anonymous"></script>
 
+    <!-- SWEET ALERT -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- SIDEBAR -->
     <script src="../js/sidebar.js"></script>
+    <script src="../../js/sweetAlert.js"></script>
 
 </body>
 </html>
