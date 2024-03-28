@@ -52,7 +52,7 @@ DELIMITER ;
 
 -- DIRECCIONES
 DELIMITER $$
-CREATE PROCEDURE spu_list_addresses()
+CREATE PROCEDURE spu_list_addresses(IN _iddistrito INT)
 BEGIN
 	SELECT
 		direcc.iddireccion,
@@ -60,6 +60,7 @@ BEGIN
 		emp.razon_social,
         emp.partida_elect,
         direcc.referencia,
+        direcc.direccion,
         dist.distrito,
         prov.provincia,
         dept.departamento
@@ -67,7 +68,8 @@ BEGIN
         INNER JOIN empresas AS emp ON emp.idempresa = direcc.idempresa
         INNER JOIN distritos AS dist ON dist.iddistrito = direcc.iddistrito
         INNER JOIN provincias AS prov ON prov.idprovincia = dist.idprovincia
-        INNER JOIN departamentos AS dept ON dept.iddepartamento = prov.iddepartamento;
+        INNER JOIN departamentos AS dept ON dept.iddepartamento = prov.iddepartamento
+        WHERE direcc.iddistrito = _iddistrito;
 END $$
 DELIMITER ;
 
@@ -87,6 +89,7 @@ BEGIN
 		emp.razon_social,
         emp.partida_elect,
         direcc.referencia,
+        direcc.direccion,
         dist.distrito,
         prov.provincia,
         dept.departamento

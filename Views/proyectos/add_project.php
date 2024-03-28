@@ -23,13 +23,54 @@ require_once "../sidebar/sidebar.php";
                                 <div class="col-md-6">
 
                                     <!-- DATOS GENERALES -->
+                                    
+                                    <!-- DEPARTEMENTO -->
+                                    <div class="mt-4">
+                                      <label for="iddepartamento" class="form-label">Departamento</label>
+                                        <select class="form-select custom-select-scroll" id="iddepartamento" required>
+                                            <option selected disabled value="0">Departamento</option>
+                                        </select>
+                                        <div class="invalid-feedback">
+                                            Necesitas escojer un departamento.
+                                        </div>
+                                        <div class="valid-feedback">
+                                            Departamento escojido correctamente.
+                                        </div>
+                                    </div>
+    
+                                    <!-- PROVINCIA -->
+                                    <div class="mt-4">
+                                        <label for="idprovincia" class="form-label">Provincia</label>
+                                        <select class="form-select custom-select-scroll" id="idprovincia" required>
+                                            <option selected disabled value="0">Provincia</option>
+                                        </select>
+                                        <div class="invalid-feedback">
+                                            Necesitas escojer una provincia.
+                                        </div>
+                                        <div class="valid-feedback">
+                                            Provincia escojida correctamente.
+                                        </div>
+                                    </div>
+    
+                                    <!-- DISTRITO -->
+                                    <div class="mt-4">
+                                        <label for="iddistrito" class="form-label">Distrito</label>
+                                        <select class="form-select custom-select-scroll" id="iddistrito" required>
+                                            <option selected disabled value="0">Distrito</option>
+                                        </select>
+                                        <div class="invalid-feedback">
+                                            Necesitas escojer un distrito.
+                                        </div>
+                                        <div class="valid-feedback">
+                                            Distrito escojido correctamente.
+                                        </div>
+                                    </div>
 
                                     <!-- IDDIRECCIÓN -->
                                     <div class="mt-4">
-                                        <label for="sede" class="form-label">Sede</label>
-                                        <select class="form-select" id="iddireccion" required>
-                                            <option selected disabled value="">Sede</option>
-                                            <option>...</option>
+                                        <label for="iddireccion" class="form-label">Sede</label>
+                                        <select class="form-select custom-select-scroll" id="iddireccion" required>
+                                            <option selected disabled value="0">Sede</option>                                            
                                         </select>
                                         <div class="invalid-feedback">
                                             Necesitas escojer una sede.
@@ -41,8 +82,8 @@ require_once "../sidebar/sidebar.php";
 
                                     <!-- CODIGO -->
                                     <div class="mt-4">
-                                        <label for="idcodigo" class="form-label">Código</label>
-                                        <input type="text" class="form-control" id="idcodigo" placeholder="Código" required>
+                                        <label for="codigo" class="form-label">Código</label>
+                                        <input type="text" class="form-control" id="codigo" placeholder="Código" required>
                                         <div class="invalid-feedback">
                                             Necesitas ingresar un código.
                                         </div>
@@ -63,57 +104,25 @@ require_once "../sidebar/sidebar.php";
                                         </div>
                                     </div>
     
-                                    <!-- DEPARTEMENTO -->
+                                    <!-- DIRECCIÓN -->
                                     <div class="mt-4">
-                                      <label for="iddepartamento" class="form-label">Departamento</label>
-                                        <select class="form-select" id="iddepartamento" required>
-                                            <option selected disabled value="">Departamento</option>
-                                            <option>...</option>
-                                        </select>
+                                        <label for="direccion" class="form-label">Dirección</label>
+                                        <input type="text" class="form-control" id="direccion" placeholder="Dirección" required>
                                         <div class="invalid-feedback">
-                                            Necesitas escojer un departamento.
+                                            Necesitas ingresar una dirección.
                                         </div>
                                         <div class="valid-feedback">
-                                            Departamento escojido correctamente.
+                                            Dirección ingresada correctamente.
                                         </div>
                                     </div>
     
-                                    <!-- PROVINCIA -->
-                                    <div class="mt-4">
-                                        <label for="idprovincia" class="form-label">Provincia</label>
-                                        <select class="form-select" id="idprovincia" required>
-                                            <option selected disabled value="">Provincia</option>
-                                            <option>...</option>
-                                        </select>
-                                        <div class="invalid-feedback">
-                                            Necesitas escojer una provincia.
-                                        </div>
-                                        <div class="valid-feedback">
-                                            Provincia escojida correctamente.
-                                        </div>
-                                    </div>
-    
-                                    <!-- DISTRITO -->
-                                    <div class="mt-4">
-                                        <label for="iddistrito" class="form-label">Distrito</label>
-                                        <select class="form-select" id="iddistrito" required>
-                                            <option selected disabled value="">Distrito</option>
-                                            <option>...</option>
-                                        </select>
-                                        <div class="invalid-feedback">
-                                            Necesitas escojer un distrito.
-                                        </div>
-                                        <div class="valid-feedback">
-                                            Distrito escojido correctamente.
-                                        </div>
-                                    </div>
     
                                     <!-- IMAGEN -->
                                     <div class="form-group">
-                                        <label for="in-imagen" class="label-img">
+                                        <label for="in-image" class="label-img">
                                             <i class="material-icons"></i>
                                             <span class="title">Agregar imagen</span>
-                                            <input type="file" accept=".jpg" id="in-imagen">
+                                            <input type="file" accept=".jpg" id="in-image">
                                         </label>
                                     </div>
                                 </div>
@@ -141,7 +150,7 @@ require_once "../sidebar/sidebar.php";
                                     </div>
         
                                     <!-- PERÍMETRO -->                                    
-                                    <div class="mt-4">
+                                    <div class="mt-4" id="perim">
                                         <label for="perimetro" class="form-label">Perímetro (Coordenadas)</label>
                                         <hr>
                                         <div id="patern">
@@ -173,9 +182,11 @@ require_once "../sidebar/sidebar.php";
 
                                 
                                 <div class="row">
-
-                                    <div class="col-md-12">
-                                        <img src="" alt="">
+                                    
+                                    <!-- COTENEDOR DE IMAGEN -->
+                                    <div class="col-md-6">
+                                        <!-- <img src="" alt="" id="file-input"> -->
+                                        <button type="button" class="btn btn-primary" style="display: none;" id="see-image">Ver imagen</button>
                                     </div>
 
                                 </div>
@@ -186,7 +197,24 @@ require_once "../sidebar/sidebar.php";
             </div>
         </div>
     </div>
-    
+
+    <!-- MODAL -->
+    <div class="modal-project">
+        <div class="modal-form">
+            <div class="modal-content">
+                <div class="modal-title">
+                    <div class="modal-head">
+                        <div>
+                            <button type="button" class="close" id="close"><strong>X</strong></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <img src="" alt="" id="file-input">
+                </div>
+            </div>
+        </div>
+    </div>
     <!--EL CONTENIDO TERMINA-->
 
     <!-- Bootstrap JavaScript Libraries -->
@@ -204,16 +232,23 @@ require_once "../sidebar/sidebar.php";
     <!-- SWEET ALERT CLASS -->
     <script src="../../js/sweetAlert.js"></script>
 
+    <!-- CLASE DATA -->
+    <script src="../../js/data.js"></script>
+    
     <script src="../../js/sidebar.js"></script>
     <script>
 
     //INSTANCIA PARA LAS ALERTAS
     const sweetAlert = new Alert();
 
+    //INSTACIA DE LA CASE DATA
+    const data = new Data();
+
     const $ = id => document.querySelector(id);
 
     let Patern = $("#patern");
-
+    let viewImage = $("#file-input");
+    let setData = false;
 
     /**
      * Función que verifica los campos vacíos
@@ -240,6 +275,9 @@ require_once "../sidebar/sidebar.php";
         return hasValue;
     }
 
+    /**
+     * FUNCIÓN PARA CREAR INPUTS
+     */
     function renderInputs(){
         
         //BOTÓN "+" Y SU CONTENEDOR
@@ -300,7 +338,7 @@ require_once "../sidebar/sidebar.php";
     }
 
     /**
-     * FUNCIOÓN QUE REEMPLAZA AL BOTON "+" POR "-"
+     * FUNCIÓN QUE REEMPLAZA AL BOTON "+" POR "-"
      */
     function replaceButton(event){
 
@@ -313,16 +351,217 @@ require_once "../sidebar/sidebar.php";
     }
 
     /**
-     * FUNCION PARA ELIMINAR INPUTS
+     * FUNCIÓN PARA ELIMINAR INPUTS
      */
     function dropInputs(event){
 
-        let row = event.target.closest(".row");
+        let row = event.target.closest(".row"); //=> OTBTIENE EL CONTEDOR ANCESTRO MÁS PRÓXIMO
 
-        row.remove();
+        row.remove();   //=> LO ELIMINA
     }
 
-    document.addEventListener("click",(e)=>{
+    /**
+     * FUNCION PARA LEER LA IMAGEN
+     */
+    function readFile(event){
+
+        const file = event.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = (event)=>{
+
+            //ESTABLECE LA RUTA DE LA IMAGEN (RUTA TEMPORAL)
+            viewImage.setAttribute("src",`${event.target.result}`);
+            viewImage.style.width = "100%";
+            viewImage.style.height = "20rem";
+
+        };
+
+        reader.readAsDataURL(file);
+    }
+
+    /**
+     * FUNCÓN PARA RENDERIZAR LOS DEPARTAMENTOS
+     */
+    function renderDepartaments(){
+
+        data.getDepartaments()
+        .then(
+            departamens=>{
+                    departamens.forEach(departamen=>{
+                        
+                        let newOption = document.createElement("option");
+                        newOption.value = departamen.iddepartamento; 
+                        newOption.innerText = departamen.departamento;
+                        
+                        $("#iddepartamento").appendChild(newOption);
+                    });
+                }
+            )
+    }
+    
+    /**
+     * FUNCÓN PARA RENDERIZAR LAS PROVINCIAS
+     */
+    function renderProvinces(){
+
+        let idDepartamento = $("#iddepartamento").value;
+
+        data.getProvinces(idDepartamento)
+            .then(
+                provinces =>{
+
+                    provinces.forEach(province =>{
+                        let newOption = document.createElement("option");
+                        newOption.value = province.idprovincia; 
+                        newOption.innerText = province.provincia;
+                        
+                        $("#idprovincia").appendChild(newOption);
+                    });
+                }
+            )
+            .catch(e=>{
+                console.error(e);
+            })
+    };
+
+     /**
+     * FUNCIÓN PARA RENDERIZAR LOS DISTRITOS
+     */
+    function renderDistricts(){
+
+        let idProvincia = $("#idprovincia").value;
+
+        data.getDistricts(idProvincia)
+            .then(
+                districts =>{
+
+                    districts.forEach(district =>{
+                        let newOption = document.createElement("option");
+                        newOption.value = district.iddistrito; 
+                        newOption.innerText = district.distrito;
+                        
+                        $("#iddistrito").appendChild(newOption);
+                    });
+                }
+            )
+            .catch(e=>{
+                console.error(e);
+            })
+    };
+
+    /**
+     * FUNCIÓN PARA RENDERIZAR LAS SEDES
+     */
+    function renderSedes(){
+
+        let idDistrito = $("#iddistrito").value;
+
+        data.getSede(idDistrito)
+            .then(
+                addresses =>{
+                    addresses.forEach(address=>{
+                        console.log(address)
+                        let newOption = document.createElement("option");
+                        newOption.value = address.iddireccion;
+                        newOption.innerText = address.direccion;
+
+                        $("#iddireccion").appendChild(newOption);
+                    });
+                }
+            ).catch(e=>{
+                console.error(e);
+            })
+    };
+
+    /**
+     * FUNCIÓN PARA RESETEAR LOS INPUTS
+     */
+    function resetSelect(id,text, callback){
+        
+        $(id).innerHTML = "";
+
+        const defaultOption = document.createElement("option");
+        defaultOption.value = 0; 
+        defaultOption.innerText = text;
+        
+        $(id).appendChild(defaultOption);
+
+        callback();
+    }
+
+    function sendData(){
+
+        let params = new FormData()
+        let idproyecto = 0;
+        if(setData){
+            params.append("action","setProject");
+            params.append("idproyecto",idproyecto);
+        }else{
+            params.append("action","addProject");
+        }
+
+        params.append("imagen",$("#in-image").files[0]);
+        params.append("iddireccion",$("#iddireccion"));
+        params.append("codigo",$("#codigo"));
+        params.append("denominacion",$("#denominacion"));
+        params.append("latitud",$("#latitud"));
+        params.append("longitud",$("#logitud"));
+        /* params.append("perimetro",$("#")); */
+        params.append("iddistrito",$("#iddistrito"));
+        params.append("direccion",$("#direccion"));
+
+        data.sendData(params)
+            .then(result =>{
+                console.log(result);
+                /* if(senData.filasAfect > 0){
+
+                } */
+            })
+            .catch()
+    }
+
+    $("#iddistrito").addEventListener("change",()=>{
+
+        resetSelect("#iddireccion","Sedes",renderSedes);
+    });
+
+    $("#idprovincia").addEventListener("change",()=>{
+        
+        resetSelect("#iddistrito","Distritos",renderDistricts);
+    });
+
+    $("#iddepartamento").addEventListener("change",()=>{
+        
+        resetSelect("#idprovincia","Provincias",renderProvinces);
+    });
+
+    $("#in-image").addEventListener("change",(e)=>{
+
+        console.log(e);
+        if(e.target.files.length > 0){
+            
+            console.log(e);
+            readFile(e);
+            $("#see-image").setAttribute("style","display: show;");
+        }else{
+            
+        }
+    });
+
+    $("#see-image").addEventListener("click",()=>{
+
+        $(".modal-form").classList.add("show");
+
+    });
+    
+    $("#close").addEventListener("click", ()=>{
+
+        $(".modal-form").classList.remove("show");
+
+    });
+
+    $("#perim").addEventListener("click",(e)=>{
 
         console.log(sweetAlert);
 
@@ -359,6 +598,8 @@ require_once "../sidebar/sidebar.php";
 
     });
 
+    renderDepartaments();
+
     // FUNCIÓN DE BOOTSTRAP PARA LAVALIDACIÓN
 
     //ESTA EESTRUCTUARA INDICA AL NAVEGADOR QUE CUANDO LEA ESTA FUNCION, LA EJECUTE INMEDIATAMENTE
@@ -377,6 +618,9 @@ require_once "../sidebar/sidebar.php";
                 if (!form.checkValidity()) {
                 event.preventDefault()      //=> FRENA EL ENVÍO DEL FORMULARIO
                 event.stopPropagation()     //=> FRENA LA PROPAGACIÓN DE DATOS EN EL FORMULARIO
+            }else{
+
+                sendData();
             }
 
             form.classList.add('was-validated') //=> AGREGA ESTA CLASE A LOS ELEMENTOS DEL FORMULARIO(MUESTRA LOS COMENTARIOS)

@@ -14,12 +14,12 @@ class Address extends Conection{
     /**
      * Método para devolver las DIRECCIONES de una empresas
      */
-    public function list_addresses(){
+    public function list_addresses($iddistrito = 0){
 
         try{
 
-            $query = $this->conection->prepare("CALL spu_list_addresses()");
-            $query->execute();
+            $query = $this->conection->prepare("CALL spu_list_addresses(?)");
+            $query->execute(array($iddistrito));
 
             return $query->fetchAll(PDO::FETCH_ASSOC);
         }

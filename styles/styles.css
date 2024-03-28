@@ -436,6 +436,11 @@
     color: white;
   }
 
+  .custom-select-scroll {
+    max-height: 100px; /* Altura máxima del select */
+    overflow-y: auto; /* Habilita el scroll vertical si es necesario */
+  }
+
     /*Móviles*/
   @media (min-width:320px) and (max-width:480px){
 

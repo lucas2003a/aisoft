@@ -39,4 +39,14 @@ class Alert{
             }    
         });
     };
+
+    alertSucces(mss,text,timer){
+        Swal.fire({
+            title: mss,
+            text: text,
+            icon: "success",
+            showConfirmButton: false,
+            timer: timer
+          });
+    }
 }

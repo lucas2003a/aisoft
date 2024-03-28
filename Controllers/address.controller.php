@@ -9,8 +9,9 @@ if(isset($_POST["action"])){
     switch($_POST["action"]){
 
         case "list": 
-        
-            echo json_encode($address->list_addresses());
+            
+            $iddistrito = $_POST["iddistrito"];
+            echo json_encode($address->list_addresses($iddistrito));
         
         break;
 
