@@ -159,7 +159,7 @@ CREATE TABLE activos(
     latitud 			VARCHAR(20) 		NULL,
     longitud 			VARCHAR(20) 		NULL,
     perimetro			JSON				NULL,
-    det_casa 			JSON 				NULL,
+    det_casa 			JSON 				NULL 		DEFAULT '{"clave": "", "valor": ""}',
     precio_venta 		DECIMAL(8,2)		NOT NULL,
 	create_at 			DATE 				NOT NULL	DEFAULT(CURDATE()),
     update_at			DATE 				NULL,
@@ -171,6 +171,8 @@ CREATE TABLE activos(
     CONSTRAINT fk_idusuario_lotes FOREIGN KEY(idusuario) REFERENCES usuarios(idusuario)
 )ENGINE = INNODB;
 
+
+-- ALTER TABLE activos ADD COLUMN det_casa JSON NOT NULL  DEFAULT '{"clave": "", "valor": ""}';
 -- ALTER TABLE activos MODIFY COLUMN codigo CHAR(7);
 -- ALTER TABLE activos CHANGE urbanizacion direccion VARCHAR(60);
 -- ALTER TABLE activos DROP COLUMN idlote;
@@ -230,6 +232,9 @@ CREATE TABLE contratos(
     CONSTRAINT fk_idrepresentante2_cont FOREIGN KEY(idrepresentante_secundario) REFERENCES vend_representantes(idvend_representante),
     CONSTRAINT fk_idusuario_cont FOREIGN KEY(idusuario) REFERENCES usuarios(idusuario)
 )ENGINE = INNODB;
+
+-- ALTER TABLE contratos DROP COLUMN detalles;
+-- ALTER TABLE contratos ADD COLUMN detalles JSON NOT NULL DEFAULT '{"clave": "", "valor":  ""}';
 
 -- DETALLES CONTRATOS
 CREATE TABLE detalles_contratos(

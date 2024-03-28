@@ -428,6 +428,14 @@
     color: white;
   }
 
+  .button-less{
+    border: none;
+    border-radius: 15px;
+    background-color: var(--second-color);
+    font-size: 25px;
+    color: white;
+  }
+
     /*Móviles*/
   @media (min-width:320px) and (max-width:480px){
 

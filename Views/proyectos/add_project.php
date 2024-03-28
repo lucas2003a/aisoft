@@ -144,25 +144,27 @@ require_once "../sidebar/sidebar.php";
                                     <div class="mt-4">
                                         <label for="perimetro" class="form-label">Perímetro (Coordenadas)</label>
                                         <hr>
-                                        <div class="row">
-                                            <div class="col-md-11" id="data-perim">
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <input type="text" class="form-control perim-key" name="clave" id="clave">
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <input type="text" class="form-control perim-value" name="valor" id="valor">
-                                                    </div>
-                                                </div>                                               
+                                        <div id="patern">
+                                            <div class="row">
+                                                <div class="col-md-11">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <input type="text" class="form-control perim-key" name="clave" id="clave">
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <input type="text" class="form-control perim-value" name="valor" id="valor">
+                                                        </div>
+                                                    </div>                                               
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <button type="button" class="button-addPlus" id="add-textBox">+</button>
+                                                </div>
                                             </div>
-                                            <div class="col-md-1">
-                                                <button type="button" class="button-addPlus" id="add-textBox">+</button>
+                                            <div class="valid-feedback">
+                                                <!-- -- -->
                                             </div>
                                         </div>
-                                        <div class="valid-feedback">
-                                            <!-- -- -->
                                         </div>
-                                    </div>
                                     <div class="m-4 col-12">
                                         <button class="btn btn-primary" type="submit">Guardar</button>
                                     </div>
@@ -206,11 +208,11 @@ require_once "../sidebar/sidebar.php";
     <script>
 
     //INSTANCIA PARA LAS ALERTAS
-    const alert = new Alert();
+    const sweetAlert = new Alert();
 
     const $ = id => document.querySelector(id);
 
-    const dataPerim = $("#data-perim");
+    let Patern = $("#patern");
 
 
     /**
@@ -231,7 +233,7 @@ require_once "../sidebar/sidebar.php";
                 hasValue = false;
                 
                 //GENERA LA ALERTA
-                alert.sweetError("Campos vacíos","Debes de completa todos los campos");
+                sweetAlert.sweetError("Campos vacíos","Debes de completa todos los campos");
             }
         });
 
@@ -239,9 +241,10 @@ require_once "../sidebar/sidebar.php";
     }
 
     function renderInputs(){
-      
+        
+        //BOTÓN "+" Y SU CONTENEDOR
         let buttonPluss = document.createElement("Button");
-        buttonPluss.classList.add("button-addPlus");
+        buttonPluss.classList.add("button-addPlus","mt-2","active");
         buttonPluss.setAttribute("id","add-textBox");
         buttonPluss.setAttribute("type","button");
         buttonPluss.innerText = "+";
@@ -249,63 +252,111 @@ require_once "../sidebar/sidebar.php";
         let contentButton = document.createElement("div");
         contentButton.classList.add("col-md-1");
 
-        let rowPatern = document.createElement("div");
-        rowPatern.classList.add("row");
+        contentButton.appendChild(buttonPluss); //=> SE AGREGA AL CONTENEDOR
 
-        contentButton.appendChild(buttonPluss);
+        // DIV ROW{DIV(COL-MD-11) - DIV(CONTENT BUTTON)}
+        let dataPerim = document.createElement("div");
+        dataPerim.classList.add("row");
 
-        let row = document.createElement("div");
-        row.classList.add("row");
-        
+
+        dataPerim.appendChild(divPatern);
+        dataPerim.appendChild(contentButton);
+
+        //CONTENEDOR (LLAVE)
         let containerKey = document.createElement("div");
         containerKey.classList.add("col-md-6","mt-2");
-      
-        let containerValue = document.createElement("div");
-        containerValue.classList.add("col-md-6","mt-2");
         
         //CAJA DE TEXTO PARA LA CLAVE NUEVA EN EL INPUT
         let newInputKey = document.createElement("input");
         newInputKey.classList.add("form-control","perim-key"); 
-            
+
+        containerKey.appendChild(newInputKey);  //=> SE AGREGA EL INPUT AL CONTENEDOR
+
+        //CONTENDEDOR (VALOR)
+        let containerValue = document.createElement("div");
+        containerValue.classList.add("col-md-6","mt-2");        
+        
         //CAJA DE TEXTO PARA EL NUEVO VALOR EN EL INPUT
         let newInputValue = document.createElement("input");
         newInputValue.classList.add("form-control","perim-value");
-            
-        containerKey.appendChild(newInputKey);
-        containerValue.appendChild(newInputValue);
-        
 
-        //POR CORREJIR
+        containerValue.appendChild(newInputValue);  //=> SE AGREGA EL INPUT AL CONTENEDOR
+
+        //ROW (CONTIENE A LOS CONTENEDORES DE LLAVES Y VALORES)
+        let row = document.createElement("div");
+        row.classList.add("row");
+
         row.appendChild(containerKey);
         row.appendChild(containerValue);
 
-        dataPerim.appendChild(row);
+        //CONTENEDOR PADRE
+        let divPatern = document.createElement("div");
+        divPatern.classList.add("col-md-11");                   
+     
+        divPatern.appendChild(row); //SE AGREAGA EL ROW DE CONTENEDORES AL ULTIMO DIV
 
-        rowPatern.appendChild(dataPerim);
-        rowPatern.appendChild(contentButton);
-        
+        Patern.appendChild(dataPerim); //SE AGREGA AL CONTENEDOR PADRE (DEFINIDO AL INICIO)
 
     }
 
-    $("#add-textBox").addEventListener("click",()=>{
+    /**
+     * FUNCIOÓN QUE REEMPLAZA AL BOTON "+" POR "-"
+     */
+    function replaceButton(event){
 
-        let perimData = false;
-        
-        //ITERACIÓN POR CADA INPUT (CLAVE)
-        let perimDataKey = document.querySelectorAll(".form-control.perim-key");
-        let dataKey = Array.from(perimDataKey);
-        console.log(dataKey.length);
-        let returnKey = checkValues(dataKey,".form-control.perim-key"); 
+        if(event.target.classList.contains("button-addPlus")){
+            event.target.classList.remove("button-addPlus");
 
-        //ITERACIÓN POR CADA INPUT (CLAVE)
-        let perimDataValue = document.querySelectorAll(".form-control.perim-value");
-        let dataValue = Array.from(perimDataValue);
-        let returnValue = checkValues(dataValue);
-
-        if(returnKey && returnValue){
-            renderInputs();
-            
+            event.target.classList.add("button-less");
+            event.target.innerText = "-";
         }
+    }
+
+    /**
+     * FUNCION PARA ELIMINAR INPUTS
+     */
+    function dropInputs(event){
+
+        let row = event.target.closest(".row");
+
+        row.remove();
+    }
+
+    document.addEventListener("click",(e)=>{
+
+        console.log(sweetAlert);
+
+        if(e.target.classList.contains("button-addPlus")){
+
+            let perimData = false;
+            
+            //ITERACIÓN POR CADA INPUT (CLAVE)
+            let perimDataKey = document.querySelectorAll(".form-control.perim-key");
+            let dataKey = Array.from(perimDataKey);
+            console.log(dataKey.length);
+            let returnKey = checkValues(dataKey); 
+    
+            //ITERACIÓN POR CADA INPUT (CLAVE)
+            let perimDataValue = document.querySelectorAll(".form-control.perim-value");
+            let dataValue = Array.from(perimDataValue);
+            let returnValue = checkValues(dataValue);
+    
+            if(returnKey && returnValue){
+                renderInputs();
+                console.log(e);
+                replaceButton(e);
+            }
+        
+        }else if(e.target.classList.contains("button-less")){
+
+            let ask = "¿Seguro de borrar los atributos?";
+            let alert = "No se podrán recuperar una vez ejecutado";
+
+            sweetAlert.sweetConfirm(ask,alert,()=>{
+                dropInputs(e);
+            });
+        }
+
     });
 
     // FUNCIÓN DE BOOTSTRAP PARA LAVALIDACIÓN
