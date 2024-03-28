@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 24-03-2024 a las 11:11:06
+-- Tiempo de generación: 28-03-2024 a las 10:07:19
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -243,13 +243,14 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_inactve_clients` (IN `_idclient
 	END IF;
 END$$
 
-CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_list_addresses` ()   BEGIN
+CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_list_addresses` (IN `_iddistrito` INT)   BEGIN
 	SELECT
 		direcc.iddireccion,
         emp.ruc,
 		emp.razon_social,
         emp.partida_elect,
         direcc.referencia,
+        direcc.direccion,
         dist.distrito,
         prov.provincia,
         dept.departamento
@@ -257,7 +258,8 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_list_addresses` ()   BEGIN
         INNER JOIN empresas AS emp ON emp.idempresa = direcc.idempresa
         INNER JOIN distritos AS dist ON dist.iddistrito = direcc.iddistrito
         INNER JOIN provincias AS prov ON prov.idprovincia = dist.idprovincia
-        INNER JOIN departamentos AS dept ON dept.iddepartamento = prov.iddepartamento;
+        INNER JOIN departamentos AS dept ON dept.iddepartamento = prov.iddepartamento
+        WHERE direcc.iddistrito = _iddistrito;
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_list_addresses_ruc` (IN `_ruc` VARCHAR(11))   BEGIN
@@ -274,6 +276,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `spu_list_addresses_ruc` (IN `_ruc` 
 		emp.razon_social,
         emp.partida_elect,
         direcc.referencia,
+        direcc.direccion,
         dist.distrito,
         prov.provincia,
         dept.departamento
@@ -713,44 +716,44 @@ CREATE TABLE `activos` (
   `latitud` varchar(20) DEFAULT NULL,
   `longitud` varchar(20) DEFAULT NULL,
   `perimetro` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`perimetro`)),
-  `det_casa` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`det_casa`)),
   `precio_venta` decimal(8,2) NOT NULL,
   `create_at` date NOT NULL DEFAULT curdate(),
   `update_at` date DEFAULT NULL,
   `inactive_at` date DEFAULT NULL,
-  `idusuario` int(11) NOT NULL
+  `idusuario` int(11) NOT NULL,
+  `det_casa` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '{"clave": "", "valor": ""}' CHECK (json_valid(`det_casa`))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `activos`
 --
 
-INSERT INTO `activos` (`idactivo`, `idproyecto`, `tipo_activo`, `imagen`, `estado`, `codigo`, `sublote`, `direccion`, `moneda_venta`, `area_terreno`, `zcomunes_porcent`, `partida_elect`, `latitud`, `longitud`, `perimetro`, `det_casa`, `precio_venta`, `create_at`, `update_at`, `inactive_at`, `idusuario`) VALUES
-(1, 1, 'casa', NULL, 'SIN VENDER', 'AC00002', 2, 'Urbanización Beta', 'USD', 200.00, NULL, 'Partida 002', NULL, NULL, NULL, NULL, 150000.00, '2024-03-23', NULL, NULL, 1),
-(2, 2, 'casa', NULL, 'SIN VENDER', 'AC00004', 2, 'Urbanización Delta', 'USD', 220.00, NULL, 'Partida 004', NULL, NULL, NULL, NULL, 180000.00, '2024-03-23', NULL, NULL, 1),
-(3, 1, 'casa', NULL, 'SIN VENDER', 'AC00006', 4, 'Urbanización Zeta', 'USD', 180.00, NULL, 'Partida 006', NULL, NULL, NULL, NULL, 120000.00, '2024-03-23', NULL, NULL, 2),
-(4, 3, 'casa', NULL, 'SIN VENDER', 'AC00008', 3, 'Urbanización Theta', 'USD', 250.00, NULL, 'Partida 008', NULL, NULL, NULL, NULL, 200000.00, '2024-03-23', NULL, NULL, 2),
-(5, 2, 'casa', NULL, 'SIN VENDER', 'AC00010', 4, 'Urbanización Kappa', 'USD', 230.00, NULL, 'Partida 010', NULL, NULL, NULL, NULL, 190000.00, '2024-03-23', NULL, NULL, 2),
-(6, 3, 'casa', NULL, 'SIN VENDER', 'AC00012', 6, 'Urbanización Mu', 'USD', 210.00, NULL, 'Partida 012', NULL, NULL, NULL, NULL, 160000.00, '2024-03-23', NULL, NULL, 2),
-(7, 4, 'casa', NULL, 'SIN VENDER', 'AC00014', 2, 'Urbanización Xi', 'USD', 240.00, NULL, 'Partida 014', NULL, NULL, NULL, NULL, 175000.00, '2024-03-23', NULL, NULL, 2),
-(8, 4, 'casa', NULL, 'SIN VENDER', 'AC00016', 4, 'Urbanización Pi', 'USD', 260.00, NULL, 'Partida 016', NULL, NULL, NULL, NULL, 220000.00, '2024-03-23', NULL, NULL, 3),
-(9, 1, 'casa', NULL, 'SIN VENDER', 'AC00018', 8, 'Urbanización Sigma', 'USD', 280.00, NULL, 'Partida 018', NULL, NULL, NULL, NULL, 200000.00, '2024-03-23', NULL, NULL, 3),
-(10, 2, 'casa', NULL, 'SIN VENDER', 'AC00020', 10, 'Urbanización Upsilon', 'USD', 300.00, NULL, 'Partida 020', NULL, NULL, NULL, NULL, 210000.00, '2024-03-23', NULL, NULL, 3),
-(11, 3, 'casa', NULL, 'SIN VENDER', 'AC00022', 12, 'Urbanización Chi', 'USD', 320.00, NULL, 'Partida 022', NULL, NULL, NULL, NULL, 180000.00, '2024-03-23', NULL, NULL, 2),
-(12, 4, 'casa', NULL, 'SIN VENDER', 'AC00024', 14, 'Urbanización Omega', 'USD', 350.00, NULL, 'Partida 024', NULL, NULL, NULL, NULL, 190000.00, '2024-03-23', NULL, NULL, 2),
-(27, 1, 'lote', NULL, 'SIN VENDER', 'AC00001', 1, 'Urbanización Alpha', 'USD', 300.00, NULL, 'Partida 001', NULL, NULL, NULL, NULL, 80000.00, '2024-03-23', NULL, NULL, 1),
-(28, 2, 'lote', NULL, 'VENDIDO', 'AC00003', 1, 'Urbanización Gamma', 'USD', 250.00, NULL, 'Partida 003', NULL, NULL, NULL, NULL, 100000.00, '2024-03-23', '2024-03-23', NULL, 1),
-(29, 1, 'lote', NULL, 'SIN VENDER', 'AC00005', 3, 'Urbanización Epsilon', 'USD', 350.00, NULL, 'Partida 005', NULL, NULL, NULL, NULL, 90000.00, '2024-03-23', NULL, NULL, 1),
-(30, 3, 'lote', NULL, 'SIN VENDER', 'AC00007', 2, 'Urbanización Eta', 'USD', 400.00, NULL, 'Partida 007', NULL, NULL, NULL, NULL, 120000.00, '2024-03-23', NULL, NULL, 3),
-(31, 2, 'lote', NULL, 'SIN VENDER', 'AC00009', 3, 'Urbanización Iota', 'USD', 280.00, NULL, 'Partida 009', NULL, NULL, NULL, NULL, 110000.00, '2024-03-23', NULL, NULL, 2),
-(32, 3, 'lote', NULL, 'SIN VENDER', 'AC00011', 5, 'Urbanización Lambda', 'USD', 320.00, NULL, 'Partida 011', NULL, NULL, NULL, NULL, 95000.00, '2024-03-23', NULL, NULL, 2),
-(33, 4, 'lote', NULL, 'SIN VENDER', 'AC00013', 1, 'Urbanización Nu', 'USD', 300.00, NULL, 'Partida 013', NULL, NULL, NULL, NULL, 85000.00, '2024-03-23', NULL, NULL, 2),
-(34, 4, 'lote', NULL, 'SIN VENDER', 'AC00015', 3, 'Urbanización Omicron', 'USD', 380.00, NULL, 'Partida 015', NULL, NULL, NULL, NULL, 110000.00, '2024-03-23', NULL, NULL, 1),
-(35, 1, 'lote', NULL, 'SIN VENDER', 'AC00017', 7, 'Urbanización Rho', 'USD', 420.00, NULL, 'Partida 017', NULL, NULL, NULL, NULL, 105000.00, '2024-03-23', NULL, NULL, 3),
-(36, 2, 'lote', NULL, 'SIN VENDER', 'AC00019', 9, 'Urbanización Tau', 'USD', 450.00, NULL, 'Partida 019', NULL, NULL, NULL, NULL, 115000.00, '2024-03-23', NULL, NULL, 3),
-(37, 3, 'lote', NULL, 'SIN VENDER', 'AC00021', 11, 'Urbanización Phi', 'USD', 480.00, NULL, 'Partida 021', NULL, NULL, NULL, NULL, 100000.00, '2024-03-23', NULL, NULL, 2),
-(38, 4, 'lote', NULL, 'SIN VENDER', 'AC00023', 13, 'Urbanización Psi', 'USD', 500.00, NULL, 'Partida 023', NULL, NULL, NULL, NULL, 120000.00, '2024-03-23', NULL, NULL, 2),
-(39, 1, 'lote', NULL, 'SIN VENDER', 'AC00025', 15, 'Urbanización Beta', 'USD', 300.00, NULL, 'Partida 025', NULL, NULL, NULL, NULL, 90000.00, '2024-03-23', NULL, NULL, 2);
+INSERT INTO `activos` (`idactivo`, `idproyecto`, `tipo_activo`, `imagen`, `estado`, `codigo`, `sublote`, `direccion`, `moneda_venta`, `area_terreno`, `zcomunes_porcent`, `partida_elect`, `latitud`, `longitud`, `perimetro`, `precio_venta`, `create_at`, `update_at`, `inactive_at`, `idusuario`, `det_casa`) VALUES
+(1, 1, 'casa', NULL, 'SIN VENDER', 'AC00002', 2, 'Urbanización Beta', 'USD', 200.00, NULL, 'Partida 002', NULL, NULL, NULL, 150000.00, '2024-03-23', NULL, NULL, 1, '{\"clave\": \"\", \"valor\": \"\"}'),
+(2, 2, 'casa', NULL, 'SIN VENDER', 'AC00004', 2, 'Urbanización Delta', 'USD', 220.00, NULL, 'Partida 004', NULL, NULL, NULL, 180000.00, '2024-03-23', NULL, NULL, 1, '{\"clave\": \"\", \"valor\": \"\"}'),
+(3, 1, 'casa', NULL, 'SIN VENDER', 'AC00006', 4, 'Urbanización Zeta', 'USD', 180.00, NULL, 'Partida 006', NULL, NULL, NULL, 120000.00, '2024-03-23', NULL, NULL, 2, '{\"clave\": \"\", \"valor\": \"\"}'),
+(4, 3, 'casa', NULL, 'SIN VENDER', 'AC00008', 3, 'Urbanización Theta', 'USD', 250.00, NULL, 'Partida 008', NULL, NULL, NULL, 200000.00, '2024-03-23', NULL, NULL, 2, '{\"clave\": \"\", \"valor\": \"\"}'),
+(5, 2, 'casa', NULL, 'SIN VENDER', 'AC00010', 4, 'Urbanización Kappa', 'USD', 230.00, NULL, 'Partida 010', NULL, NULL, NULL, 190000.00, '2024-03-23', NULL, NULL, 2, '{\"clave\": \"\", \"valor\": \"\"}'),
+(6, 3, 'casa', NULL, 'SIN VENDER', 'AC00012', 6, 'Urbanización Mu', 'USD', 210.00, NULL, 'Partida 012', NULL, NULL, NULL, 160000.00, '2024-03-23', NULL, NULL, 2, '{\"clave\": \"\", \"valor\": \"\"}'),
+(7, 4, 'casa', NULL, 'SIN VENDER', 'AC00014', 2, 'Urbanización Xi', 'USD', 240.00, NULL, 'Partida 014', NULL, NULL, NULL, 175000.00, '2024-03-23', NULL, NULL, 2, '{\"clave\": \"\", \"valor\": \"\"}'),
+(8, 4, 'casa', NULL, 'SIN VENDER', 'AC00016', 4, 'Urbanización Pi', 'USD', 260.00, NULL, 'Partida 016', NULL, NULL, NULL, 220000.00, '2024-03-23', NULL, NULL, 3, '{\"clave\": \"\", \"valor\": \"\"}'),
+(9, 1, 'casa', NULL, 'SIN VENDER', 'AC00018', 8, 'Urbanización Sigma', 'USD', 280.00, NULL, 'Partida 018', NULL, NULL, NULL, 200000.00, '2024-03-23', NULL, NULL, 3, '{\"clave\": \"\", \"valor\": \"\"}'),
+(10, 2, 'casa', NULL, 'SIN VENDER', 'AC00020', 10, 'Urbanización Upsilon', 'USD', 300.00, NULL, 'Partida 020', NULL, NULL, NULL, 210000.00, '2024-03-23', NULL, NULL, 3, '{\"clave\": \"\", \"valor\": \"\"}'),
+(11, 3, 'casa', NULL, 'SIN VENDER', 'AC00022', 12, 'Urbanización Chi', 'USD', 320.00, NULL, 'Partida 022', NULL, NULL, NULL, 180000.00, '2024-03-23', NULL, NULL, 2, '{\"clave\": \"\", \"valor\": \"\"}'),
+(12, 4, 'casa', NULL, 'SIN VENDER', 'AC00024', 14, 'Urbanización Omega', 'USD', 350.00, NULL, 'Partida 024', NULL, NULL, NULL, 190000.00, '2024-03-23', NULL, NULL, 2, '{\"clave\": \"\", \"valor\": \"\"}'),
+(27, 1, 'lote', NULL, 'SIN VENDER', 'AC00001', 1, 'Urbanización Alpha', 'USD', 300.00, NULL, 'Partida 001', NULL, NULL, NULL, 80000.00, '2024-03-23', NULL, NULL, 1, '{\"clave\": \"\", \"valor\": \"\"}'),
+(28, 2, 'lote', NULL, 'VENDIDO', 'AC00003', 1, 'Urbanización Gamma', 'USD', 250.00, NULL, 'Partida 003', NULL, NULL, NULL, 100000.00, '2024-03-23', '2024-03-23', NULL, 1, '{\"clave\": \"\", \"valor\": \"\"}'),
+(29, 1, 'lote', NULL, 'SIN VENDER', 'AC00005', 3, 'Urbanización Epsilon', 'USD', 350.00, NULL, 'Partida 005', NULL, NULL, NULL, 90000.00, '2024-03-23', NULL, NULL, 1, '{\"clave\": \"\", \"valor\": \"\"}'),
+(30, 3, 'lote', NULL, 'SIN VENDER', 'AC00007', 2, 'Urbanización Eta', 'USD', 400.00, NULL, 'Partida 007', NULL, NULL, NULL, 120000.00, '2024-03-23', NULL, NULL, 3, '{\"clave\": \"\", \"valor\": \"\"}'),
+(31, 2, 'lote', NULL, 'SIN VENDER', 'AC00009', 3, 'Urbanización Iota', 'USD', 280.00, NULL, 'Partida 009', NULL, NULL, NULL, 110000.00, '2024-03-23', NULL, NULL, 2, '{\"clave\": \"\", \"valor\": \"\"}'),
+(32, 3, 'lote', NULL, 'SIN VENDER', 'AC00011', 5, 'Urbanización Lambda', 'USD', 320.00, NULL, 'Partida 011', NULL, NULL, NULL, 95000.00, '2024-03-23', NULL, NULL, 2, '{\"clave\": \"\", \"valor\": \"\"}'),
+(33, 4, 'lote', NULL, 'SIN VENDER', 'AC00013', 1, 'Urbanización Nu', 'USD', 300.00, NULL, 'Partida 013', NULL, NULL, NULL, 85000.00, '2024-03-23', NULL, NULL, 2, '{\"clave\": \"\", \"valor\": \"\"}'),
+(34, 4, 'lote', NULL, 'SIN VENDER', 'AC00015', 3, 'Urbanización Omicron', 'USD', 380.00, NULL, 'Partida 015', NULL, NULL, NULL, 110000.00, '2024-03-23', NULL, NULL, 1, '{\"clave\": \"\", \"valor\": \"\"}'),
+(35, 1, 'lote', NULL, 'SIN VENDER', 'AC00017', 7, 'Urbanización Rho', 'USD', 420.00, NULL, 'Partida 017', NULL, NULL, NULL, 105000.00, '2024-03-23', NULL, NULL, 3, '{\"clave\": \"\", \"valor\": \"\"}'),
+(36, 2, 'lote', NULL, 'SIN VENDER', 'AC00019', 9, 'Urbanización Tau', 'USD', 450.00, NULL, 'Partida 019', NULL, NULL, NULL, 115000.00, '2024-03-23', NULL, NULL, 3, '{\"clave\": \"\", \"valor\": \"\"}'),
+(37, 3, 'lote', NULL, 'SIN VENDER', 'AC00021', 11, 'Urbanización Phi', 'USD', 480.00, NULL, 'Partida 021', NULL, NULL, NULL, 100000.00, '2024-03-23', NULL, NULL, 2, '{\"clave\": \"\", \"valor\": \"\"}'),
+(38, 4, 'lote', NULL, 'SIN VENDER', 'AC00023', 13, 'Urbanización Psi', 'USD', 500.00, NULL, 'Partida 023', NULL, NULL, NULL, 120000.00, '2024-03-23', NULL, NULL, 2, '{\"clave\": \"\", \"valor\": \"\"}'),
+(39, 1, 'lote', NULL, 'SIN VENDER', 'AC00025', 15, 'Urbanización Beta', 'USD', 300.00, NULL, 'Partida 025', NULL, NULL, NULL, 90000.00, '2024-03-23', NULL, NULL, 2, '{\"clave\": \"\", \"valor\": \"\"}');
 
 --
 -- Disparadores `activos`
@@ -885,25 +888,25 @@ CREATE TABLE `contratos` (
   `idrepresentante_secundario` int(11) DEFAULT NULL,
   `tipo_cambio` decimal(4,3) NOT NULL,
   `estado` varchar(10) NOT NULL,
-  `detalles` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`detalles`)),
   `fecha_contrato` date NOT NULL,
   `create_at` date NOT NULL DEFAULT curdate(),
   `update_at` date DEFAULT NULL,
   `inactive_at` date DEFAULT NULL,
-  `idusuario` int(11) NOT NULL
+  `idusuario` int(11) NOT NULL,
+  `detalles` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL DEFAULT '{"clave": "", "valor":  ""}' CHECK (json_valid(`detalles`))
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `contratos`
 --
 
-INSERT INTO `contratos` (`idcontrato`, `idcliente`, `idconyugue`, `idrepresentante_primario`, `idrepresentante_secundario`, `tipo_cambio`, `estado`, `detalles`, `fecha_contrato`, `create_at`, `update_at`, `inactive_at`, `idusuario`) VALUES
-(6, 1, NULL, 1, NULL, 3.500, 'VIGENTE', NULL, '2024-03-10', '2024-03-23', NULL, NULL, 1),
-(7, 2, NULL, 2, NULL, 3.500, 'VIGENTE', NULL, '2024-03-11', '2024-03-23', NULL, NULL, 2),
-(8, 3, NULL, 2, NULL, 3.500, 'VIGENTE', NULL, '2024-03-12', '2024-03-23', NULL, NULL, 3),
-(9, 1, NULL, 1, NULL, 3.500, 'VIGENTE', NULL, '2024-03-13', '2024-03-23', NULL, NULL, 4),
-(10, 2, NULL, 1, NULL, 3.500, 'VIGENTE', NULL, '2024-03-14', '2024-03-23', NULL, NULL, 5),
-(11, 1, NULL, 2, NULL, 3.800, 'Activo', '{\"detalle\": \"Información adicional\", \"detalles construccion\":\"varios\"}', '2024-03-17', '2024-03-23', NULL, NULL, 3);
+INSERT INTO `contratos` (`idcontrato`, `idcliente`, `idconyugue`, `idrepresentante_primario`, `idrepresentante_secundario`, `tipo_cambio`, `estado`, `fecha_contrato`, `create_at`, `update_at`, `inactive_at`, `idusuario`, `detalles`) VALUES
+(6, 1, NULL, 1, NULL, 3.500, 'VIGENTE', '2024-03-10', '2024-03-23', NULL, NULL, 1, '{\"clave\": \"\", \"valor\":  \"\"}'),
+(7, 2, NULL, 2, NULL, 3.500, 'VIGENTE', '2024-03-11', '2024-03-23', NULL, NULL, 2, '{\"clave\": \"\", \"valor\":  \"\"}'),
+(8, 3, NULL, 2, NULL, 3.500, 'VIGENTE', '2024-03-12', '2024-03-23', NULL, NULL, 3, '{\"clave\": \"\", \"valor\":  \"\"}'),
+(9, 1, NULL, 1, NULL, 3.500, 'VIGENTE', '2024-03-13', '2024-03-23', NULL, NULL, 4, '{\"clave\": \"\", \"valor\":  \"\"}'),
+(10, 2, NULL, 1, NULL, 3.500, 'VIGENTE', '2024-03-14', '2024-03-23', NULL, NULL, 5, '{\"clave\": \"\", \"valor\":  \"\"}'),
+(11, 1, NULL, 2, NULL, 3.800, 'Activo', '2024-03-17', '2024-03-23', NULL, NULL, 3, '{\"clave\": \"\", \"valor\":  \"\"}');
 
 -- --------------------------------------------------------
 
