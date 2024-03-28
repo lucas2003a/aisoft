@@ -18,7 +18,7 @@ require_once "../sidebar/sidebar.php";
                     <hr>
 
                     <div>
-                        <form class="row needs-validation" id="fomr-add-project" novalidate>
+                        <form class="row needs-validation" id="form-add-project" novalidate>
                             <div class="row">
                                 <div class="col-md-6">
 
@@ -28,7 +28,7 @@ require_once "../sidebar/sidebar.php";
                                     <div class="mt-4">
                                       <label for="iddepartamento" class="form-label">Departamento</label>
                                         <select class="form-select custom-select-scroll" id="iddepartamento" required>
-                                            <option selected disabled value="0">Departamento</option>
+                                            <option selected disabled value="">Departamento</option>
                                         </select>
                                         <div class="invalid-feedback">
                                             Necesitas escojer un departamento.
@@ -42,7 +42,7 @@ require_once "../sidebar/sidebar.php";
                                     <div class="mt-4">
                                         <label for="idprovincia" class="form-label">Provincia</label>
                                         <select class="form-select custom-select-scroll" id="idprovincia" required>
-                                            <option selected disabled value="0">Provincia</option>
+                                            <option selected disabled value="">Provincia</option>
                                         </select>
                                         <div class="invalid-feedback">
                                             Necesitas escojer una provincia.
@@ -56,7 +56,7 @@ require_once "../sidebar/sidebar.php";
                                     <div class="mt-4">
                                         <label for="iddistrito" class="form-label">Distrito</label>
                                         <select class="form-select custom-select-scroll" id="iddistrito" required>
-                                            <option selected disabled value="0">Distrito</option>
+                                            <option selected disabled value="">Distrito</option>
                                         </select>
                                         <div class="invalid-feedback">
                                             Necesitas escojer un distrito.
@@ -70,7 +70,7 @@ require_once "../sidebar/sidebar.php";
                                     <div class="mt-4">
                                         <label for="iddireccion" class="form-label">Sede</label>
                                         <select class="form-select custom-select-scroll" id="iddireccion" required>
-                                            <option selected disabled value="0">Sede</option>                                            
+                                            <option selected disabled value="">Sede</option>                                            
                                         </select>
                                         <div class="invalid-feedback">
                                             Necesitas escojer una sede.
@@ -249,6 +249,7 @@ require_once "../sidebar/sidebar.php";
     let Patern = $("#patern");
     let viewImage = $("#file-input");
     let setData = false;
+    let idproyecto;
 
     /**
      * Función que verifica los campos vacíos
@@ -260,7 +261,6 @@ require_once "../sidebar/sidebar.php";
         array.forEach(element =>{
 
             if(element.value != ""){
-                console.log(element);
                 hasValue = true;
 
             }else{
@@ -296,10 +296,6 @@ require_once "../sidebar/sidebar.php";
         let dataPerim = document.createElement("div");
         dataPerim.classList.add("row");
 
-
-        dataPerim.appendChild(divPatern);
-        dataPerim.appendChild(contentButton);
-
         //CONTENEDOR (LLAVE)
         let containerKey = document.createElement("div");
         containerKey.classList.add("col-md-6","mt-2");
@@ -332,6 +328,9 @@ require_once "../sidebar/sidebar.php";
         divPatern.classList.add("col-md-11");                   
      
         divPatern.appendChild(row); //SE AGREAGA EL ROW DE CONTENEDORES AL ULTIMO DIV
+
+        dataPerim.appendChild(divPatern);
+        dataPerim.appendChild(contentButton);
 
         Patern.appendChild(dataPerim); //SE AGREGA AL CONTENEDOR PADRE (DEFINIDO AL INICIO)
 
@@ -461,7 +460,6 @@ require_once "../sidebar/sidebar.php";
             .then(
                 addresses =>{
                     addresses.forEach(address=>{
-                        console.log(address)
                         let newOption = document.createElement("option");
                         newOption.value = address.iddireccion;
                         newOption.innerText = address.direccion;
@@ -482,7 +480,7 @@ require_once "../sidebar/sidebar.php";
         $(id).innerHTML = "";
 
         const defaultOption = document.createElement("option");
-        defaultOption.value = 0; 
+        defaultOption.value = ""; 
         defaultOption.innerText = text;
         
         $(id).appendChild(defaultOption);
@@ -490,11 +488,36 @@ require_once "../sidebar/sidebar.php";
         callback();
     }
 
+    /**
+     *VALIDA EL FOMRULARIO (FUNCION) 
+     */
+    function valideteForm() {
+        const forms = document.querySelectorAll('.needs-validation');
+
+        forms.forEach(form => {
+            form.addEventListener('submit', event => {
+                form.checkValidity = false;
+
+                if(!form.checkValidity){
+
+                    event.preventDefault();      
+                    event.stopPropagation();    
+                    form.classList.remove('was-validated'); 
+                }
+
+            }, false);
+        });
+    }
+
+    /**
+     * FUNCIÓN PARA ENVIAR DATOS (REGISTRAR O ACTUALIZAR)
+     */
     function sendData(){
 
+        let perim = data.getJson(".form-control.perim-key",".form-control.perim-value")
         let params = new FormData()
-        let idproyecto = 0;
-        if(setData){
+        
+        if(idproyecto){
             params.append("action","setProject");
             params.append("idproyecto",idproyecto);
         }else{
@@ -502,23 +525,31 @@ require_once "../sidebar/sidebar.php";
         }
 
         params.append("imagen",$("#in-image").files[0]);
-        params.append("iddireccion",$("#iddireccion"));
-        params.append("codigo",$("#codigo"));
-        params.append("denominacion",$("#denominacion"));
-        params.append("latitud",$("#latitud"));
-        params.append("longitud",$("#logitud"));
-        /* params.append("perimetro",$("#")); */
-        params.append("iddistrito",$("#iddistrito"));
-        params.append("direccion",$("#direccion"));
+        params.append("iddireccion",$("#iddireccion").value);
+        params.append("codigo",$("#codigo").value);
+        params.append("denominacion",$("#denominacion").value);
+        params.append("latitud",$("#latitud").value);
+        params.append("longitud",$("#longitud").value);
+        params.append("perimetro",perim);
+        params.append("iddistrito",$("#iddistrito").value);
+        params.append("direccion",$("#direccion").value);
 
         data.sendData(params)
             .then(result =>{
                 console.log(result);
-                /* if(senData.filasAfect > 0){
-
-                } */
+                if(result.filasAfect > 0){
+                    sweetAlert.sweetConfirmAdd("El registro fué exitoso","¿Deseas volver a registrar?",
+                    ()=>{
+                        $("#form-add-project").reset();
+                    },()=>{
+                        window.location.href = "../index_project.php";
+                    })
+                }
             })
-            .catch()
+            .catch(e=>{
+                valideteForm();
+                console.error(e);
+            })
     }
 
     $("#iddistrito").addEventListener("change",()=>{
@@ -563,8 +594,6 @@ require_once "../sidebar/sidebar.php";
 
     $("#perim").addEventListener("click",(e)=>{
 
-        console.log(sweetAlert);
-
         if(e.target.classList.contains("button-addPlus")){
 
             let perimData = false;
@@ -572,7 +601,6 @@ require_once "../sidebar/sidebar.php";
             //ITERACIÓN POR CADA INPUT (CLAVE)
             let perimDataKey = document.querySelectorAll(".form-control.perim-key");
             let dataKey = Array.from(perimDataKey);
-            console.log(dataKey.length);
             let returnKey = checkValues(dataKey); 
     
             //ITERACIÓN POR CADA INPUT (CLAVE)
@@ -582,7 +610,6 @@ require_once "../sidebar/sidebar.php";
     
             if(returnKey && returnValue){
                 renderInputs();
-                console.log(e);
                 replaceButton(e);
             }
         
@@ -619,7 +646,7 @@ require_once "../sidebar/sidebar.php";
                 event.preventDefault()      //=> FRENA EL ENVÍO DEL FORMULARIO
                 event.stopPropagation()     //=> FRENA LA PROPAGACIÓN DE DATOS EN EL FORMULARIO
             }else{
-
+                event.preventDefault();
                 sendData();
             }
 

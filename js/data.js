@@ -105,7 +105,7 @@ class Data{
         })
                 .then(result=>result.json())
                 .catch(e=>{
-                    console.error(e);
+                    /* console.error(e); */
                     throw e;
                 })
     };
@@ -123,5 +123,38 @@ class Data{
                 .catch();
     }
     */
+   
+    /**
+     * FUNCION QUE RETORNA UN JSON EN BASE A DOS CLASES
+     * @param {string} keyClass 
+     * @param {string} valueClass 
+     * @returns 
+     */
+    getJson(keyClass, valueClass){
+
+        let fomrKeys = document.querySelectorAll(keyClass);
+        let formValues = document.querySelectorAll(valueClass);
+        /* let fomrKeys = document.querySelectorAll(".form-control.perim-key");
+        let formValues = document.querySelectorAll(".form-control.perim-value"); */
+
+        let dataJson ={
+            "clave": [],
+            "valor": []
+        };
+
+        //INDEX SE CREA DE FORMA AUTOMATICA ES EL INDICE DE LA ITERACIÓN
+        Array.from(fomrKeys).forEach((keyInput, index)=>{
+            let key = keyInput.value.trim();
+
+            let indexValue = formValues[index]; //=>ASIGANMOS EL "VALOR" CORRESPONDIENTE AL INDICE DE LA ITERACION(GUARDA LA RELACIÓN KEY => VALUE)
+
+            let value = indexValue.value.trim();
+
+            dataJson.clave[index] = key;
+            dataJson.valor[index] = value;
+        });
+
+        return JSON.stringify(dataJson);
+    }
 
 }

@@ -160,6 +160,8 @@ BEGIN
 	INSERT INTO proyectos(imagen, iddireccion, codigo, denominacion, latitud, longitud, perimetro, iddistrito, direccion, idusuario)
 			VALUES
 				(NULLIF(_imagen,""), _iddireccion, _codigo, _denominacion, NULLIF(_latitud, ""), NULLIF(_longitud, ""), NULLIF(_perimetro, ""), _iddistrito, _direccion, _idusuario);
+                
+	SELECT ROW_COUNT() AS filasAfect; -- FILAS AFECTADAS
 END $$
 DELIMITER ;
 

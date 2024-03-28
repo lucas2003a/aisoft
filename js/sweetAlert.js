@@ -40,13 +40,29 @@ class Alert{
         });
     };
 
-    alertSucces(mss,text,timer){
+    /**
+     * ALERTA DE EXITO QUE PIDE CONFIRMAR PARA REALIZAR UNA TAREA
+     * @param {string} mss 
+     * @param {string} text 
+     * @param {function} callback 
+     * @param {function} resetCallback 
+     */
+    sweetConfirmAdd(mss,text,callback,resetCallback){
         Swal.fire({
             title: mss,
             text: text,
             icon: "success",
-            showConfirmButton: false,
-            timer: timer
+            showConfirmButton: true,
+            confirmButton: "Si",
+            cancelButton: "No",
+            showCancelButton: true,
+          }).then(result=>{
+
+              if(result.isConfirmed){
+                callback()
+              }else{
+                resetCallback()
+              }
           });
     }
 }

@@ -43,10 +43,11 @@ if(isset($_POST["action"])){
         case "addProject": 
             
                 $today = date("dmYhis");
-                $nombre_img = sha1($today). ".jpg";
+                
+                $nombre_img = null;
 
                 $dataObtained = [
-                    "imagen"        =>  $_POST["imagen"],
+                    "imagen"        =>  $nombre_img,
                     "iddireccion"   =>  $_POST["iddireccion"],
                     "codigo"        =>  $_POST["codigo"],
                     "denominacion"  =>  $_POST["denominacion"],
@@ -58,12 +59,24 @@ if(isset($_POST["action"])){
                     "idusuario"     =>  1
                     /* "idusuario"     =>  $_POST["idusuario"] */
                 ];
+                
+                if(isset($_FILES["imagen"]) && $_FILES["imagen"]["size"] > 0){
+                    
+                    $nombre_img = sha1($today). ".jpg";
+                    
+                    $rutaImg =  "../logos_proyectos/" . $nombre_img;
 
-                if(move_uploaded_file($_FILES["imagen"]["temp_name"], "../logos_proyectos/" . $nombre_img)){
+                    if(move_uploaded_file($_FILES["imagen"]["tmp_name"],$rutaImg)){
+
+                        $dataObtained["imagen"] = $nombre_img;
+    
+                    }
+
+                }else{
                     
                     $dataObtained["imagen"] = $nombre_img;
-
                 }
+                
 
                 echo json_encode($project->addProject($dataObtained));
             break;

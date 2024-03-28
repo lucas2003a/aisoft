@@ -122,6 +122,7 @@ class Project extends Conection{
             );
             
             return $query->fetch(PDO::FETCH_ASSOC);
+            
         }catch(Exception $e){
             die($e->getMessage());
         }
