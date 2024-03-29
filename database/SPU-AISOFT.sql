@@ -196,6 +196,8 @@ BEGIN
             update_at	= CURDATE()
 		WHERE 
 			idproyecto = _idproyecto;
+            
+SELECT ROW_COUNT() AS filasAfect; -- FILAS AFECTADAS
 END $$
 DELIMITER ;
 
