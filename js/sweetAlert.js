@@ -1,5 +1,10 @@
 class Alert{
 
+    /**
+     * MUESTRA MENSAJE DE ERROR
+     * @param {string} text 
+     * @param {string} footer 
+     */
     sweetError(text, footer){
         
         Swal.fire({
@@ -12,6 +17,46 @@ class Alert{
           });
     };
 
+    /**
+     * MUESTRA MENSAJE DE "SUCCESS"
+     * @param {string} text 
+     * @param {string} footer 
+     */
+    sweetSuccess(text, footer){
+        
+        Swal.fire({
+            icon: "success",
+            title: "Éxito",
+            text: text,
+            footer: footer,
+            showConfirmButton: false,
+            timer:  1500
+          });
+    };
+    
+    /**
+     * MUESTRA UN ALERTA TIPO WARNING
+     * @param {string} text 
+     * @param {string} footer 
+     */
+    sweetWarning(text, footer){
+        
+      Swal.fire({
+          icon: "info",
+          title: "Oops...",
+          text: text,
+          footer: footer,
+          showConfirmButton: false,
+          timer:  3500
+        });
+  };
+
+    /**
+     * MUESTTRA MENSAJE DE ÉXITO CON PREGUNTA
+     * @param {string} ask 
+     * @param {string} alert 
+     * @param {function} callback 
+     */
     sweetConfirm(ask, alert, callback){
 
         Swal.fire({
@@ -19,8 +64,8 @@ class Alert{
             text: alert,
             icon: "warning",
             showCancelButton: true,
-            confirmButtonColor: "#FF284A",
-            cancelButtonColor: "#003473",
+            confirmButtonColor: "#003473",
+            cancelButtonColor: "#FF284A",
             confirmButtonText: "Si, seguro!",
             cancelButtonText: "No"
           }).then((result) => {
@@ -53,9 +98,11 @@ class Alert{
             text: text,
             icon: "success",
             showConfirmButton: true,
-            confirmButton: "Si",
-            cancelButton: "No",
+            confirmButtonText: "Si",
+            cancelButtonText: "No",
             showCancelButton: true,
+            confirmButtonColor: "#FF284A",
+            cancelButtonColor: "#003473",
           }).then(result=>{
 
               if(result.isConfirmed){

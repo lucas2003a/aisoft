@@ -44,7 +44,7 @@ class Data{
                     console.error(e);
                     throw e;
                 });
-    }
+    };
 
     /**
      * getDistrictis obtiene toda la data de los distritos
@@ -97,9 +97,9 @@ class Data{
      * sendData envia los datos (REGISTRO O ACTUALIZACIÓN)
      * @param {object} object 
      */
-    sendData(object){
+    sendData(url, object){
 
-        return fetch(`../../Controllers/project.controller.php`,{
+        return fetch(url ,{
             method: "POST",
             body: object
         })
@@ -109,23 +109,9 @@ class Data{
                     throw e;
                 })
     };
-
-        /*
-        getProvinces(iddep){
-
-        let params = new FormData();
-
-        return fetch(`../../Controllers/  .controller.php`,{
-            method: "POST",
-            body: params
-        })
-                .then()
-                .catch();
-    }
-    */
    
     /**
-     * FUNCION QUE RETORNA UN JSON EN BASE A DOS CLASES
+     * GETSON RETORNA UN JSON EN BASE A DOS CLASES
      * @param {string} keyClass 
      * @param {string} valueClass 
      * @returns 
@@ -156,5 +142,64 @@ class Data{
 
         return JSON.stringify(dataJson);
     }
+
+
+    /**
+     * GET OBTIENE LOS DATOS DE UNA URL ESPECIFICANDO LA ACCION
+     * @param {string} url 
+     * @param {string} action 
+     * @returns 
+     */
+    getData(url,action){
+
+        let params = new FormData();
+
+        params.append("action",action);
+
+        return fetch(url,{
+            method: "POST",
+            body: params
+        })
+                .then(result => result.json())
+                .catch(e=>{
+
+                    throw e;
+                });
+
+    }
+
+    /**
+     * GEDATAOBJ OBTIENE DATOS ENVIANDOLE UNA URL Y UN OBJETO
+     * @param {string} url 
+     * @param {object} object 
+     * @returns 
+     */
+    getDataObj(url, object){
+
+        return fetch(url,{
+            method: "POST",
+            body: object
+        })
+                .then(result => result.json())
+                .catch(e=>{
+
+                    throw e;
+                });
+
+    }
+
+            /*
+        getProvinces(iddep){
+
+        let params = new FormData();
+
+        return fetch(`../../Controllers/  .controller.php`,{
+            method: "POST",
+            body: params
+        })
+                .then()
+                .catch();
+    }
+    */
 
 }

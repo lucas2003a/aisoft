@@ -18,7 +18,7 @@ require_once "../sidebar/sidebar.php";
                         <input type="text" id="in-codigo" class="input-form"  placeholder="Ingrese el código del proyecto">
                     </div>
                     <div>
-                        <a type="button" href="../proyectos/add_project.php" class="button-add"><i class="bi bi-plus-circle"></i> Agregar</a>
+                        <a type="button" href="../projects/add_project.php" class="button-add"><i class="bi bi-plus-circle"></i> Agregar</a>
                     </div>
                     
                     <div class="row" id="card-project">
@@ -44,3 +44,6 @@ require_once "../sidebar/sidebar.php";
     crossorigin="anonymous"></script>
 
     <script src="../../js/sidebar.js"></script>
+    <script src="../../js/Projects/project_index.js"></script>
+</body>
+</html>

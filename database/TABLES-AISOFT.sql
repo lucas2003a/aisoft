@@ -114,7 +114,7 @@ CREATE TABLE proyectos(
     codigo	 				VARCHAR(20) NOT NULL, -- "A-12 NOMBRE DEL PROYECTO" => VARIA
     denominacion 			VARCHAR(30) NOT NULL,
     latitud					VARCHAR(20) NULL,
-    longitud 				VARCHAR(20) NULL,
+    longitud 				VARCHAR(20) NOT NULL DEFAULT '{"clave" :[""], "valor":[""]}',
     perimetro				JSON		NULL, -- GUARDARÁ UN ARRAY CON LAS COORDENADAS QUE MARQUEN EL PERÍMETRO
     iddistrito 				INT 		NOT NULL,
     direccion 				VARCHAR(70) NOT NULL,
@@ -129,6 +129,8 @@ CREATE TABLE proyectos(
     CONSTRAINT fk_idusuario_proyects FOREIGN KEY(idusuario) REFERENCES usuarios(idusuario)
 )ENGINE = INNODB;
 
+-- ALTER TABLE proyectos DROP COLUMN perimetro; 
+-- ALTER TABLE proyectos ADD COLUMN perimetro JSON NOT NULL DEFAULT '{"clave" :[""], "valor":[""]}';
 -- MÉTRICAS => TABLA QUE TENDRA LA CANTIDAD DE LOTES VENDIDOS, NO VENDIDOS, 
 CREATE TABLE metricas(
 	idmetrica 			INT PRIMARY KEY AUTO_INCREMENT,
@@ -148,7 +150,7 @@ CREATE TABLE activos(
     idproyecto			INT  				NOT  NULL,
     tipo_activo 		VARCHAR(10) 		NOT NULL,
     imagen 				VARCHAR(100) 		NULL,
-    estado 				VARCHAR(10) 		NOT  NULL 	DEFAULT "SIN VENDER", 
+    estado 				VARCHAR(10) 		NOT NULL DEFAULT '{"calve" :[], "valor":[]}', 
     codigo				CHAR(7)				NOT NULL,
     sublote 			TINYINT 			NOT NULL,
     direccion			VARCHAR(70) 		NOT NULL,
@@ -159,7 +161,7 @@ CREATE TABLE activos(
     latitud 			VARCHAR(20) 		NULL,
     longitud 			VARCHAR(20) 		NULL,
     perimetro			JSON				NULL,
-    det_casa 			JSON 				NULL 		DEFAULT '{"clave": "", "valor": ""}',
+    det_casa 			JSON 				NULL 		DEFAULT '{"clave" :[""], "valor":[""]}',
     precio_venta 		DECIMAL(8,2)		NOT NULL,
 	create_at 			DATE 				NOT NULL	DEFAULT(CURDATE()),
     update_at			DATE 				NULL,
@@ -171,8 +173,8 @@ CREATE TABLE activos(
     CONSTRAINT fk_idusuario_lotes FOREIGN KEY(idusuario) REFERENCES usuarios(idusuario)
 )ENGINE = INNODB;
 
-
--- ALTER TABLE activos ADD COLUMN det_casa JSON NOT NULL  DEFAULT '{"clave": "", "valor": ""}';
+-- ALTER TABLE activos DROP COLUMN det_casa; 
+-- ALTER TABLE activos ADD COLUMN det_casa JSON NOT NULL DEFAULT '{"clave" :[""], "valor":[""]}';
 -- ALTER TABLE activos MODIFY COLUMN codigo CHAR(7);
 -- ALTER TABLE activos CHANGE urbanizacion direccion VARCHAR(60);
 -- ALTER TABLE activos DROP COLUMN idlote;
