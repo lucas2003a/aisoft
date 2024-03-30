@@ -903,6 +903,15 @@ BEGIN
 END $$
 DELIMITER ;
 
+DELIMITER $$
+CREATE PROCEDURE spu_list_separation_ByIdAsset(IN _idactivo INT)
+BEGIN
+	SELECT * FROM separaciones
+    WHERE idactivo = _idactivo
+    AND inactive_at IS NULL;
+END $$
+DELIMITER ;
+
 -- PLANTILLA
 DELIMITER $$
 CREATE PROCEDURE ()

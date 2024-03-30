@@ -77,4 +77,6 @@ CALL spu_resotres_contracts(3);
 SELECT * FROM activos WHERE idactivo = 11;
 UPDATE activos SET estado = "SEPARADO" WHERE idactivo <16 AND idactivo > 0 ;
 
+select * from separaciones;
+
     
