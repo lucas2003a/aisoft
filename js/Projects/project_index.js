@@ -20,11 +20,15 @@ document.addEventListener("DOMContentLoaded",()=>{
     
         let newImage = item.imagen == null ? "NoImage.jpg" : item.imagen;
 
+        let code = btoa(item.idproyecto);   //=>CODFICA EL VALOR EN BASE 64
+        let name = btoa(item.denominacion);   //=>CODFICA EL VALOR
+
         let options = item.l_total == 0 ? `
-            <li class="dropdown-item-admin"><a href='./set_project.php?id=${item.idproyecto}'><img src="../../iconos/lapiz-blue.png" style="width: 24px;"> Editar</a></li>
-            <li class="dropdown-item-admin"><a  href="./delete_project.php?id=${item.idproyecto}"><img src="../../iconos/delete.png"> Eliminar</a></li>` :
-            `<li class="dropdown-item-admin"><a href='./set_project.php?id=${item.idproyecto}'><img src="../../iconos/lapiz-blue.png" style="width: 24px;"> Editar</a></li>`;
-    
+            <li class="dropdown-item-admin"><a href='./set_project.php?id=${code}'><img src="../../iconos/lapiz-blue.png" style="width: 24px;"> Editar</a></li>
+            <li class="dropdown-item-admin"><a  href="./delete_project.php?id=${code}"><img src="../../iconos/delete.png"> Eliminar</a></li>` :
+            `<li class="dropdown-item-admin"><a href='./set_project.php?id=${code}'><img src="../../iconos/lapiz-blue.png" style="width: 24px;"> Editar</a></li>`;
+        
+
             newCard = `
                 <div class="col-md-6 col-sm-12">
                     <div class="card project">
@@ -47,7 +51,7 @@ document.addEventListener("DOMContentLoaded",()=>{
                             <p class="card-text"><i class="bi bi-flag btn-band"></i>${item.distrito}-${item.provincia}-${item.departamento}</p>
                             <p style="margin-top: 3rem; margin-bottom: 1rem;"><i class="bi bi-building-fill-slash btn-nvend"></i>${item.l_noVendidos} <i class="bi bi-building-fill-lock btn-sep"></i>${item.l_separados} 
                             <i class="bi bi-building-fill-check btn-vend"></i>${item.l_vendidos} <i class="bi bi-houses-fill btn-total"></i>${item.l_total}</p>
-                            <a href="#" class="button-verinfo" data-idpr="${item.idproyecto}"><strong>Ver más..</strong></a>
+                            <a href="../assets/index_asset.php?id=${code}&name=${name}" class="button-verinfo"><strong>Ver más..</strong></a>
                         </div>
                     </div>
                 </div>

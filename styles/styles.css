@@ -34,6 +34,17 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra */
   }
 
+.card-detail {
+    display: flex;
+    flex-direction: row;
+    max-width: 100%; /* Ancho máximo del card */
+    margin: 20px; /* Margen exterior */
+    border: 1px solid #dee2e6; /* Borde del card */
+    border-radius: 8px; /* Radio de borde */
+    overflow: hidden; /* Evita que la imagen sobresalga del card */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Sombra */
+  }
+
 .card-center {
     display: flex;
     flex-direction: column;
@@ -127,7 +138,7 @@
     border: none;
     border-radius: 10px;
     display: inline-block;
-    padding: 15px 15px;
+    padding: 10px 15px;
     margin: 0rem 0rem 1rem 2rem;
     background-color: var(--green-color); /* Hace transparente el color de fondo para mostrar la imagen */
     color: white;

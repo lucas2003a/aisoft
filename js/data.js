@@ -169,7 +169,7 @@ class Data{
     }
 
     /**
-     * GEDATAOBJ OBTIENE DATOS ENVIANDOLE UNA URL Y UN OBJETO
+     * SENDACTION OBTIENE DATOS ENVIANDOLE UNA URL Y UN OBJETO
      * @param {string} url 
      * @param {object} object 
      * @returns 

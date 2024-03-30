@@ -5,9 +5,11 @@ const $ = id => document.querySelector(id);
 //OBTIENE EL ID DEL URL
 const stringQuery = window.location.search;
 
-const params = new URLSearchParams(stringQuery);
+const url = new URLSearchParams(stringQuery);
 
-const idProyecto = params.get("id");
+const code = url.get("id");
+
+const idProyecto = atob(code);
 
 //INSTANCIA A LA CLASE DATA
 const data = new Data();

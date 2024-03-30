@@ -9,8 +9,8 @@ document.addEventListener("DOMContentLoaded",()=>{
     
     const url = new URLSearchParams(queryString);
     
-    const idProyecto = url.get("id");
-    
+    const code = url.get("id");
+    const idProyecto = atob(code);
 
     const $ = id => document.querySelector(id);
     

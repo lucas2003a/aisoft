@@ -6,11 +6,44 @@ require_once "../sidebar/sidebar.php"
     <div class="height-100 bg-light">
         <div class="m-4 bg-white">
 
-        <div class="p-2 header-gradient">
-                <h2 class="m-2 text-white"><strong>PROYECTOS</strong></h1>
+            <div class="p-2 header-gradient">
+                <h2 class="m-2 text-white"><strong id="cabezera">LOTES - </strong></h1>
             </div>
 
             <div class="content ma-4">
+                <div class="m-4">
+                    <div>
+                        <input type="text" id="in-codigo" class="input-form"  placeholder="Ingrese el código del proyecto">
+                    </div>
+                    <div>
+                        <a type="button" href="../projects/add_project.php" class="button-add"><i class="bi bi-plus-circle"></i> Agregar</a>
+                    </div>
+
+                    <table class="mt-4 table table-sm table-stripped table-primary table-hover border-primary text-center" id="table-assets">
+                        <thead>
+                            <th><strong>#</strong></th>                            
+                            <th><strong>CÓDIGO</strong></th>                            
+                            <th><strong>SUBLOTE</strong></th>                            
+                            <th><strong>ESTADO</strong></th>                            
+                            <th><strong>DIRECCIÓN</strong></th>                            
+                            <th><strong>USUARIO</strong></th>                            
+                            <th><strong>OPERACIONES</strong></th>                            
+                        </thead>
+                        <tbody>
+
+                            <!-- RENDER TABLA -->
+                            <tr>
+                                <td> -- </td>
+                                <td> -- </td>
+                                <td> -- </td>
+                                <td> -- </td>
+                                <td> -- </td>
+                                <td> -- </td>
+                                <td> -- </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -36,6 +69,84 @@ require_once "../sidebar/sidebar.php"
 
     <!-- SIDEBAR -->
     <script src="../../js/sidebar.js"></script>
+    <script>
+document.addEventListener("DOMContentLoaded",()=>{
+
+    /* INSTANCIAS */
+    const sweetAlert = new Alert();
+    const data = new Data();
+
+    /* VALOR EN LA URL */
+    const stringQuery = window.location.search;
+    const url = new URLSearchParams(stringQuery);
+    const code = url.get("id");
+    const codeName = url.get("name");
+
+    const idProyecto = atob(code); //DECOFICA EL VALOR
+    const name = atob(codeName);
+
+    const $ = id => document.querySelector(id);
+    const $All = id => document.querySelectorAll(id);
+
+    function getAssets(id){
+
+        let url ="../../Controllers/asset.controller.php";
+        let params = new FormData();
+
+        params.append("action","listAssetProjectId");
+        params.append("idproyecto",id);
+
+        data.sendAction(url,params)
+            .then(assets => {
+                
+                $("#cabezera").innerText +=` ${name}`;
+
+                let numberRow = 1;
+                $("#table-assets tbody").innerHTML = "";
+
+
+                assets.forEach(asset =>{
+
+                    let newRow = ``;
+                    let code = btoa(asset.idactivo) //CODIFICACIÓN
+
+                    newRow = `
+                            <tr>
+                                <td>${numberRow}</td>
+                                <td>${asset.codigo}</td>
+                                <td>${asset.sublote}</td>
+                                <td>${asset.estado}</td>
+                                <td>${asset.direccion}</td>
+                                <td>${asset.usuario}</td>
+                                <td>
+                                    <a type="button" href="./detail_asset.php?id=${code}" class="btn btn-success"><i class="bi bi-arrow-right-square"></i></a>
+                                </td>
+                            </tr>            
+                    `;
+                    numberRow ++;
+
+                    $("#table-assets tbody").innerHTML += newRow;
+                });
+            })
+            .catch(e => {
+                console.error(e);
+            });
+    }
+
+    $All("#table-assets tbody tr").forEach(row => {
+
+        row.addEventListener("click",(e)=>{
+            console.log("numero");
+    
+            if(e.target.classList.contains("getId")){
+    
+            }
+        });
+    }) 
+
+    getAssets(idProyecto);
+});
+    </script>
 
 </body>
 </html>

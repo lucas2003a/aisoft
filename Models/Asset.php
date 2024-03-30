@@ -18,7 +18,7 @@ class Asset extends Conection{
 
         try{
 
-            $query = $this->conection->prepare("CALL spu_list_assets_idProject(?)");
+            $query = $this->conection->prepare("CALL spu_list_assets_short_idpr(?)");
             $query->execute(array($idproyecto));
 
             return $query->fetchAll(PDO::FETCH_ASSOC);
@@ -35,7 +35,7 @@ class Asset extends Conection{
 
         try{
 
-            $query = $this->conection->prepare("CALL spu_list_assets_idAsset(?)");
+            $query = $this->conection->prepare("CALL spu_list_assets_by_id(?)");
             $query->execute(array($idactivo));
 
             return $query->fetch(PDO::FETCH_ASSOC);
