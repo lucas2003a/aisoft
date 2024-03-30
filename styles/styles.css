@@ -36,10 +36,10 @@
 
 .card-center {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    max-width: 800px; /* Ancho máximo del card */
+    width: 800px; /* Ancho máximo del card */
     margin: 20px; /* Margen exterior */
     border: 1px solid #dee2e6; /* Borde del card */
     border-radius: 8px; /* Radio de borde */
@@ -274,15 +274,17 @@
     font-size: 1rem
   }
 
-  .btn-guardar{
+  .btn-blue{
 
     width: 50%;
     height: 3rem;
     color: var(--white-color);
     border: none;
     background-color: var(--first-color);
+    border-radius: 0px 15px 15px 0px;     
+    font-size: 1.5rem;
   }
-  .btn-guardar:hover{
+  .btn-blue:hover{
 
     width: 50%;
     height: 3rem;
@@ -291,15 +293,17 @@
     background-color: var(--first-color-hover);
   }
 
-  .btn-cerrar{
+  .btn-red{
 
     width: 50%;
     height: 3rem;
     border: none;
     color: var(--white-color);
     background-color: var(--second-color);
+    border-radius: 15px 0px 0px 15px;
+    font-size: 1.5rem;
   }
-  .btn-cerrar:hover{
+  .btn-red:hover{
 
     width: 50%;
     height: 3rem;
@@ -454,6 +458,11 @@
     overflow-y: auto; /* Habilita el scroll vertical si es necesario */
   }
 
+  .ask-footer{
+    text-align: center; 
+    text-transform: uppercase;
+    color: var(--second-color);
+  }
     /*Móviles*/
   @media (min-width:320px) and (max-width:480px){
 

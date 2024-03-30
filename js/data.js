@@ -174,7 +174,7 @@ class Data{
      * @param {object} object 
      * @returns 
      */
-    getDataObj(url, object){
+    sendAction(url, object){
 
         return fetch(url,{
             method: "POST",

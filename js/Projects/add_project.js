@@ -3,7 +3,6 @@ document.addEventListener("DOMContentLoaded",()=>{
     const $ = id => document.querySelector(id);
     
     let dataProject;
-    
     const data = new Data();
     const sweetAlert = new Alert();
     
@@ -106,6 +105,8 @@ document.addEventListener("DOMContentLoaded",()=>{
                         },()=>{
                             window.location.href = "./index_project.php";
                         })
+                    }else{
+                        sweetAlert.alertError("No se termiado el registro","Vuelve a intentarlo");
                     }
                 })
                 .catch(e=>{
@@ -180,4 +181,5 @@ document.addEventListener("DOMContentLoaded",()=>{
     
     getData();
 });
+
 

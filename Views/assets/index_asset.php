@@ -6,7 +6,12 @@ require_once "../sidebar/sidebar.php"
     <div class="height-100 bg-light">
         <div class="m-4 bg-white">
 
-            <h4>Main Components</h4>
+        <div class="p-2 header-gradient">
+                <h2 class="m-2 text-white"><strong>PROYECTOS</strong></h1>
+            </div>
+
+            <div class="content ma-4">
+            </div>
         </div>
     </div>
     <!--EL CONTENIDO TERMINA-->

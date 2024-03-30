@@ -44,6 +44,6 @@ require_once "../sidebar/sidebar.php";
     crossorigin="anonymous"></script>
 
     <script src="../../js/sidebar.js"></script>
-    <script src="../../js/Projects/project_index.js"></script>
+    <script src="../../js/projects/project_index.js"></script>
 </body>
 </html>

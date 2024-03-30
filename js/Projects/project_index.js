@@ -19,6 +19,11 @@ document.addEventListener("DOMContentLoaded",()=>{
         let newCard = ``;
     
         let newImage = item.imagen == null ? "NoImage.jpg" : item.imagen;
+
+        let options = item.l_total == 0 ? `
+            <li class="dropdown-item-admin"><a href='./set_project.php?id=${item.idproyecto}'><img src="../../iconos/lapiz-blue.png" style="width: 24px;"> Editar</a></li>
+            <li class="dropdown-item-admin"><a  href="./delete_project.php?id=${item.idproyecto}"><img src="../../iconos/delete.png"> Eliminar</a></li>` :
+            `<li class="dropdown-item-admin"><a href='./set_project.php?id=${item.idproyecto}'><img src="../../iconos/lapiz-blue.png" style="width: 24px;"> Editar</a></li>`;
     
             newCard = `
                 <div class="col-md-6 col-sm-12">
@@ -33,8 +38,7 @@ document.addEventListener("DOMContentLoaded",()=>{
         
                                 
                                 <ul class="dropdown-menu-admin">
-                                    <li class="dropdown-item-admin"><a href='./set_project.php?id=${item.idproyecto}'><img src="../../iconos/lapiz-blue.png" style="width: 24px;"> Editar</a></li>
-                                    <li class="dropdown-item-admin"><a  href="./delete_project.php?id=${item.idproyecto}"><img src="../../iconos/delete.png"> Eliminar</a></li>
+                                    ${options}
                                     <li class="dropdown-item-admin"><a  href="./${item.idproyecto}"><img src="../../iconos/planet-earth.png" style="width: 24px;"> Mapa</a></li>
                                 </ul>
                             </div>
@@ -231,11 +235,11 @@ document.addEventListener("DOMContentLoaded",()=>{
 
             });
         }
-        else{
+        /* else{
 
             console.log("No hay más registros");
                 
-            }
+            } */
     },{
         //CONFIGURACION DEL OBSERVADOR
         rootMargin: "0% 0% 0% 0%", //TAMAÑO DEL VIEWPORT => PANTALLA VISUAL 

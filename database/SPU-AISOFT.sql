@@ -204,25 +204,14 @@ DELIMITER ;
 DELIMITER $$
 CREATE PROCEDURE spu_inactive_projects(IN _idproyecto INT)
 BEGIN
-	DECLARE _lotes SMALLINT;
+
+	UPDATE proyectos
+		SET
+			inactive_at = CURDATE()
+		WHERE
+			idproyecto = _idproyecto;
     
-    -- CUENTA SI EL PROJECTO NO TIENE LOTES
-    SET _lotes = (
-		SELECT COUNT(*) 
-        FROM lotes 
-        WHERE idproyecto = _idproyecto
-        AND inactive_at IS NULL
-    );
-    
-    IF _lotes = 0 THEN
-		UPDATE proyectos
-			SET
-				inactive_at = CURDATE()
-			WHERE
-				idproyecto = _idproyecto;
-	ELSE 
-		SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Error: El proyecto tiene lotes';
-	END IF;
+    SELECT ROW_COUNT() AS filasAfect;
 END $$
 DELIMITER ;
 

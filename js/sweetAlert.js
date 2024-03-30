@@ -21,8 +21,9 @@ class Alert{
      * MUESTRA MENSAJE DE "SUCCESS"
      * @param {string} text 
      * @param {string} footer 
+     * @param {function} callback 
      */
-    sweetSuccess(text, footer){
+    sweetSuccess(text, footer, callback){
         
         Swal.fire({
             icon: "success",
@@ -30,7 +31,15 @@ class Alert{
             text: text,
             footer: footer,
             showConfirmButton: false,
-            timer:  1500
+            timer:  1500,
+            timerProgressBar: true, //MUESTRA UNA BARRA DE PROGRESO
+            didClose: () =>{ //CUANDO ACABE EL TIEMPO O CIERRE EL MODAL
+
+              if(typeof(callback) == "function"){
+
+                callback();
+              }
+            }
           });
     };
     

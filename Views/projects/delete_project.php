@@ -14,38 +14,79 @@ require_once "../sidebar/sidebar.php";
                 <!-- CAJA DE BUSQUEDA -->
                 <div class="m-4">
 
-                    <div>
-                        <input type="text" id="in-codigo" class="input-form"  placeholder="Ingrese el código del proyecto">
-                    </div>
-                    <div>
-                        <a type="button" href="../proyectos/add_project.php" class="button-add"><i class="bi bi-plus-circle"></i> Agregar</a>
-                    </div>
-
                     <!-- RENDER DE PROYECTOS -->
-                    <h2 class="m-4"><strong>Cargando información..</strong></h2>
                     
                     <div  style ="display: flex;justify-content: center; align-content: center;">
                     <div class="card-center">
                         <div class="card-body">
-                            <div class="dropdown dropup">
-                                <button type="button" class="button-edit" data-idSet="${item.idproyecto}"></button>
-        
-                                
-                                <ul class="dropdown-menu-admin">
-                                    <li class="dropdown-item-admin"><a href='./set_project.php?id=${item.idproyecto}'><img src="../../iconos/lapiz-blue.png" style="width: 24px;"> Editar</a></li>
-                                    <li class="dropdown-item-admin"><a  href="./delete_project.php?id=${item.idproyecto}"><img src="../../iconos/delete.png"> Eliminar</a></li>
-                                    <li class="dropdown-item-admin"><a  href="./${item.idproyecto}"><img src="../../iconos/planet-earth.png" style="width: 24px;"> Mapa</a></li>
-                                </ul>
+                            <div  class="card-title m-4"><h2 style="text-align: center; text-transform: uppercase;"><strong  id="card-title"></strong></h2></div>
+                            <hr>
+                            <div class="row mt-4">
+                                <div class="col-md-6">
+                                    <h3><strong>Código:</strong></h3>
+                                </div>
+                                <div class="col-md-6">
+                                    <h4 id="codigo"> ---- </h4>
+                                </div>
                             </div>
-                            <h5 class="card-title"><strong>${item.denominacion}</strong></h5>
-                            <p class="card-text"><strong><i class="bi bi-signpost-2 bt-adress"></i> </strong>${item.direccion}</p>
-                            <p class="card-text"><i class="bi bi-flag btn-band"></i>${item.distrito}-${item.provincia}-${item.departamento}</p>
-                            <p style="margin-top: 3rem; margin-bottom: 1rem;"><i class="bi bi-building-fill-slash btn-nvend"></i>${item.l_noVendidos} <i class="bi bi-building-fill-lock btn-sep"></i>${item.l_separados} 
-                            <i class="bi bi-building-fill-check btn-vend"></i>${item.l_vendidos} <i class="bi bi-houses-fill btn-total"></i>${item.l_total}</p>
-                            <a href="#" class="button-verinfo" data-idpr="${item.idproyecto}"><strong>Ver más..</strong></a>
-                        </div>
-                        <div class="carad-footer">
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h3><strong>Denominación: </strong></h3>
+                                </div>
+                                <div class="col-md-6">
+                                    <h4 id="denominacion"> --- </h4>
+                                </div>                                    
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h3><strong>Ubigeo :</strong></h3>
+                                </div>
+                                <div class="col-md-6">
+                                    <h4 id="ubigeo"> ---- </h4>
+                                </div>
+                            </div>
                             
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h3><strong>Latitud :</strong></h3>
+                                </div>
+                                <div class="col-md-6">
+                                    <h4 id="latitud"> ---- </h4>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h3><strong>Longitud: </strong></h3>
+                                </div>
+                                <div class="col-md-6">
+                                    <h4 id="longitud"> ---- </h4>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <h3><strong>Perímetro: </strong></h3>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="m-4" id="perimetro">
+
+                                    </div>                                     
+                                </div>
+                            </div>
+                            <div class="m-4">
+                                <h4 class="ask-footer">¿Deseas eliminarlo?</h4>
+                            </div>
+                            <div>
+                                <div class="row">                                    
+                                    <button type="button" class="btn-red" id="eliminar">Eliminar</button>
+                                    <button type="button" class="btn-blue" id="cancelar">Cancelar</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
                         </div>
                     </div>
                 </div>                
@@ -65,4 +106,17 @@ require_once "../sidebar/sidebar.php";
     integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
     crossorigin="anonymous"></script>
 
+    <!-- SWEET ALERT -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <script src="../../js/sidebar.js"></script>
+
+    <!-- CLASE DATA -->
+    <script src="../../js/data.js"></script>
+
+    <!-- CLASE SWEETALERT -->
+    <script src="../../js/sweetAlert.js"></script>
+ 
+    <script src="../../js/projects/delete_project.js"></script>
+    </body>
+</html>

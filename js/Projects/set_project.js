@@ -1,184 +1,188 @@
-
 document.addEventListener("DOMContentLoaded",()=>{
 
-    const $ = id => document.querySelector(id);
+const $ = id => document.querySelector(id);
+
+//OBTIENE EL ID DEL URL
+const stringQuery = window.location.search;
+
+const params = new URLSearchParams(stringQuery);
+
+const idProyecto = params.get("id");
+
+//INSTANCIA A LA CLASE DATA
+const data = new Data();
+
+const sweetAlert = new Alert();
+
+let Patern = $("#patern");
+
+
+function renderInputs(keyValue, valValue){
     
-    //OBTIENE EL ID DEL URL
-    const stringQuery = window.location.search;
+    //BOTÓN "+" Y SU CONTENEDOR
+    let buttonPluss = document.createElement("Button");
+    buttonPluss.classList.add("button-less","mt-2","active");
+    buttonPluss.setAttribute("id","add-textBox");
+    buttonPluss.setAttribute("type","button");
+    buttonPluss.innerText = "-";
 
-    const params = new URLSearchParams(stringQuery);
+    let contentButton = document.createElement("div");
+    contentButton.classList.add("col-md-1");
 
-    const idProyecto = params.get("id");
+    contentButton.appendChild(buttonPluss); //=> SE AGREGA AL CONTENEDOR
 
-    //INSTANCIA A LA CLASE DATA
-    const data = new Data();
+    // DIV ROW{DIV(COL-MD-11) - DIV(CONTENT BUTTON)}
+    let dataPerim = document.createElement("div");
+    dataPerim.classList.add("row");
 
-    const sweetAlert = new Alert();
+    //CONTENEDOR (LLAVE)
+    let containerKey = document.createElement("div");
+    containerKey.classList.add("col-md-6","mt-2");
     
-    let Patern = $("#patern");
+    //CAJA DE TEXTO PARA LA CLAVE NUEVA EN EL INPUT
+    let newInputKey = document.createElement("input");
+    newInputKey.classList.add("form-control","perim-key"); 
+    newInputKey.value = keyValue;                           //=> SE LE ASIGNA VALOR OBTENIDO
 
-    function renderInputs(keyValue, valValue){
-        
-        //BOTÓN "+" Y SU CONTENEDOR
-        let buttonPluss = document.createElement("Button");
-        buttonPluss.classList.add("button-less","mt-2","active");
-        buttonPluss.setAttribute("id","add-textBox");
-        buttonPluss.setAttribute("type","button");
-        buttonPluss.innerText = "-";
+    containerKey.appendChild(newInputKey);  //=> SE AGREGA EL INPUT AL CONTENEDOR
 
-        let contentButton = document.createElement("div");
-        contentButton.classList.add("col-md-1");
+    //CONTENDEDOR (VALOR)
+    let containerValue = document.createElement("div");
+    containerValue.classList.add("col-md-6","mt-2");        
+    
+    //CAJA DE TEXTO PARA EL NUEVO VALOR EN EL INPUT
+    let newInputValue = document.createElement("input");
+    newInputValue.classList.add("form-control","perim-value");
+    newInputValue.value = valValue;                          //=> SE LE ASIGNA VALOR OBTENIDO
 
-        contentButton.appendChild(buttonPluss); //=> SE AGREGA AL CONTENEDOR
+    containerValue.appendChild(newInputValue);  //=> SE AGREGA EL INPUT AL CONTENEDOR
 
-        // DIV ROW{DIV(COL-MD-11) - DIV(CONTENT BUTTON)}
-        let dataPerim = document.createElement("div");
-        dataPerim.classList.add("row");
+    //ROW (CONTIENE A LOS CONTENEDORES DE LLAVES Y VALORES)
+    let row = document.createElement("div");
+    row.classList.add("row");
 
-        //CONTENEDOR (LLAVE)
-        let containerKey = document.createElement("div");
-        containerKey.classList.add("col-md-6","mt-2");
-        
-        //CAJA DE TEXTO PARA LA CLAVE NUEVA EN EL INPUT
-        let newInputKey = document.createElement("input");
-        newInputKey.classList.add("form-control","perim-key"); 
-        newInputKey.value = keyValue;                           //=> SE LE ASIGNA VALOR OBTENIDO
+    row.appendChild(containerKey);
+    row.appendChild(containerValue);
 
-        containerKey.appendChild(newInputKey);  //=> SE AGREGA EL INPUT AL CONTENEDOR
+    //CONTENEDOR PADRE
+    let divPatern = document.createElement("div");
+    divPatern.classList.add("col-md-11");                   
+ 
+    divPatern.appendChild(row); //SE AGREAGA EL ROW DE CONTENEDORES AL ULTIMO DIV
 
-        //CONTENDEDOR (VALOR)
-        let containerValue = document.createElement("div");
-        containerValue.classList.add("col-md-6","mt-2");        
-        
-        //CAJA DE TEXTO PARA EL NUEVO VALOR EN EL INPUT
-        let newInputValue = document.createElement("input");
-        newInputValue.classList.add("form-control","perim-value");
-        newInputValue.value = valValue;                          //=> SE LE ASIGNA VALOR OBTENIDO
+    dataPerim.appendChild(divPatern);
+    dataPerim.appendChild(contentButton);
 
-        containerValue.appendChild(newInputValue);  //=> SE AGREGA EL INPUT AL CONTENEDOR
+    let firstIntputs = Patern.firstChild; //=> OBTIENE EL PRIMER NODO(ELEMENTO) DEL CONTENEDOR EN LA VARIABLE PATERN
 
-        //ROW (CONTIENE A LOS CONTENEDORES DE LLAVES Y VALORES)
-        let row = document.createElement("div");
-        row.classList.add("row");
+    Patern.insertBefore(dataPerim, firstIntputs); //AGREGA DATEPERIM ANTES DEL PRIMER ELEMENTO EN PATERN
 
-        row.appendChild(containerKey);
-        row.appendChild(containerValue);
+};
 
-        //CONTENEDOR PADRE
-        let divPatern = document.createElement("div");
-        divPatern.classList.add("col-md-11");                   
-     
-        divPatern.appendChild(row); //SE AGREAGA EL ROW DE CONTENEDORES AL ULTIMO DIV
+function getDataId(id){
 
-        dataPerim.appendChild(divPatern);
-        dataPerim.appendChild(contentButton);
+    let url = "../../Controllers/project.controller.php";
 
-        let firstIntputs = Patern.firstChild; //=> OBTIENE EL PRIMER NODO(ELEMENTO) DEL CONTENEDOR EN LA VARIABLE PATERN
+    let params = new FormData();
+    
+    params.append("action","listProjectId");
+    params.append("idproyecto",id);
 
-        Patern.insertBefore(dataPerim, firstIntputs); //AGREGA DATEPERIM ANTES DEL PRIMER ELEMENTO EN PATERN
+    data.sendAction(url, params)
+        .then(project => {
 
-    }
+            const perimetro = JSON.parse(project.perimetro);
 
-    function getDataId(id){
+            const keys = perimetro.clave;
+            const values = perimetro.valor;
 
-        url = "../../Controllers/project.controller.php";
+            $("#codigo").value = project.codigo;
+            $("#denominacion").value = project.denominacion;
+            $("#direccion").value = project.direccion;
+            $("#latitud").value = project.latitud;
+            $("#longitud").value = project.longitud;
 
-        let params = new FormData();
-        
-        params.append("action","listProjectId");
-        params.append("idproyecto",idProyecto);
+            keys.forEach((key, index) => {
+                const value = values[index];
 
-        data.getDataObj(url, params)
-            .then(project => {
+                if(key != ""|| value != ""){
 
-                const perimetro = JSON.parse(project.perimetro);
-
-                const keys = perimetro.clave;
-                const values = perimetro.valor;
-
-                $("#codigo").value = project.codigo;
-                $("#denominacion").value = project.denominacion;
-                $("#direccion").value = project.direccion;
-                $("#latitud").value = project.latitud;
-                $("#longitud").value = project.longitud;
-
-                keys.forEach((key, index) => {
-                    const value = values[index];
-
-                    if(key != ""|| value != ""){
-
-                        renderInputs(key,value);
-                    }
-                });
-
-
-
-            })
-            .catch(e => {
-                console.error(e);
+                    renderInputs(key,value);
+                }
             });
 
-    }
 
-    function setData(){
 
-        let perim = data.getJson(".form-control.perim-key",".form-control.perim-value")
-        let url = `../../Controllers/project.controller.php`;
-        let params = new FormData();
+        })
+        .catch(e => {
+            console.error(e);
+        });
 
-        params.append("action","setProject");
-        params.append("idproyecto",idProyecto);
-        params.append("imagen",$("#in-image").files[0]);
-        params.append("iddireccion",$("#iddireccion").value);
-        params.append("codigo",$("#codigo").value);
-        params.append("denominacion",$("#denominacion").value);
-        params.append("latitud",$("#latitud").value);
-        params.append("longitud",$("#longitud").value);
-        params.append("perimetro",perim);
-        params.append("iddistrito",$("#iddistrito").value);
-        params.append("direccion",$("#direccion").value);
+};
 
-        data.sendData(url, params)
-            .then(result => {
-                console.log(result);
-                if(result.filasAfect > 0){
+function setData(){
 
-                    sweetAlert.sweetSuccess("Registro actualizado","El registro se ha actualizado correctamente");
-                    window.location.href = "./index_project.php";
-                }
-            })
-            .catch(e =>{
-                console.error(e);
-            })
-    }
+    let perim = data.getJson(".form-control.perim-key",".form-control.perim-value")
+    let url = `../../Controllers/project.controller.php`;
+    let params = new FormData();
 
-    // FUNCIÓN DE BOOTSTRAP PARA LAVALIDACIÓN
+    params.append("action","setProject");
+    params.append("idproyecto",idProyecto);
+    params.append("imagen",$("#in-image").files[0]);
+    params.append("iddireccion",$("#iddireccion").value);
+    params.append("codigo",$("#codigo").value);
+    params.append("denominacion",$("#denominacion").value);
+    params.append("latitud",$("#latitud").value);
+    params.append("longitud",$("#longitud").value);
+    params.append("perimetro",perim);
+    params.append("iddistrito",$("#iddistrito").value);
+    params.append("direccion",$("#direccion").value);
 
-    //ESTA EESTRUCTUARA INDICA AL NAVEGADOR QUE CUANDO LEA ESTA FUNCION, LA EJECUTE INMEDIATAMENTE
-    (() => {
-        'use strict' //=> USO ESTRICTO POR POLITICAS DE SEGURIDAD EN EL FORMULARIO
+    data.sendData(url, params)
+        .then(result => {
 
-         //SELECCIONA TODOS LOS ELEMENTOS DEL FORMULARIO QUE TIENE LA CLASE "needs-validation
-        const forms = document.querySelectorAll('.needs-validation')
+            console.log(result);
+            if(result.filasAfect > 0){
 
-        // TOMA EL ELEMENTO "FORMS" Y LO CONVIERTE A UN ARRAY
-        // SE INCLUYE EN UN FOREAH PARA ITERAR SOBRE SUS ELEMENTOS
-
-        Array.from(forms).forEach(form => {
-            form.addEventListener('submit', event => {
-
-                //SI LA VALIDACIÓN DEL FORMULARIO ES FALSE
-                if (!form.checkValidity()) {
-                event.preventDefault()      //=> FRENA EL ENVÍO DEL FORMULARIO
-                event.stopPropagation()     //=> FRENA LA PROPAGACIÓN DE DATOS EN EL FORMULARIO
+                sweetAlert.sweetSuccess("Registro actualizado","El registro se ha actualizado correctamente");
+                window.location.href = "./index_project.php";
             }else{
-                event.preventDefault();
-                setData();
+                sweetAlert.alertError("No se actualizó el registro","Vuelve a intentarlo");
             }
+        })
+        .catch(e =>{
+            console.error(e);
+        })
+};
 
-            form.classList.add('was-validated') //=> AGREGA ESTA CLASE A LOS ELEMENTOS DEL FORMULARIO(MUESTRA LOS COMENTARIOS)
-            }, false) //=> ESTE TERCER ARGUMENTO INDICA QUE EL EVENTO NO SE ESTA CAPTURANDO EN LA ""FASE DE CAPTURA" SINO EN "PROPAGACIÓN NORMAL"
-        })  
-    })()
-    getDataId(idProyecto);
+// FUNCIÓN DE BOOTSTRAP PARA LAVALIDACIÓN
+
+//ESTA EESTRUCTUARA INDICA AL NAVEGADOR QUE CUANDO LEA ESTA FUNCION, LA EJECUTE INMEDIATAMENTE
+(() => {
+    'use strict' //=> USO ESTRICTO POR POLITICAS DE SEGURIDAD EN EL FORMULARIO
+
+     //SELECCIONA TODOS LOS ELEMENTOS DEL FORMULARIO QUE TIENE LA CLASE "needs-validation
+    const forms = document.querySelectorAll('.needs-validation')
+
+    // TOMA EL ELEMENTO "FORMS" Y LO CONVIERTE A UN ARRAY
+    // SE INCLUYE EN UN FOREAH PARA ITERAR SOBRE SUS ELEMENTOS
+
+    Array.from(forms).forEach(form => {
+        form.addEventListener('submit', event => {
+
+            //SI LA VALIDACIÓN DEL FORMULARIO ES FALSE
+            if (!form.checkValidity()) {
+            event.preventDefault()      //=> FRENA EL ENVÍO DEL FORMULARIO
+            event.stopPropagation()     //=> FRENA LA PROPAGACIÓN DE DATOS EN EL FORMULARIO
+        }else{
+            event.preventDefault();
+            setData();
+        }
+
+        form.classList.add('was-validated') //=> AGREGA ESTA CLASE A LOS ELEMENTOS DEL FORMULARIO(MUESTRA LOS COMENTARIOS)
+        }, false) //=> ESTE TERCER ARGUMENTO INDICA QUE EL EVENTO NO SE ESTA CAPTURANDO EN LA ""FASE DE CAPTURA" SINO EN "PROPAGACIÓN NORMAL"
+    })  
+})();
+getDataId(idProyecto);
+
 });
