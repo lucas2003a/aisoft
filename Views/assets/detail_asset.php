@@ -87,12 +87,11 @@ require_once "../sidebar/sidebar.php"
                                         <strong>Detalle de construcción</strong>
                                         <hr>
                                     </div>
-                                </div>
                                     <div id="det-casa">
 
                                         <!-- RENDER DETALLES -->
 
-                                    </div>
+                                    </div>                                
                                 </div>
                             </div>                    
                         </div>
