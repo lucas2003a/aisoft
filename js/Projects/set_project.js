@@ -18,6 +18,8 @@ const sweetAlert = new Alert();
 
 let Patern = $("#patern");
 
+let oldImage;
+
 
 function renderInputs(keyValue, valValue){
     
@@ -93,10 +95,13 @@ function getDataId(id){
     data.sendAction(url, params)
         .then(project => {
 
+            console.log(project);
             const perimetro = JSON.parse(project.perimetro);
 
             const keys = perimetro.clave;
             const values = perimetro.valor;
+
+            oldImage = project.imagen;
 
             $("#codigo").value = project.codigo;
             $("#denominacion").value = project.denominacion;
@@ -128,9 +133,11 @@ function setData(){
     let url = `../../Controllers/project.controller.php`;
     let params = new FormData();
 
+    let img = $("#in-image").files[0] ? $("#in-image").files[0] : oldImage;
+
     params.append("action","setProject");
     params.append("idproyecto",idProyecto);
-    params.append("imagen",$("#in-image").files[0]);
+    params.append("imagen",img);
     params.append("iddireccion",$("#iddireccion").value);
     params.append("codigo",$("#codigo").value);
     params.append("denominacion",$("#denominacion").value);
@@ -146,8 +153,10 @@ function setData(){
             console.log(result);
             if(result.filasAfect > 0){
 
-                sweetAlert.sweetSuccess("Registro actualizado","El registro se ha actualizado correctamente");
-                window.location.href = "./index_project.php";
+                sweetAlert.sweetSuccess("Registro actualizado","El registro se ha actualizado correctamente",()=>{
+
+                    window.location.href = "./index_project.php";
+                });
             }else{
                 sweetAlert.alertError("No se actualizó el registro","Vuelve a intentarlo");
             }
@@ -178,7 +187,10 @@ function setData(){
             event.stopPropagation()     //=> FRENA LA PROPAGACIÓN DE DATOS EN EL FORMULARIO
         }else{
             event.preventDefault();
-            setData();
+            sweetAlert.sweetConfirm("Datos nuevos","¿Deseas actualizar el registro?",()=>{
+                
+                setData();
+            });
         }
 
         form.classList.add('was-validated') //=> AGREGA ESTA CLASE A LOS ELEMENTOS DEL FORMULARIO(MUESTRA LOS COMENTARIOS)

@@ -81,10 +81,10 @@ class Alert{
             if (result.isConfirmed) {
                 
                 if(callback && typeof(callback) == "function"){
-                    callback(event);
+                    callback();
                 }
                 Swal.fire({
-                  title: "Borrado!",
+                  title: "Bien hecho!",
                   text: "La operación se ha logrado ejecutar",
                   icon: "success",
                   showConfirmButton: false,

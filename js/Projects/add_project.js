@@ -171,7 +171,10 @@ document.addEventListener("DOMContentLoaded",()=>{
                 event.stopPropagation()     //=> FRENA LA PROPAGACIÓN DE DATOS EN EL FORMULARIO
             }else{
                 event.preventDefault();
-                sendData();
+                sweetAlert.sweetConfirm("Datos nuevos","¿Desea crear el nuevo registro?",()=>{
+
+                    sendData();
+                })
             }
 
             form.classList.add('was-validated') //=> AGREGA ESTA CLASE A LOS ELEMENTOS DEL FORMULARIO(MUESTRA LOS COMENTARIOS)

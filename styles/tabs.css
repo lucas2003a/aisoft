@@ -1,0 +1,63 @@
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap");
+:root{
+    --header-height: 3rem;
+    --nav-width: 250px;
+    --first-color: #003473;
+    --first-color-hover:#01234d;
+    --second-color: #FF284A;
+    --second-color-hover: #af2136;
+    --third-color: #FFD200;
+    --first-color-light: #8fb5e4;
+    --white-color: #F7F6FB;
+    --black-color:#232E33;
+    --input-file-color: grey;
+    --input-file-hover-color: black;
+    --green-color:#0F7300 ;
+    --body-font: 'Nunito', sans-serif;
+    --normal-font-size: 1rem;
+    --z-fixed: 100
+}
+
+  /* Style tab links */
+  .tablink {
+    background-color: #555;
+    color: white;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    font-size: 17px;
+    width: 25%;
+  }
+  
+  .tablink:hover {
+    background-color: #777;
+  }
+  
+  .tablink.active {
+    background-color: #747171;
+  }
+  
+  /* Style the tab content (and add height:100% for full page content) */
+  .tabcontent {
+    color: white;
+    display: none;
+    padding: 50px 20px;
+    height: 100%;
+  }
+  
+  #DGeneral {
+    background-color: var(--white-color);
+    }
+
+  #Description {
+    background-color: green;
+    }
+
+  #Build {
+    background-color: blue;
+    }
+  #Client {
+    background-color: orange;
+    }

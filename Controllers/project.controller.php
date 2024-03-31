@@ -89,7 +89,7 @@ if(isset($_POST["action"])){
 
                 $dataObtained = [
                     "idproyecto"    =>  $_POST["idproyecto"],
-                    "imagen"        =>  $_POST["imagen"],
+                    "imagen"        =>  $nombre_img,
                     "iddireccion"   =>  $_POST["iddireccion"],
                     "codigo"        =>  $_POST["codigo"],
                     "denominacion"   =>  $_POST["denominacion"],

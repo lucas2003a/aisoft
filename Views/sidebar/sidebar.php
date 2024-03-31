@@ -13,6 +13,7 @@
 
     <!-- ESTILOS CSS -->
     <link rel="stylesheet" href="../../styles/sidebar.css">
+    <link rel="stylesheet" href="../../styles/tabs.css">
     <link rel="stylesheet" href="../../styles/styles.css">
 
 </head>

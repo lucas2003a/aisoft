@@ -118,7 +118,7 @@ class Data{
      */
     getJson(keyClass, valueClass){
 
-        let fomrKeys = document.querySelectorAll(keyClass);
+        let formKeys = document.querySelectorAll(keyClass);
         let formValues = document.querySelectorAll(valueClass);
         /* let fomrKeys = document.querySelectorAll(".form-control.perim-key");
         let formValues = document.querySelectorAll(".form-control.perim-value"); */
@@ -129,7 +129,7 @@ class Data{
         };
 
         //INDEX SE CREA DE FORMA AUTOMATICA ES EL INDICE DE LA ITERACIÓN
-        Array.from(fomrKeys).forEach((keyInput, index)=>{
+        Array.from(formKeys).forEach((keyInput, index)=>{
             let key = keyInput.value.trim();
 
             let indexValue = formValues[index]; //=>ASIGANMOS EL "VALOR" CORRESPONDIENTE AL INDICE DE LA ITERACION(GUARDA LA RELACIÓN KEY => VALUE)

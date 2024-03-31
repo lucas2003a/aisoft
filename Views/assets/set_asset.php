@@ -69,20 +69,6 @@ require_once "../sidebar/sidebar.php"
                                         </div>
                                     </div>
 
-                                    <!-- IDDIRECCIÓN -->
-                                    <div class="mt-4">
-                                        <label for="iddireccion" class="form-label">Sede</label>
-                                        <select class="form-select custom-select-scroll" id="iddireccion" required>
-                                            <option selected disabled value="">Sede</option>                                            
-                                        </select>
-                                        <div class="invalid-feedback">
-                                            Necesitas escojer una sede.
-                                        </div>
-                                        <div class="valid-feedback">
-                                            Sede escojida correctament
-                                        </div>
-                                    </div>
-
                                     <!-- CODIGO -->
                                     <div class="mt-4">
                                         <label for="codigo" class="form-label">Código</label>
@@ -95,18 +81,18 @@ require_once "../sidebar/sidebar.php"
                                         </div>
                                     </div>
     
-                                    <!-- DENOMINACÓN -->
+                                    <!-- SUBLOTE -->
                                     <div class="mt-4">
-                                        <label for="denominacion" class="form-label">Denominación</label>
-                                        <input type="text" class="form-control" id="denominacion" placeholder="Denominación" readonly required>
+                                        <label for="sublote" class="form-label">Sublote</label>
+                                        <input type="text" class="form-control" id="sublote" placeholder="Sublote" required>
                                         <div class="invalid-feedback">
-                                            Necesitas ingresar una denominación.
+                                            Necesitas ingresar el sublote.
                                         </div>
                                         <div class="valid-feedback">
-                                            Denominación ingresada correctamente.
+                                            Sublote registrado correctamente.
                                         </div>
                                     </div>
-    
+                                    
                                     <!-- DIRECCIÓN -->
                                     <div class="mt-4">
                                         <label for="direccion" class="form-label">Dirección</label>
@@ -118,8 +104,7 @@ require_once "../sidebar/sidebar.php"
                                             Dirección ingresada correctamente.
                                         </div>
                                     </div>
-    
-    
+
                                     <!-- IMAGEN -->
                                     <div class="form-group">
                                         <label for="in-image" class="label-img">
@@ -129,77 +114,18 @@ require_once "../sidebar/sidebar.php"
                                         </label>
                                     </div>
                                 </div>
-    
+
+
                                 <div class="col-md-6">
-
-                                    <!-- UBICACIÓN Y MEDIDAS-->
-    
-                                    <!-- LATITUD -->
-                                    <div class="mt-4">
-                                        <label for="latitud" class="form-label">Latitud</label>                                  
-                                        <input type="text" class="form-control" id="latitud">
-                                        <div class="valid-feedback">
-                                            <!-- -- -->
-                                        </div>
-                                    </div>
-        
-                                    <!-- LONGITUD -->
-                                    <div class="mt-4">
-                                        <label for="longitud" class="form-label">Longitud</label>
-                                        <input type="text" class="form-control" id="longitud">
-                                        <div class="valid-feedback">
-                                            <!-- -- -->
-                                        </div>
-                                    </div>
-        
-                                    <!-- PERÍMETRO -->                                    
-                                    <div class="mt-4" id="perim">
-                                        <label for="perimetro" class="form-label">Perímetro (Coordenadas)</label>
-                                        <hr>
-                                        <div id="patern">
-                                            <div class="row">
-                                                <div class="col-md-11">
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <input type="text" class="form-control perim-key" name="clave" id="clave">
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <input type="text" class="form-control perim-value" name="valor" id="valor">
-                                                        </div>
-                                                    </div>                                               
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <button type="button" class="button-addPlus" id="add-textBox">+</button>
-                                                </div>
-                                            </div>
-                                            <div class="valid-feedback">
-                                                <!-- -- -->
-                                            </div>
-                                        </div>
-                                        </div>
-                                    <div class="m-4 col-md-12">
-                                        <div class="d-grid">
-
-                                            <button class="btn btn-primary" type="submit" id="guardar" disabled>Guardar</button>
-                                        </div>
-                                    </div>
-                                    
-                                </div>                                    
-
-                                
-                                <div class="row">
-                                    
-                                    <!-- COTENEDOR DE IMAGEN -->
-                                    <div class="col-md-6">
-                                        <!-- <img src="" alt="" id="file-input"> -->
-                                        <button type="button" class="btn btn-primary" style="display: none;" id="see-image">Ver imagen</button>
-                                    </div>
-
+                                    <img src="" alt="" id="visor">
                                 </div>
+                            </div>                                                                 
+                                                        
+                            <div style="display: flex; justify-content: center; margin: 1rem;">
+                        
+                                <button class="btn btn-primary btn-lg" type="submit" id="guardar" disabled>Siguiente</button>
                             </div>
                         </form>
-                            
-                        </div>
                     </div>
 
                     <div id="Description" class="tabcontent">
@@ -287,6 +213,61 @@ document.addEventListener("DOMContentLoaded",()=>{
         btn.classList.add("active");
     }
 
+    function renderDepartaments(){
+
+        const url = "../../Controllers/ubigeo/departament.controller.php";
+        const action = "list";
+
+        data.getData(url,action)
+            .then(departaments => {
+                console.log(departaments);
+                departaments.forEach(departament => {
+
+                    const newOption = document.createElement("option");
+                    newOption.value = departament.iddepartamento;
+                    newOption.innerText = departament.departamento;
+                    
+                    $("#iddepartamento").appendChild(newOption);
+                });
+            })
+            .catch(e => {
+                console.error(e);
+            });
+    }
+
+    function renderProvinces(id){
+
+        const url = "../../Controllers/province.controller.php";
+        let params = new FormData();
+
+        params.append("action","list");
+        params.append("iddepartamento",$("#iddepartamento").value);
+
+        data.sendAction(result => {
+
+        })
+        .catch(e => {
+            console.log(e);
+        })
+    }
+
+    function resetSelect(id,text,callback){
+
+        $(id).innerHTML = "";
+        
+        let newOption = document.createElement("option");
+        newOption.value = "",
+        newOption.innerText = text;
+
+        $(id).appendChild(newOption);
+
+        callback();
+    }
+
+    $("#iddepartamento").addEventListener("change",()=>{
+        resetSelect("#iddepartamento","Departamentos",renderDepartaments);
+    });
+
     btnDGeneral.addEventListener("click",function(){
         openTab("#DGeneral", this);
     });
@@ -303,6 +284,7 @@ document.addEventListener("DOMContentLoaded",()=>{
         openTab("#Client", this);
     });
 
+    renderDepartaments();
     btnDGeneral.click();
 });
     </script>

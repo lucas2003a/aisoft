@@ -279,7 +279,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 
     $("#btn-edit").addEventListener("click",()=>{
 
-        window.location.href = `./add_asset.php?id=${code}`;
+        window.location.href = `./set_asset.php?id=${code}`;
     });
 
     getDetailAsset(idActivo);
