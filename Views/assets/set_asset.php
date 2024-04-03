@@ -7,7 +7,7 @@ require_once "../sidebar/sidebar.php"
         <div class="m-4 bg-white">
 
             <div class="p-2 header-gradient">
-                <h2 class="m-2 text-white"><strong id="cabezera">LOTES - </strong></h1>
+                <h2 class="m-2 text-white"><strong id="cabezera">LOTE </strong></h1>
             </div>
 
             <div class="content ma-4">
@@ -18,61 +18,38 @@ require_once "../sidebar/sidebar.php"
                     <button class="tablink" id="btn-client" disabled>Cliente</button>
 
                     <div id="DGeneral" class="tabcontent" style="display: block;">
-                        <h3>Home</h3>
-                        <p>Home is where the heart is..</p>
-                        <div>
-                        <form class="row needs-validation" id="form-add-project" novalidate>
+                        <form class="row needs-validation" id="form-asset-gen" novalidate>
                             <div class="row">
                                 <div class="col-md-6">
 
                                     <!-- DATOS GENERALES -->
                                     
-                                    <!-- DEPARTEMENTO -->
-                                    <div class="mt-4">
-                                      <label for="iddepartamento" class="form-label">Departamento</label>
-                                        <select class="form-select custom-select-scroll" id="iddepartamento" required>
-                                            <option selected disabled value="">Departamento</option>
-                                        </select>
-                                        <div class="invalid-feedback">
-                                            Necesitas escojer un departamento.
-                                        </div>
-                                        <div class="valid-feedback">
-                                            Departamento escojido correctamente.
-                                        </div>
-                                    </div>
-    
-                                    <!-- PROVINCIA -->
-                                    <div class="mt-4">
-                                        <label for="idprovincia" class="form-label">Provincia</label>
-                                        <select class="form-select custom-select-scroll" id="idprovincia" required>
-                                            <option selected disabled value="">Provincia</option>
-                                        </select>
-                                        <div class="invalid-feedback">
-                                            Necesitas escojer una provincia.
-                                        </div>
-                                        <div class="valid-feedback">
-                                            Provincia escojida correctamente.
-                                        </div>
-                                    </div>
-    
-                                    <!-- DISTRITO -->
-                                    <div class="mt-4">
-                                        <label for="iddistrito" class="form-label">Distrito</label>
-                                        <select class="form-select custom-select-scroll" id="iddistrito" required>
-                                            <option selected disabled value="">Distrito</option>
-                                        </select>
-                                        <div class="invalid-feedback">
-                                            Necesitas escojer un distrito.
-                                        </div>
-                                        <div class="valid-feedback">
-                                            Distrito escojido correctamente.
-                                        </div>
+                                    <!-- UBIGEO -->
+                                    <div >
+                                      <label for="ubigeo" class="form-label">Ubigeo</label>
+                                        <input type="text" class="form-control" id="ubigeo" readonly>
+
                                     </div>
 
+                                    <!-- ESTADO -->
+                                    <div class="mt-4">
+                                      <label for="estado" class="form-label">Estado</label>
+                                        <input type="text" class="form-control" id="estado" readonly>
+
+                                    </div>
+    
+                                    <!-- ESTADO -->
+                                    <div class="mt-4">
+                                      <label for="tipo-activo" class="form-label">Tipo activo</label>
+                                        <input type="text" class="form-control" id="tipo-activo" readonly>
+
+                                    </div>
+    
+                                    
                                     <!-- CODIGO -->
                                     <div class="mt-4">
                                         <label for="codigo" class="form-label">Código</label>
-                                        <input type="text" class="form-control" id="codigo" placeholder="Código" required autofocus>
+                                        <input type="text" class="form-control" id="codigo" placeholder="Código" maxlength="7" minlength="7" required autofocus>
                                         <div class="invalid-feedback">
                                             Necesitas ingresar un código.
                                         </div>
@@ -96,7 +73,7 @@ require_once "../sidebar/sidebar.php"
                                     <!-- DIRECCIÓN -->
                                     <div class="mt-4">
                                         <label for="direccion" class="form-label">Dirección</label>
-                                        <input type="text" class="form-control" id="direccion" placeholder="Dirección" readonly required>
+                                        <input type="text" class="form-control" id="direccion" placeholder="Dirección" required>
                                         <div class="invalid-feedback">
                                             Necesitas ingresar una dirección.
                                         </div>
@@ -116,14 +93,14 @@ require_once "../sidebar/sidebar.php"
                                 </div>
 
 
-                                <div class="col-md-6">
-                                    <img src="" alt="" id="visor">
+                                <div class="col-md-6" style="display: flex; align-items: center;">
+                                    <img src="" alt="" id="view-image">
                                 </div>
                             </div>                                                                 
                                                         
                             <div style="display: flex; justify-content: center; margin: 1rem;">
                         
-                                <button class="btn btn-primary btn-lg" type="submit" id="guardar" disabled>Siguiente</button>
+                                <button class="btn btn-primary btn-lg" type="submit" id="validar">Validar</button>
                             </div>
                         </form>
                     </div>
@@ -131,6 +108,99 @@ require_once "../sidebar/sidebar.php"
                     <div id="Description" class="tabcontent">
                         <h3>News</h3>
                         <p>Some news this fine day!</p>
+                        <div>
+                            <form class="row needs-validation" id="form-asset-gen" novalidate>
+                            <div class="row">
+                                <div class="col-md-6">
+
+                                    <!-- DATOS GENERALES -->
+                                    
+                                    <!-- ÁREA -->
+                                    <div class="mt-4">
+                                      <label for="area" class="form-label">Área</label>
+                                        <input type="number" class="form-control" id="area" min="0" value="000.00">
+
+                                    </div>
+
+                                    <!-- ZONAS COMUNES -->
+                                    <div >
+                                      <label for="z-comunes" class="form-label">Zonas comunes</label>
+                                        <input type="number" class="form-control" id="z-comunes" min="0" max="100">
+
+                                    </div>
+
+    
+                                    <!-- MONEDA VENTA -->
+                                    <div class="mt-4">
+                                      <label for="moneda-venta" class="form-label">Moneda de venta</label>
+                                        <select class="form-control" id="moneda-venta">
+                                            <option value="0">Seleccione</option>
+                                            <option value="USD">Dólares</option>
+                                            <option value="SOL">Soles</option>
+                                        </select>
+
+                                    </div>
+    
+                                    
+                                    <!-- PRECIO VENTA -->
+                                    <div class="mt-4">
+                                        <label for="precio-venta" class="form-label">Precio de venta</label>
+                                        <input type="text" class="form-control" id="precio-venta" placeholder="Código" maxlength="7" minlength="7" required autofocus>
+                                        <div class="invalid-feedback">
+                                            Necesitas ingresar un código.
+                                        </div>
+                                        <div class="valid-feedback">
+                                            Código registrado correctamente.
+                                        </div>
+                                    </div>
+    
+                                    <!-- SUBLOTE -->
+                                    <div class="mt-4">
+                                        <label for="sublote" class="form-label">Sublote</label>
+                                        <input type="text" class="form-control" id="sublote" placeholder="Sublote" required>
+                                        <div class="invalid-feedback">
+                                            Necesitas ingresar el sublote.
+                                        </div>
+                                        <div class="valid-feedback">
+                                            Sublote registrado correctamente.
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- DIRECCIÓN -->
+                                    <div class="mt-4">
+                                        <label for="direccion" class="form-label">Dirección</label>
+                                        <input type="text" class="form-control" id="direccion" placeholder="Dirección" required>
+                                        <div class="invalid-feedback">
+                                            Necesitas ingresar una dirección.
+                                        </div>
+                                        <div class="valid-feedback">
+                                            Dirección ingresada correctamente.
+                                        </div>
+                                    </div>
+
+                                    <!-- IMAGEN -->
+                                    <div class="form-group">
+                                        <label for="in-image" class="label-img">
+                                            <i class="material-icons"></i>
+                                            <span class="title">Agregar imagen</span>
+                                            <input type="file" accept=".jpg" id="in-image">
+                                        </label>
+                                    </div>
+                                </div>
+
+
+                                <div class="col-md-6" style="display: flex; align-items: center;">
+                                    <img src="" alt="" id="view-image">
+                                </div>
+                            </div>                                                                 
+                                                        
+                            <div style="display: flex; justify-content: center; margin: 1rem;">
+                        
+                                <button class="btn btn-primary btn-lg" type="submit" id="validar">Validar</button>
+                            </div>
+                        </form>
+                        </div>
+                        
                     </div>
 
                     <div id="Build" class="tabcontent">
@@ -192,6 +262,79 @@ document.addEventListener("DOMContentLoaded",()=>{
     const contentDescription = $("#Description");
     const contentBuild = $("#Build");
     const contentClient = $("#Client");
+    const viewImage = $("#view-image");
+
+    /**URL*/
+    const stringQuery = window.location.search;
+    const params = new URLSearchParams(stringQuery);
+    const code = params.get("id");
+    const idActivo = atob(code);
+
+    let idProyecto;
+    let dataAssets;
+    let oldImage;
+
+    function getAssets(id){
+
+        let url ="../../Controllers/asset.controller.php";
+        let params = new FormData();
+
+        params.append("action","listAssetProjectId");
+        params.append("idproyecto",id);
+
+        data.sendAction(url,params)
+            .then(assets => {
+                
+                dataAssets = assets;
+                console.log(dataAssets);
+            })
+            .catch(e => {
+                console.error(e);
+            });
+    }
+
+    function getDetailAsset(id){
+
+        let url = "../../Controllers/asset.controller.php";
+        let params = new FormData();
+
+        params.append("action","listAssetId");
+        params.append("idactivo",id);
+
+        data.sendAction(url,params)
+        .then(asset =>{
+            console.log(asset);
+
+            idProyecto = asset.idproyecto;
+
+            oldImage = asset.imagen;
+            let img = asset.imagen != null ? asset.imagen : "NoImage.jpg";
+
+            $("#cabezera").innerText += ` ${asset.sublote} - ${asset.denominacion}`;
+
+            $("#ubigeo").value = `${asset.distrito} - ${asset.provincia} - ${asset.departamento}`;
+            $("#estado").value = asset.estado;
+            $("#tipo-activo").value = asset.tipo_activo;
+            $("#codigo").value = asset.codigo;
+            $("#sublote").value = asset.sublote;
+            $("#direccion").value = asset.direccion;
+            $("#view-image").setAttribute("src",`../../logos_proyectos/${img}`);
+
+        
+            const det_casa = JSON.parse(asset.det_casa);
+            console.log(det_casa);
+
+            getAssets(idProyecto);
+        
+            /* renderDescription(asset);
+            renderJson(det_casa); 
+            getClient(idActivo);*/
+
+        })
+        .catch(e => {
+            console.error(e);
+        });
+    };
 
     function openTab(page, btn){
 
@@ -213,59 +356,132 @@ document.addEventListener("DOMContentLoaded",()=>{
         btn.classList.add("active");
     }
 
-    function renderDepartaments(){
-
-        const url = "../../Controllers/ubigeo/departament.controller.php";
-        const action = "list";
-
-        data.getData(url,action)
-            .then(departaments => {
-                console.log(departaments);
-                departaments.forEach(departament => {
-
-                    const newOption = document.createElement("option");
-                    newOption.value = departament.iddepartamento;
-                    newOption.innerText = departament.departamento;
+    function searchInfo(array, column, param){
+    
+        if(column == "codigo"){
+    
+            for(let element of array){
+    
+    
+                if(element[column] == param){
+    
+                    sweetAlert.sweetWarning("Se ha encontrado coincidencias", `"${param}" ya existe, ingresa otro`);
+                    $("#sublote").setAttribute("readonly",true);
+                }else{
                     
-                    $("#iddepartamento").appendChild(newOption);
+                    $("#codigo").removeAttribute("autofocus");
+                    $("#sublote").removeAttribute("readonly");
+                    $("#sublote").focus();
+                }
+    
+                
+            }
+    
+    
+        }else if(column = "denominacion"){
+    
+            for(let element of array){
+    
+    
+                if(element[column] == param){
+    
+                    sweetAlert.sweetWarning("Se ha encontrado coincidencias", `"${param}" ya existe, ingresa otro`);
+                
+                }else{
+
+                    $("#denominacion").removeAttribute("autofocus");
+                    $("#direccion").removeAttribute("readonly");
+                    $("#direccion").focus();
+                }
+                
+            }
+    
+        }
+         
+    };
+
+    function readFile(event){
+
+        const file = event.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = (event)=>{
+
+            viewImage.setAttribute("src",`${event.target.result}`);
+            viewImage.style.width = "100%";
+            viewImage.style.height = "20rem";
+        }
+
+        reader.readAsDataURL(file);
+    }
+
+    function validateForm(id, callback){
+        'use strict'
+        const form = $(id);
+
+
+
+            form.addEventListener('submit', event => {
+            
+                if (!form.checkValidity()) {
+                    event.preventDefault()      //=> FRENA EL ENVÍO DEL FORMULARIO
+                    event.stopPropagation()     //=> FRENA LA PROPAGACIÓN DE DATOS EN EL FORMULARIO
+                }else{
+                    event.preventDefault();
+                    sweetAlert.sweetConfirm("Datos nuevos","¿Deseas actualizar el registro?",()=>{
+                
+                    callback();
                 });
-            })
-            .catch(e => {
-                console.error(e);
-            });
+            }
+
+            form.classList.add('was-validated') //=> AGREGA ESTA CLASE A LOS ELEMENTOS DEL FORMULARIO(MUESTRA LOS COMENTARIOS)
+            }, false) //=> ESTE TERCER ARGUMENTO INDICA QUE EL EVENTO NO SE ESTA CAPTURANDO EN LA ""FASE DE CAPTURA" SINO EN "PROPAGACIÓN NORMAL"
+         
     }
+    
+    $("#form-asset-gen").addEventListener("submit",(e)=>{
+        let id = "#form-asset-gen"
 
-    function renderProvinces(id){
+        e.preventDefault();
+        validateForm(id,()=>{
+            btnDescription.removeAttribute("disabled");
+            console.log("validar");
+            btnDescription.click();
+        });
+    })
 
-        const url = "../../Controllers/province.controller.php";
-        let params = new FormData();
+    $("#in-image").addEventListener("change",(e)=>{
 
-        params.append("action","list");
-        params.append("iddepartamento",$("#iddepartamento").value);
+        console.log(e)
+        readFile(e);
+    });
 
-        data.sendAction(result => {
+    $("#sublote").addEventListener("keypress",(e)=>{
+    
+        if(e.keyCode == 13){
 
-        })
-        .catch(e => {
-            console.log(e);
-        })
-    }
+            let sublote = $("#sublote").value;
+    
+                if(code != ""){
 
-    function resetSelect(id,text,callback){
+                    searchInfo(dataAssets,"sublote",sublote);
+                }   
+        } 
 
-        $(id).innerHTML = "";
+    });
+
+    $("#codigo").addEventListener("keypress",(e)=>{
+    
+        /* if(e.keyCode == 13){
+
+            let code = $("#codigo").value;
         
-        let newOption = document.createElement("option");
-        newOption.value = "",
-        newOption.innerText = text;
+                if(code != ""){
 
-        $(id).appendChild(newOption);
+                    searchInfo(dataAssets,"codigo",code);
+                }
+        }  */
 
-        callback();
-    }
-
-    $("#iddepartamento").addEventListener("change",()=>{
-        resetSelect("#iddepartamento","Departamentos",renderDepartaments);
     });
 
     btnDGeneral.addEventListener("click",function(){
@@ -284,7 +500,7 @@ document.addEventListener("DOMContentLoaded",()=>{
         openTab("#Client", this);
     });
 
-    renderDepartaments();
+    getDetailAsset(idActivo);
     btnDGeneral.click();
 });
     </script>

@@ -271,8 +271,6 @@ document.addEventListener("DOMContentLoaded",()=>{
             console.log(e);
             readFile(e);
             $("#see-image").setAttribute("style","display: show;");
-        }else{
-            
         }
     });
 

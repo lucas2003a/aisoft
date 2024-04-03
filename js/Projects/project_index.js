@@ -201,13 +201,13 @@ document.addEventListener("DOMContentLoaded",()=>{
      */
     $("#in-codigo").addEventListener("input",()=>{
 
-        clearTimeout(timer);
+        clearTimeout(timer); //RESETEA EL TIEMPO
 
-        timer = setTimeout(()=>{
+        timer = setTimeout(()=>{ //CONSIGURA EL TIEMPO
 
             let codigo = $("#in-codigo").value;
 
-            if(codigo != ""){
+            if(codigo != ""){  //SI EL INPUT ESTÀ VACÍO
 
                 cardProject.innerHTML = "";
                 searchProject(codigo);

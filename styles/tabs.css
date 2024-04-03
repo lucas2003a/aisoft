@@ -52,12 +52,12 @@
     }
 
   #Description {
-    background-color: green;
+    background-color: var(--white-color);
     }
 
   #Build {
-    background-color: blue;
+    background-color: var(--white-color);
     }
   #Client {
-    background-color: orange;
+    background-color: var(--white-color);
     }
