@@ -28,7 +28,7 @@
                 <a href="#" class="nav_logo">
                     <img src="../../iconos/Logo_Blanco.png" style="width: 210px;" alt="" id="img-logo"> </a>
                 <div class="nav_list"> 
-                    <a href="#" class="nav_link active" style="margin-top: 4rem;"><i class='bx bx-grid-alt nav_icon'></i><span class="nav_name">Proyectos</span></a> 
+                    <a href="../projects/index_project.php" class="nav_link active" style="margin-top: 4rem;"><i class='bx bx-grid-alt nav_icon'></i><span class="nav_name">Proyectos</span></a> 
                     <a href="#" class="nav_link"> <i class='bx bx-user nav_icon'></i> <span class="nav_name">Usuarios</span></a> 
                     <a href="#" class="nav_link"> <i class='bx bx-message-square-detail nav_icon'></i> <span class="nav_name">Clientes</span></a> 
                     <a href="#" class="nav_link"> <i class='bx bx-bookmark nav_icon'></i> <span class="nav_name">Cuotas</span> </a> 

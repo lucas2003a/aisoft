@@ -16,7 +16,7 @@ require_once "../sidebar/sidebar.php"
                         <input type="text" id="in-codigo" class="input-form"  placeholder="Ingrese el código del proyecto">
                     </div>
                     <div>
-                        <a type="button" href="../projects/add_project.php" class="button-add"><i class="bi bi-plus-circle"></i> Agregar</a>
+                        <a type="button" href="#" class="button-add" id="agregar"><i class="bi bi-plus-circle"></i> Agregar</a>
                     </div>
 
                     <table class="mt-4 table table-sm table-stripped table-primary table-hover border-primary text-center" id="table-assets">
@@ -84,6 +84,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 
     const idProyecto = atob(code); //DECOFICA EL VALOR
     const name = atob(codeName);
+    console.log(idProyecto,name);
 
     const $ = id => document.querySelector(id);
     const $All = id => document.querySelectorAll(id);
@@ -119,7 +120,11 @@ document.addEventListener("DOMContentLoaded",()=>{
                                 <td>${asset.direccion}</td>
                                 <td>${asset.usuario}</td>
                                 <td>
-                                    <a type="button" href="./detail_asset.php?id=${code}" class="btn btn-success"><i class="bi bi-arrow-right-square"></i></a>
+                                    <div class="btn-group">
+                                    <a type="button" href="./delete_asset.php?id=${code}" class="btn btn-danger btn-sm" id="btn-delete"><i class="bi bi-trash-fill"></i></a>
+                                    <a type="button" href="./set_asset.php?id=${code}" class="btn btn-primary btn-sm" id="btn-edit"><i class="bi bi-pencil-fill"></i></a>
+                                    <a type="button" href="./detail_asset.php?id=${code}" class="btn btn-success btn-sm"><i class="bi bi-arrow-right-square"></i></a>
+                                    </div>
                                 </td>
                             </tr>            
                     `;
@@ -133,16 +138,10 @@ document.addEventListener("DOMContentLoaded",()=>{
             });
     }
 
-    $All("#table-assets tbody tr").forEach(row => {
+    $("#agregar").addEventListener("click",()=>{
 
-        row.addEventListener("click",(e)=>{
-            console.log("numero");
-    
-            if(e.target.classList.contains("getId")){
-    
-            }
-        });
-    }) 
+        window.location.href = `./add_asset.php?id=${code}`;
+    });
 
     getAssets(idProyecto);
 });

@@ -49,10 +49,13 @@ if(isset($_POST["action"])){
         
         case "addAsset": 
 
+            $today = date("dmYhis");
+            $nom_img = null;
+            
                 $dataObtained = [
                     "idproyecto"    => $_POST["idproyecto"],
                     "tipo_activo"   => $_POST["tipo_activo"],
-                    "imagen"        => $_POST["imagen"], //se tiene que modificar el proceso de subir una imagen
+                    "imagen"        => $nom_img, //se tiene que modificar el proceso de subir una imagen
                     "estado"        => $_POST["estado"],
                     "codigo"        => $_POST["codigo"],
                     "sublote"       => $_POST["sublote"],
@@ -66,19 +69,37 @@ if(isset($_POST["action"])){
                     "perimetro"     => $_POST["perimetro"],
                     "det_casa"      => $_POST["det_casa"],
                     "precio_venta"  => $_POST["precio_venta"],
-                    "idusuario"     => $_POST["idusuario"]
+                    "idusuario"     => 1
+                    /* "idusuario"     => $_POST["idusuario"] */
                 ];
+
+                if(isset($_FILES["imagen"]) && $_FILES["imagen"]["size"] > 0){
+
+                    $nom_img = sha1($today) . "jpg";
+                    $ruta_img = "../logos_proyectos/" . $nom_img;
+
+                    if(move_uploaded_file($_FILES["imagen"]["tmp_name"], $ruta_img)){
+
+                        $dataObtained["imagen"] = $nom_img;
+                    }
+                }else{
+
+                    $dataObtained["imagen"] = $nom_img;
+                }
 
                 echo json_encode($asset->addAsset($dataObtained));
             break;
 
         case "setAsset": 
+
+                $today = date("dmYhis");
+                $nom_img = null;
             
                 $dataObtained = [
                     "idactivo"      => $_POST["idactivo"],
                     "idproyecto"    => $_POST["idproyecto"],
                     "tipo_activo"   => $_POST["tipo_activo"],
-                    "imagen"        => $_POST["imagen"], //se tiene que modificar el proceso de subir una imagen
+                    "imagen"        => $nom_img, //se tiene que modificar el proceso de subir una imagen
                     "estado"        => $_POST["estado"],
                     "codigo"        => $_POST["codigo"],
                     "sublote"       => $_POST["sublote"],
@@ -92,13 +113,30 @@ if(isset($_POST["action"])){
                     "perimetro"     => $_POST["perimetro"],
                     "det_casa"      => $_POST["det_casa"],
                     "precio_venta"  => $_POST["precio_venta"],
-                    "idusuario"     => $_POST["idusuario"]
+                    "idusuario"     => 1
+                    /* "idusuario"     => $_POST["idusuario"] */
                 ];
+
+                if(isset($_FILES["imagen"]) && $_FILES["imagen"]["size"] > 0){
+
+                    $nom_img = sha1($today) . ".jpg";
+
+                    $ruta_img = "../logos_proyectos/" . $nom_img;
+
+                    if(move_uploaded_file($_FILES["imagen"]["tmp_name"], $ruta_img)){
+
+                        $dataObtained["imagen"] = $nom_img;
+                    }
+
+                }else{
+
+                    $dataObtained["imagen"] = $nom_img;
+                }
 
                 echo json_encode($asset->setAsset($dataObtained));
 
             break;
-        
+            
         case "inactiveAsset": 
             
                 $idactivo = $_POST["idactivo"];

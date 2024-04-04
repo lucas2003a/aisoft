@@ -235,6 +235,7 @@ BEGIN
 		SELECT 
 		act.idactivo,
         act.tipo_activo,
+        proy.idproyecto,
         proy.denominacion,
         act.imagen,
         act.estado,
@@ -248,6 +249,8 @@ BEGIN
         act.area_terreno,
         act.zcomunes_porcent,
         act.partida_elect,
+        act.latitud,
+        act.longitud,
         act.det_casa,
         act.precio_venta,
         usu.nombres AS usuario
@@ -326,10 +329,12 @@ BEGIN
 			VALUES
 				(
                 _idproyecto, _tipo_activo, NULLIF(_imagen,""), _estado, _codigo, _sublote, _direccion, _moneda_venta, _area_terreno, _zcomunes_porcent, partida_elect,
-				NULLIF(_latitud,""), NULLIF(_longitud, ""), NULLIF(_perimetro,""), NULLIF(_det_casa,""), _precio_venta, _idusuario
+				NULLIF(_latitud,""), NULLIF(_longitud, ""), NULLIF(_perimetro,""),NULLIF(_det_casa,""), _precio_venta, _idusuario
                 );
+                
+	SELECT ROW_COUNT() as filasAfect;
 END $$
-DELIMITER 
+DELIMITER ;
 
 DELIMITER $$
 CREATE PROCEDURE spu_set_assets
@@ -371,12 +376,14 @@ BEGIN
             latitud 		= NULLIF(_latitud,""),
             longitud		= NULLIF(_longitud,""),
             perimetro 		= NULLIF(_perimetro, ""),
-            det_casa		= NULLIF(_det_casa, ""),
+            det_casa		= NULLIF(_det_casa,""),
             precio_venta	= _precio_venta,
             idusuario		= _idusuario,
             update_at		= CURDATE() 
 		WHERE
 			idactivo = _idactivo;
+            
+		SELECT ROW_COUNT() AS filasAfect;
 END$$
 DELIMITER ;
 
@@ -400,6 +407,8 @@ BEGIN
 	ELSE
 		SIGNAL SQLSTATE "45000" SET MESSAGE_TEXT = "Error: el lote tiene un cliente";
     END IF;
+    
+    SELECT ROW_COUNT() AS filasAfect;
 END$$
 DELIMITER ;
 

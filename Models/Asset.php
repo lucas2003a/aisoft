@@ -125,8 +125,8 @@ class Asset extends Conection{
                     $dataAsset["latitud"],
                     $dataAsset["longitud"],
                     $dataAsset["perimetro"],
-                    $dataAsset["det_casa"],
                     $dataAsset["precio_venta"],
+                    $dataAsset["det_casa"],
                     $dataAsset["idusuario"]
                 )
             );

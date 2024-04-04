@@ -235,7 +235,7 @@ require_once "../sidebar/sidebar.php";
     <!-- SWEET ALERT CLASS -->
     <script src="../../js/sweetAlert.js"></script>
 
-    <script src="../../js/interactionForms.js"></script>
+    <script src="../../js/projects/interactionForms.js"></script>
     <!-- CLASE DATA -->
     <script src="../../js/data.js"></script>
     

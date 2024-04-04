@@ -289,8 +289,6 @@ document.addEventListener("DOMContentLoaded",()=>{
     $("#perim").addEventListener("click",(e)=>{
 
         if(e.target.classList.contains("button-addPlus")){
-
-            let perimData = false;
             
             //ITERACIÓN POR CADA INPUT (CLAVE)
             let perimDataKey = document.querySelectorAll(".form-control.perim-key");

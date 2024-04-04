@@ -12,10 +12,22 @@ require_once "../sidebar/sidebar.php"
 
             <div class="content ma-4">
                 <div class="mt-4">
-                    <button class="tablink active" id="btn-DGeneral">Datos Generales</button>
-                    <button class="tablink" id="btn-description" disabled>Descripción</button>
-                    <button class="tablink" id="btn-build" disabled>Construcción</button>
-                    <button class="tablink" id="btn-client" disabled>Cliente</button>
+
+                    <div class="row">
+                        <!-- BOTNES DEL NAVBAR -->
+                        <div class="btn-group">
+
+                            <div class="col-md-6">
+    
+                                <button class="tablink active" id="btn-DGeneral">Datos Generales</button>
+                            </div>
+                            <div class="col-md-6">
+    
+                                <button class="tablink" id="btn-description" disabled>Descripción</button>
+                            </div>
+                        </div>
+                        
+                    </div>
 
                     <div id="DGeneral" class="tabcontent" style="display: block;">
                         <form class="row needs-validation" id="form-asset-gen" novalidate>
@@ -106,26 +118,24 @@ require_once "../sidebar/sidebar.php"
                     </div>
 
                     <div id="Description" class="tabcontent">
-                        <h3>News</h3>
-                        <p>Some news this fine day!</p>
                         <div>
-                            <form class="row needs-validation" id="form-asset-gen" novalidate>
+                            <form class="row needs-validation" id="form-asset-desc" novalidate>
                             <div class="row">
                                 <div class="col-md-6">
 
-                                    <!-- DATOS GENERALES -->
+                                    <!-- DESCRPCIÓN -->
                                     
                                     <!-- ÁREA -->
-                                    <div class="mt-4">
+                                    <div>
                                       <label for="area" class="form-label">Área</label>
-                                        <input type="number" class="form-control" id="area" min="0" value="000.00">
+                                        <input type="number" class="form-control" id="area" min="0" value="000.00" placeholder="Àrea (m2)">
 
                                     </div>
 
                                     <!-- ZONAS COMUNES -->
-                                    <div >
+                                    <div class="mt-4">
                                       <label for="z-comunes" class="form-label">Zonas comunes</label>
-                                        <input type="number" class="form-control" id="z-comunes" min="0" max="100">
+                                        <input type="number" class="form-control" id="z-comunes" min="0" max="100" placeholder="Zonas comúnes (%)">
 
                                     </div>
 
@@ -133,8 +143,8 @@ require_once "../sidebar/sidebar.php"
                                     <!-- MONEDA VENTA -->
                                     <div class="mt-4">
                                       <label for="moneda-venta" class="form-label">Moneda de venta</label>
-                                        <select class="form-control" id="moneda-venta">
-                                            <option value="0">Seleccione</option>
+                                        <select class="form-control custom-select-scroll" id="moneda-venta" required>
+                                            <option value="">Tipo moneda</option>
                                             <option value="USD">Dólares</option>
                                             <option value="SOL">Soles</option>
                                         </select>
@@ -145,7 +155,7 @@ require_once "../sidebar/sidebar.php"
                                     <!-- PRECIO VENTA -->
                                     <div class="mt-4">
                                         <label for="precio-venta" class="form-label">Precio de venta</label>
-                                        <input type="text" class="form-control" id="precio-venta" placeholder="Código" maxlength="7" minlength="7" required autofocus>
+                                        <input type="number" class="form-control" id="precio-venta" placeholder="Código" maxlength="7" minlength="7" required autofocus>
                                         <div class="invalid-feedback">
                                             Necesitas ingresar un código.
                                         </div>
@@ -156,62 +166,79 @@ require_once "../sidebar/sidebar.php"
     
                                     <!-- SUBLOTE -->
                                     <div class="mt-4">
-                                        <label for="sublote" class="form-label">Sublote</label>
-                                        <input type="text" class="form-control" id="sublote" placeholder="Sublote" required>
+                                        <label for="partida-elect" class="form-label">Partida electrónica</label>
+                                        
+                                        <textarea name="partida-elect" class="form-control" id="partida-elect" cols="38" rows="3"></textarea>
                                         <div class="invalid-feedback">
-                                            Necesitas ingresar el sublote.
+                                            Necesitas ingresar la partida electrónica.
                                         </div>
                                         <div class="valid-feedback">
-                                            Sublote registrado correctamente.
+                                        Partida electrónica registrada correctamente.
                                         </div>
                                     </div>
+
                                     
-                                    <!-- DIRECCIÓN -->
+                                </div>
+                                
+                                
+                                <div class="col-md-6">
+                                    
+                                    <!-- LATITUD -->
                                     <div class="mt-4">
-                                        <label for="direccion" class="form-label">Dirección</label>
-                                        <input type="text" class="form-control" id="direccion" placeholder="Dirección" required>
+                                        <label for="latitud" class="form-label">Latitud</label>
+                                        
+                                        <input type="text" name="partida-elect" class="form-control" id="latitud" placeholder="Latitud">
                                         <div class="invalid-feedback">
-                                            Necesitas ingresar una dirección.
+                                            Necesitas ingresar la latitud.
                                         </div>
                                         <div class="valid-feedback">
-                                            Dirección ingresada correctamente.
+                                            Latitud registrada correctamente.
                                         </div>
                                     </div>
-
-                                    <!-- IMAGEN -->
-                                    <div class="form-group">
-                                        <label for="in-image" class="label-img">
-                                            <i class="material-icons"></i>
-                                            <span class="title">Agregar imagen</span>
-                                            <input type="file" accept=".jpg" id="in-image">
-                                        </label>
+    
+                                    <!-- LONGITUD -->
+                                    <div class="mt-4">
+                                        <label for="longitud" class="form-label">Longitud</label>
+                                        
+                                        <input type="text" name="longitud" class="form-control" id="longitud" placeholder="Longitud">
+                                        <div class="invalid-feedback">
+                                            Necesitas ingresar la longitud.
+                                        </div>
+                                        <div class="valid-feedback">
+                                            Longitud registrada correctamente.
+                                        </div>
                                     </div>
-                                </div>
+                                    <!-- PERIMTETRO -->
+                                    <label for="longitud" class="form-label">Perímetro</label>
+                                    <div id="perimetro-asset">
+                                        <div class="row">
+                                            <div class="col-md-11">
 
-
-                                <div class="col-md-6" style="display: flex; align-items: center;">
-                                    <img src="" alt="" id="view-image">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <input type="text" class="form-control perim-key" name="clave" id="clave">
+                                                    </div>
+                                                    <div class="col-md-6">
+                                                        <input type="text" class="form-control perim-value" name="valor" id="valor">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <button type="button" class="button-addPlus" id="add-textBox">+</button>
+                                            </div>
+                                        </div>
+                                    </div>                                    
                                 </div>
                             </div>                                                                 
                                                         
                             <div style="display: flex; justify-content: center; margin: 1rem;">
                         
-                                <button class="btn btn-primary btn-lg" type="submit" id="validar">Validar</button>
+                                <button class="btn btn-primary btn-lg" type="submit" id="guardar">guardar</button>
                             </div>
                         </form>
                         </div>
                         
                     </div>
-
-                    <div id="Build" class="tabcontent">
-                        <h3>Contact</h3>
-                        <p>Get in touch, or swing by for a cup of coffee.</p>
-                    </div>
-
-                    <div id="Client" class="tabcontent">
-                        <h3>About</h3>
-                        <p>Who we are and what we do.</p>
-                    </div> 
                 </div>
             </div>
         </div>
@@ -241,6 +268,7 @@ require_once "../sidebar/sidebar.php"
 
     <!-- SIDEBAR -->
     <script src="../../js/sidebar.js"></script>
+    <script src="../../js/assets/interactionForms.js"></script>
     <script>
 document.addEventListener("DOMContentLoaded",()=>{
 
@@ -251,19 +279,6 @@ document.addEventListener("DOMContentLoaded",()=>{
     const $ = id => document.querySelector(id);
     const $All = id => document.querySelectorAll(id);
 
-    /* TABLINKS */
-    const btnDGeneral = $("#btn-DGeneral");
-    const btnDescription = $("#btn-description");
-    const btnBuild = $("#btn-build");
-    const btnClient = $("#btn-client");
-
-    /* TABCONTENT */
-    const contentDGeneral = $("#DGeneral");
-    const contentDescription = $("#Description");
-    const contentBuild = $("#Build");
-    const contentClient = $("#Client");
-    const viewImage = $("#view-image");
-
     /**URL*/
     const stringQuery = window.location.search;
     const params = new URLSearchParams(stringQuery);
@@ -272,8 +287,74 @@ document.addEventListener("DOMContentLoaded",()=>{
 
     let idProyecto;
     let dataAssets;
+    let assetObtained;
     let oldImage;
 
+    function renderInputs(key, value){
+
+        /*INPUT KEY */
+        let inputKey = document.createElement("input");
+        inputKey.classList.add("form-control","perim-key")
+        inputKey.value = key;
+
+        /* INPUT VALUE */
+        let inputValue = document.createElement("input");
+        inputValue.classList.add("form-control","perim-key");
+        inputValue.value = value;
+
+        /* DIV KEY */
+        let divKey = document.createElement("div");
+        divKey.classList.add("col-md-6");
+
+        /* DIV VALUE */
+        let divValue = document.createElement("div");
+        divValue.classList.add("col-md-6");
+
+        divKey.appendChild(inputKey);
+        divValue.appendChild(inputValue);
+
+        
+        let rowInputs = document.createElement("div");
+        rowInputs.classList.add("row","mt.2");
+        
+        rowInputs.appendChild(divKey);
+        rowInputs.appendChild(divValue);
+
+        let divInputs = document.createElement("div");
+        divInputs.classList.add("col-md-11");
+
+        divInputs.appendChild(rowInputs);
+
+        /* -------------------------------------------------- */
+
+        /* BOTÓN "+" */
+        let buttonPluss = document.createElement("button");
+        buttonPluss.classList.add("button-addPlus","mt-2","active");
+        buttonPluss.setAttribute("id","add-textBox");
+        buttonPluss.setAttribute("type","button");
+        buttonPluss.innerText = "+";
+        
+        let divButton = document.createElement("div");
+        divButton.classList.add("col-md-1");
+
+        divButton.appendChild(buttonPluss);
+
+        /* -------------------------------------------------- */
+
+        let rowMaster = document.createElement("div");
+        rowMaster.classList.add("row");
+
+        rowMaster.appendChild(divInputs);
+        rowMaster.appendChild(divButton);
+
+        let firstRow = $("#perimetro-asset").firsChild;
+        $("#perimetro-asset").insertBefore(rowMaster,firstRow);
+        
+    }
+
+    /**
+     * FUNCIÓN PARA OBTENER LA DATA DE LOS ACTIVOS POR IDPROYECTO
+     */
     function getAssets(id){
 
         let url ="../../Controllers/asset.controller.php";
@@ -293,6 +374,9 @@ document.addEventListener("DOMContentLoaded",()=>{
             });
     }
 
+    /**
+     * FUNCIÓN PARA OBTENER LA DATA DE LOS ACTIVOS POR EL IDACTIVO
+     */
     function getDetailAsset(id){
 
         let url = "../../Controllers/asset.controller.php";
@@ -305,6 +389,8 @@ document.addEventListener("DOMContentLoaded",()=>{
         .then(asset =>{
             console.log(asset);
 
+            assetObtained = asset;
+
             idProyecto = asset.idproyecto;
 
             oldImage = asset.imagen;
@@ -312,6 +398,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 
             $("#cabezera").innerText += ` ${asset.sublote} - ${asset.denominacion}`;
 
+            /* FORMULARIO DATOS GENERALES */
             $("#ubigeo").value = `${asset.distrito} - ${asset.provincia} - ${asset.departamento}`;
             $("#estado").value = asset.estado;
             $("#tipo-activo").value = asset.tipo_activo;
@@ -320,8 +407,30 @@ document.addEventListener("DOMContentLoaded",()=>{
             $("#direccion").value = asset.direccion;
             $("#view-image").setAttribute("src",`../../logos_proyectos/${img}`);
 
-        
+            /* FORMULARIO DESCRIPCIÓN */
+            $("#area").value = asset.area_terreno;
+            $("#z-comunes").value = asset.zcomun_porcent;
+            $("#moneda-venta").value = asset.moneda_venta;
+            $("#precio-venta").value = asset.precio_venta;
+            $("#partida-elect").value = asset.partida_elect;
+            $("#latitud").value = asset.latitud;
+            $("#longitud").value = asset.longitud;
+
             const det_casa = JSON.parse(asset.det_casa);
+
+            let arrayKey = det_casa.clave;
+            let arrayValue = det_casa.valor;
+
+            arrayKey.forEach((key, index)=>{
+
+                let value = arrayValue[index];
+
+                if(key != "" || value != ""){
+
+                    renderInputs(key, value);
+                }
+            });
+
             console.log(det_casa);
 
             getAssets(idProyecto);
@@ -336,26 +445,11 @@ document.addEventListener("DOMContentLoaded",()=>{
         });
     };
 
-    function openTab(page, btn){
+    
 
-        let tabContent = $All(".tabcontent");
-
-        for(i=0; i < tabContent.length; i++){
-
-            tabContent[i].style.display = "none";
-        }
-
-        let tablink = $All(".tablink");
-        
-        for(i = 0; i < tablink.length; i++){
-
-            tablink[i].classList.remove("active");
-        }
-
-        $(page).style.display = "block";
-        btn.classList.add("active");
-    }
-
+    /**
+     * FUNCIÓN PARA COMPARA INFORMACIÓN
+     */
     function searchInfo(array, column, param){
     
         if(column == "codigo"){
@@ -400,26 +494,14 @@ document.addEventListener("DOMContentLoaded",()=>{
          
     };
 
-    function readFile(event){
 
-        const file = event.target.files[0];
-        const reader = new FileReader();
-
-        reader.onload = (event)=>{
-
-            viewImage.setAttribute("src",`${event.target.result}`);
-            viewImage.style.width = "100%";
-            viewImage.style.height = "20rem";
-        }
-
-        reader.readAsDataURL(file);
-    }
-
-    function validateForm(id, callback){
+    /**
+     * FUNCIÓN PARA ENVIAR TODOS LOS DATOS DE LOS FORMUALARIOS
+     */
+    function sendDataForm(id, callback){
         'use strict'
+
         const form = $(id);
-
-
 
             form.addEventListener('submit', event => {
             
@@ -427,11 +509,15 @@ document.addEventListener("DOMContentLoaded",()=>{
                     event.preventDefault()      //=> FRENA EL ENVÍO DEL FORMULARIO
                     event.stopPropagation()     //=> FRENA LA PROPAGACIÓN DE DATOS EN EL FORMULARIO
                 }else{
-                    event.preventDefault();
-                    sweetAlert.sweetConfirm("Datos nuevos","¿Deseas actualizar el registro?",()=>{
-                
-                    callback();
-                });
+
+                    if(form.checkValidity()){
+                        
+                        event.preventDefault();
+                        sweetAlert.sweetConfirm("Datos nuevos","¿Deseas actualizar el registro?",()=>{
+                            callback();
+                            
+                        }); 
+                    }
             }
 
             form.classList.add('was-validated') //=> AGREGA ESTA CLASE A LOS ELEMENTOS DEL FORMULARIO(MUESTRA LOS COMENTARIOS)
@@ -439,23 +525,69 @@ document.addEventListener("DOMContentLoaded",()=>{
          
     }
     
-    $("#form-asset-gen").addEventListener("submit",(e)=>{
-        let id = "#form-asset-gen"
+    function setAsset(id){
+
+        const keyClass = ".form-control.perim-key";
+        const keyValue = ".form-control.perim-key";
+
+        const json = data.getJson(keyClass, keyValue)
+
+        let url = "../../Controllers/asset.controller.php";
+
+        let params = new FormData();
+        let img = $("#in-image").files[0] ? $("#in-image").files[0] : oldImage;
+
+        params.append("action","setAsset");
+        params.append("idactivo",id);
+        params.append("idproyecto",idProyecto);
+        params.append("tipo_activo",assetObtained.tipo_activo);
+        params.append("imagen",img);
+        params.append("codigo",$("#codigo").value);
+        params.append("estado",assetObtained.estado);
+        params.append("sublote",$("#sublote").value);
+        params.append("direccion",$("#direccion").value);
+        params.append("moneda_venta",$("#moneda-venta").value);
+        params.append("precio_venta",$("#precio-venta").value);
+        params.append("area_terreno",$("#area").value);
+        params.append("zcomunes_porcent",$("#z-comunes").value);
+        params.append("partida_elect",$("#partida-elect").value);
+        params.append("latitud",$("#latitud").value);
+        params.append("longitud",$("#longitud").value);
+        params.append("perimetro",json);
+        params.append("det_casa",`{"clave" :[""], "valor":[""]}`);
+         
+
+        data.sendAction(url,params)
+            .then(result =>{
+
+                console.log(result);
+                if(result.filasAfect > 0){
+                   
+                let codeName = btoa(assetObtained.denominacion)
+                let codeid = btoa(idProyecto);
+                   sweetAlert.sweetSuccess("Registro actualizado","El registro se ha actualizado correctamente",()=>{
+
+                        window.location.href = `./index_asset.php?id=${codeid}&name=${codeName}`;
+                    });
+                }else{
+                    sweetAlert.alertError("No se actualizó el registro","Vuelve a intentarlo");
+                }
+            })
+            .catch(e=>{
+                console.error(e);
+            });
+    }
+
+    $("#form-asset-desc").addEventListener("submit",(e)=>{
+
+        let id ="#form-asset-desc";
 
         e.preventDefault();
-        validateForm(id,()=>{
-            btnDescription.removeAttribute("disabled");
-            console.log("validar");
-            btnDescription.click();
+        sendDataForm(id,()=>{
+
+            setAsset(idActivo);
         });
     })
-
-    $("#in-image").addEventListener("change",(e)=>{
-
-        console.log(e)
-        readFile(e);
-    });
-
     $("#sublote").addEventListener("keypress",(e)=>{
     
         if(e.keyCode == 13){
@@ -470,38 +602,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 
     });
 
-    $("#codigo").addEventListener("keypress",(e)=>{
-    
-        /* if(e.keyCode == 13){
-
-            let code = $("#codigo").value;
-        
-                if(code != ""){
-
-                    searchInfo(dataAssets,"codigo",code);
-                }
-        }  */
-
-    });
-
-    btnDGeneral.addEventListener("click",function(){
-        openTab("#DGeneral", this);
-    });
-    
-    btnDescription.addEventListener("click",function(){
-        openTab("#Description", this);
-    });
-
-    btnBuild.addEventListener("click",function(){
-        openTab("#Build", this);
-    });
-
-    btnClient.addEventListener("click",function(){
-        openTab("#Client", this);
-    });
-
     getDetailAsset(idActivo);
-    btnDGeneral.click();
 });
     </script>
   </body>

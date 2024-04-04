@@ -239,7 +239,7 @@ require_once "../sidebar/sidebar.php";
     <script src="../../js/data.js"></script>
     
     <script src="../../js/sidebar.js"></script>
-    <script src="../../js/interactionForms.js"></script>
+    <script src="../../js/projects/interactionForms.js"></script>
     <script src="../../js/projects/add_project.js"></script>
 </body>
 </html>

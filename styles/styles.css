@@ -523,6 +523,11 @@
     font-weight: bold;
   }
 
+  .form-label{
+
+    color: #232E33;
+  }
+
 
     /*Móviles*/
   @media (min-width:320px) and (max-width:480px){
