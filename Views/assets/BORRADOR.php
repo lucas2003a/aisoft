@@ -30,91 +30,162 @@ require_once "../sidebar/sidebar.php"
                     </div>
 
                     <div id="DGeneral" class="tabcontent" style="display: block;">
-                        <form class="row needs-validation" id="form-asset-gen" novalidate>
-                            <div class="row">
-                                <div class="col-md-6">
+                    <form class="row needs-validation" id="form-client" novalidate>
+                                
+                                <!-- CLIENTE PRINCIPAL -->
 
-                                    <!-- DATOS GENERALES -->
-                                    
-                                    <!-- UBIGEO -->
-                                    <div >
-                                      <label for="ubigeo" class="form-label">Ubigeo</label>
-                                        <input type="text" class="form-control" id="ubigeo" readonly>
-
-                                    </div>
-
-                                    <!-- ESTADO -->
-                                    <div class="mt-4">
-                                      <label for="estado" class="form-label">Estado</label>
-                                        <input type="text" class="form-control" id="estado" value="SIN VENDER" readonly>
-
-                                    </div>
-    
-                                    <!-- ESTADO -->
-                                    <div class="mt-4">
-                                      <label for="tipo-activo" class="form-label">Tipo activo</label>
-                                        <input type="text" class="form-control" id="tipo-activo" value="LOTE" readonly>
-
-                                    </div>
-    
-                                    
-                                    <!-- CODIGO -->
-                                    <div class="mt-4">
-                                        <label for="codigo" class="form-label">Código</label>
-                                        <input type="text" class="form-control" id="codigo" placeholder="Código" maxlength="7" minlength="7" required autofocus>
-                                        <div class="invalid-feedback">
-                                            Necesitas ingresar un código.
-                                        </div>
-                                        <div class="valid-feedback">
-                                            Código registrado correctamente.
-                                        </div>
-                                    </div>
-    
-                                    <!-- SUBLOTE -->
-                                    <div class="mt-4">
-                                        <label for="sublote" class="form-label">Sublote</label>
-                                        <input type="text" class="form-control" id="sublote" placeholder="Sublote" readonly required>
-                                        <div class="invalid-feedback">
-                                            Necesitas ingresar el sublote.
-                                        </div>
-                                        <div class="valid-feedback">
-                                            Sublote registrado correctamente.
+                                <h4>CLIENTE</h4>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        
+                                        <!-- DOCUMENTO TIPO -->
+                                        <div class="mt-4">
+                                            <label for="documento_tipo" class="form-label">Tipo de documento</label>
+                                            <select class="form-select custom-select-scroll" id="documento_tipo" required>
+                                                <option selected disabled value="">Tipo de documento</option>                                            
+                                                <option disabled value="DNI">DNI</option>                                            
+                                                <option disabled value="Carnet de extranjería">Carnet de extranjería</option>                                            
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                Necesitas escojer un tipo de documento.
+                                            </div>
+                                            <div class="valid-feedback">
+                                                Tipo de documento escojido correctamente.
+                                            </div>
                                         </div>
                                     </div>
                                     
-                                    <!-- DIRECCIÓN -->
-                                    <div class="mt-4">
-                                        <label for="direccion" class="form-label">Dirección</label>
-                                        <input type="text" class="form-control" id="direccion" placeholder="Dirección" readonly required>
-                                        <div class="invalid-feedback">
-                                            Necesitas ingresar una dirección.
-                                        </div>
-                                        <div class="valid-feedback">
-                                            Dirección ingresada correctamente.
+                                    <div class="col-md-6">
+                                        
+                                        <!-- DOCUMENTO NÚMERO -->
+                                        
+                                        <div class="mt-4">
+                                            <label for="documento_nro" class="form-label">Nº de documento</label>
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="documento_nro" placeholder="Nº de documento" required autofocus>
+                                                <button type="button" class="btn btn-primary btn-sm">Buscar</button>
+                                            </div>
+                                            <div class="invalid-feedback">
+                                                Necesitas ingresar un nº de documento.
+                                            </div>
+                                            <div class="valid-feedback">
+                                                Nº de documento registrado correctamente.
+                                            </div>                                                    
                                         </div>
                                     </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        
+                                        <!-- ESTADO CIVIL -->
+                                        <div class="mt-4">
+                                            <label for="estado_civil" class="form-label">Estado civil</label>
+                                            <select class="form-select custom-select-scroll" id="estado_civil" required>
+                                                <option selected disabled value="">Estado civil</option>                                            
+                                                <option disabled value="">Soltero</option>                                            
+                                                <option disabled value="">Estado civil</option>                                            
+                                            </select>
+                                            <div class="invalid-feedback">
+                                                Necesitas escojer el estado civil.
+                                            </div>
+                                            <div class="valid-feedback">
+                                                Estado civil escojido correctamente.
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        
+                                        <!-- DIRECCIÓN -->
+                                        <div class="mt-4 mb-4">
+                                            <label for="direccion" class="form-label">Dirección</label>
+                                            <input type="text" class="form-control" id="direccion" placeholder="Dirección" required>
+                                            <div class="invalid-feedback">
+                                                Necesitas ingresar una dirección.
+                                            </div>
+                                            <div class="valid-feedback">
+                                                Dirección ingresada correctamente.
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        
+                                        <!-- NOMBRES -->
+                                        <div class="mt-4">
+                                            <label for="nombres" class="form-label">Nombres</label>
+                                            <input type="text" class="form-control" id="nombres" placeholder="Nombres" required>
+                                            <div class="invalid-feedback">
+                                                Necesitas ingresar los nombres.
+                                            </div>
+                                            <div class="valid-feedback">
+                                                Nombres ingresados correctamente.
+                                            </div>
+                                        </div>
 
-                                    <!-- IMAGEN -->
-                                    <div class="form-group">
-                                        <label for="in-image" class="label-img">
-                                            <i class="material-icons"></i>
-                                            <span class="title">Agregar imagen</span>
-                                            <input type="file" accept=".jpg" id="in-image">
-                                        </label>
+                                    </div>
+                                    <div class="col-md-6">
+                                        
+                                        <!-- APELLIDOS -->
+                                        <div class="mt-4">
+                                            <label for="apellidos" class="form-label">Apellidos</label>
+                                            <input type="text" class="form-control" id="apellidos" placeholder="Apellidos" required>
+                                            <div class="invalid-feedback">
+                                                Necesitas ingresar los apellidos.
+                                            </div>
+                                            <div class="valid-feedback">
+                                                Apellidos ingresados correctamente.
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
 
-                                <div class="col-md-6" style="display: flex; align-items: center;">
-                                    <img src="" alt="" id="view-image">
+
+                                <!-- DEPARTEMENTO -->
+                                <div class="mt-4">
+                                  <label for="iddepartamento" class="form-label">Departamento</label>
+                                    <select class="form-select custom-select-scroll" id="iddepartamento" required>
+                                        <option selected disabled value="">Departamento</option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        Necesitas escojer un departamento.
+                                    </div>
+                                    <div class="valid-feedback">
+                                        Departamento escojido correctamente.
+                                    </div>
                                 </div>
-                            </div>                                                                 
-                                                        
-                            <div style="display: flex; justify-content: center; margin: 1rem;">
-                        
-                                <button class="btn btn-primary btn-lg" type="submit" id="validar">Validar</button>
-                            </div>
-                        </form>
+
+                                <!-- PROVINCIA -->
+                                <div class="mt-4">
+                                    <label for="idprovincia" class="form-label">Provincia</label>
+                                    <select class="form-select custom-select-scroll" id="idprovincia" required>
+                                        <option selected disabled value="">Provincia</option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        Necesitas escojer una provincia.
+                                    </div>
+                                    <div class="valid-feedback">
+                                        Provincia escojida correctamente.
+                                    </div>
+                                </div>
+
+                                <!-- DISTRITO -->
+                                <div class="mt-4">
+                                    <label for="iddistrito" class="form-label">Distrito</label>
+                                    <select class="form-select custom-select-scroll" id="iddistrito" required>
+                                        <option selected disabled value="">Distrito</option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        Necesitas escojer un distrito.
+                                    </div>
+                                    <div class="valid-feedback">
+                                        Distrito escojido correctamente.
+                                    </div>
+                                </div>
+                            </form>
                     </div>
 
                     <div id="Description" class="tabcontent">

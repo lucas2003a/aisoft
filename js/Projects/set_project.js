@@ -23,17 +23,17 @@ let oldImage;
 
 function renderInputs(keyValue, valValue){
     
-    //BOTÓN "+" Y SU CONTENEDOR
-    let buttonPluss = document.createElement("Button");
-    buttonPluss.classList.add("button-less","mt-2","active");
-    buttonPluss.setAttribute("id","add-textBox");
-    buttonPluss.setAttribute("type","button");
-    buttonPluss.innerText = "-";
+    //BOTÓN "-" Y SU CONTENEDOR
+    let buttonLess = document.createElement("Button");
+    buttonLess.classList.add("button-less","mt-2","active");
+    buttonLess.setAttribute("id","add-textBox");
+    buttonLess.setAttribute("type","button");
+    buttonLess.innerText = "-";
 
     let contentButton = document.createElement("div");
     contentButton.classList.add("col-md-1");
 
-    contentButton.appendChild(buttonPluss); //=> SE AGREGA AL CONTENEDOR
+    contentButton.appendChild(buttonLess); //=> SE AGREGA AL CONTENEDOR
 
     // DIV ROW{DIV(COL-MD-11) - DIV(CONTENT BUTTON)}
     let dataPerim = document.createElement("div");

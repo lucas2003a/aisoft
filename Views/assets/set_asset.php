@@ -29,7 +29,7 @@ require_once "../sidebar/sidebar.php"
                         
                     </div>
 
-                    <div id="DGeneral" class="tabcontent" style="display: block;">
+                    
                         <form class="row needs-validation" id="form-asset-gen" novalidate>
                             <div class="row">
                                 <div class="col-md-6">
@@ -106,7 +106,7 @@ require_once "../sidebar/sidebar.php"
 
 
                                 <div class="col-md-6" style="display: flex; align-items: center;">
-                                    <img src="" alt="" id="view-image">
+                                    <img src="" alt="" id="view-image" style="max-height: 500px;" width="100%">
                                 </div>
                             </div>                                                                 
                                                         
@@ -327,17 +327,17 @@ document.addEventListener("DOMContentLoaded",()=>{
 
         /* -------------------------------------------------- */
 
-        /* BOTÓN "+" */
-        let buttonPluss = document.createElement("button");
-        buttonPluss.classList.add("button-addPlus","mt-2","active");
-        buttonPluss.setAttribute("id","add-textBox");
-        buttonPluss.setAttribute("type","button");
-        buttonPluss.innerText = "+";
+        /* BOTÓN "-" */
+        let buttonLess = document.createElement("button");
+        buttonLess.classList.add("button-less","mt-2","active");
+        buttonLess.setAttribute("id","add-textBox");
+        buttonLess.setAttribute("type","button");
+        buttonLess.innerText = "-";
         
         let divButton = document.createElement("div");
         divButton.classList.add("col-md-1");
 
-        divButton.appendChild(buttonPluss);
+        divButton.appendChild(buttonLess);
 
         /* -------------------------------------------------- */
 
@@ -347,7 +347,7 @@ document.addEventListener("DOMContentLoaded",()=>{
         rowMaster.appendChild(divInputs);
         rowMaster.appendChild(divButton);
 
-        let firstRow = $("#perimetro-asset").firsChild;
+        let firstRow = $("#perimetro-asset").firstChild;
         $("#perimetro-asset").insertBefore(rowMaster,firstRow);
         
     }
@@ -388,7 +388,7 @@ document.addEventListener("DOMContentLoaded",()=>{
         data.sendAction(url,params)
         .then(asset =>{
             console.log(asset);
-
+            console.log(asset);
             assetObtained = asset;
 
             idProyecto = asset.idproyecto;
@@ -409,17 +409,17 @@ document.addEventListener("DOMContentLoaded",()=>{
 
             /* FORMULARIO DESCRIPCIÓN */
             $("#area").value = asset.area_terreno;
-            $("#z-comunes").value = asset.zcomun_porcent;
+            $("#z-comunes").value = asset.zcomunes_porcent;
             $("#moneda-venta").value = asset.moneda_venta;
             $("#precio-venta").value = asset.precio_venta;
             $("#partida-elect").value = asset.partida_elect;
             $("#latitud").value = asset.latitud;
             $("#longitud").value = asset.longitud;
 
-            const det_casa = JSON.parse(asset.det_casa);
+            const perimetro = JSON.parse(asset.perimetro);
 
-            let arrayKey = det_casa.clave;
-            let arrayValue = det_casa.valor;
+            let arrayKey = perimetro.clave;
+            let arrayValue = perimetro.valor;
 
             arrayKey.forEach((key, index)=>{
 
@@ -431,7 +431,7 @@ document.addEventListener("DOMContentLoaded",()=>{
                 }
             });
 
-            console.log(det_casa);
+            console.log(perimetro);
 
             getAssets(idProyecto);
         

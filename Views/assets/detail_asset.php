@@ -31,7 +31,7 @@ require_once "../sidebar/sidebar.php"
                                 <p>
                                     <button type="button" class="btn btn-danger btn-lg" id="btn-pdf"><i class="bi bi-filetype-pdf"></i></button>
                                     <button type="button" class="btn btn-success btn-lg" id="btn-excel"><i class="bi bi-file-earmark-excel-fill"></i></button>                                                                        
-                                    <button type="button" class="btn btn-primary btn-lg" id="btn-plussClient"><i class="bi bi-person-fill-add"></i></button>
+                                    <a type="button" href="./search_client.php" class="btn btn-primary btn-lg" id="btn-plussClient"><i class="bi bi-person-fill-add"></i></a>
                                 </p>
                             </div>    
                             <!-- <h4><strong>Estado : </strong><spam ></spam></h4> -->
@@ -274,11 +274,6 @@ document.addEventListener("DOMContentLoaded",()=>{
                 console.error(e);
             });
     };
-
-    $("#btn-edit").addEventListener("click",()=>{
-
-        window.location.href = `./set_asset.php?id=${code}`;
-    });
 
     getDetailAsset(idActivo);
 });

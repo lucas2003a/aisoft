@@ -12,9 +12,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
     <!-- ESTILOS CSS -->
+    <link rel="stylesheet" href="../../styles/styles.css">
     <link rel="stylesheet" href="../../styles/sidebar.css">
     <link rel="stylesheet" href="../../styles/tabs.css">
-    <link rel="stylesheet" href="../../styles/styles.css">
 
 </head>
 <body id="body-pd">

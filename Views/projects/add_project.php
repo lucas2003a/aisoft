@@ -241,5 +241,6 @@ require_once "../sidebar/sidebar.php";
     <script src="../../js/sidebar.js"></script>
     <script src="../../js/projects/interactionForms.js"></script>
     <script src="../../js/projects/add_project.js"></script>
+    <script src="../../js/renderUbigeo.js"></script>
 </body>
 </html>

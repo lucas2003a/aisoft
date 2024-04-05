@@ -240,6 +240,7 @@ require_once "../sidebar/sidebar.php";
     <script src="../../js/data.js"></script>
     
     <script src="../../js/sidebar.js"></script>    
-    <script src="../../js/projects/set_project.js"></script>    
+    <script src="../../js/projects/set_project.js"></script>  
+    <script src="../../js/renderUbigeo.js"></script>  
 </body>
 </html>
