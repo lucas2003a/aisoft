@@ -251,6 +251,7 @@ BEGIN
         act.partida_elect,
         act.latitud,
         act.longitud,
+        act.perimetro,
         act.det_casa,
         act.precio_venta,
         usu.nombres AS usuario
@@ -442,7 +443,7 @@ DELIMITER $$
 CREATE PROCEDURE spu_list_clients_by_docNro(IN _documento_nro VARCHAR(12))
 BEGIN
 	SELECT * FROM vws_list_clients
-    WHERE documento_nro LIKE CONCAT("%",_documento_nro, "%");
+    WHERE documento_nro =_documento_nro;
 END$$
 DELIMITER ;
 

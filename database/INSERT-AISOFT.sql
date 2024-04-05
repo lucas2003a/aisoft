@@ -110,6 +110,8 @@ INSERT INTO proyectos(iddireccion, codigo, denominacion, iddistrito,direccion, i
 				(1, 'A-14 Centenario II', 'RESIDENCIAL Centenario II', 1007, 'Dirección Centenario II', 4),
 				(1, 'A-15 Kalea Playa', 'Kalea Playa', 1007, 'Dirección Kalea Playa', 5);
                 
+
+                
 SELECT * FROM PROYECTOS;
 SELECT * FROM metricas;
 

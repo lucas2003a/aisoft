@@ -100,6 +100,7 @@ DELIMITER $$
 CREATE VIEW vws_list_assets_short AS
 	SELECT
 		act.idactivo,
+        proy.idproyecto,
         proy.denominacion,
         act.codigo,
         act.estado,
@@ -116,7 +117,7 @@ CREATE VIEW vws_list_assets_short AS
         INNER JOIN departamentos AS dept ON dept.iddepartamento = prov.iddepartamento
         INNER JOIN usuarios AS usu ON usu.idusuario = act.idusuario
         WHERE act.tipo_activo = "LOTE"
-        ORDER BY proy.denominacion;
+        ORDER BY CAST(SUBSTRING(act.codigo,3) AS UNSIGNED) ASC;
 $$
 DELIMITER ;
 

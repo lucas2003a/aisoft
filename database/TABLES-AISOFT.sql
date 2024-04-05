@@ -169,16 +169,17 @@ CREATE TABLE activos(
     idusuario 			INT 				NOT NULL,
     CONSTRAINT fk_idproyecto_lotes FOREIGN KEY(idproyecto)  REFERENCES proyectos(idproyecto),
     CONSTRAINT uk_codigo_lotes UNIQUE(codigo),
-    CONSTRAINT uk_sublote_lotes UNIQUE(idproyecto, sublote),
     CONSTRAINT fk_idusuario_lotes FOREIGN KEY(idusuario) REFERENCES usuarios(idusuario)
 )ENGINE = INNODB;
 
+-- ALTER TABLE activos DROP CONSTRAINT fk_idproyecto_lotes;
+-- ALTER TABLE activos ADD CONSTRAINT fk_idproyecto_lotes FOREIGN KEY(idproyecto)  REFERENCES proyectos(idproyecto);
 -- ALTER TABLE activos DROP COLUMN det_casa; 
 -- ALTER TABLE activos ADD COLUMN det_casa JSON NOT NULL DEFAULT '{"clave" :[""], "valor":[""]}';
 -- ALTER TABLE activos MODIFY COLUMN codigo CHAR(7);
 -- ALTER TABLE activos CHANGE urbanizacion direccion VARCHAR(60);
 -- ALTER TABLE activos DROP COLUMN idlote;
-
+SELECT * FROM activos ORDER BY create_at asc;
 -- CLIENTES
 CREATE TABLE clientes(
 	idcliente			INT PRIMARY KEY AUTO_INCREMENT,
@@ -216,6 +217,7 @@ CREATE TABLE vend_representantes(
 -- CONTRATOS
 CREATE TABLE contratos(
 	idcontrato 				INT PRIMARY KEY AUTO_INCREMENT,
+    tipo_contrato 			VARCHAR(40)		NOT NULL,
     idcliente				INT  			NOT NULL,	-- EL CLIENTE
     idconyugue 				INT    			NULL,		-- EL CONYUGUE (SOLO SI ESTÁ CASADO)
     idrepresentante_primario 		INT 			NOT NULL,	-- REPRESENTANTE DEL VENDEDOR
@@ -235,6 +237,8 @@ CREATE TABLE contratos(
     CONSTRAINT fk_idusuario_cont FOREIGN KEY(idusuario) REFERENCES usuarios(idusuario)
 )ENGINE = INNODB;
 
+SELECT * FROM contratos;
+-- ALTER TABLE contratos ADD COLUMN tipo_contrato VARCHAR(40) NOT NULL;
 -- ALTER TABLE contratos DROP COLUMN detalles;
 -- ALTER TABLE contratos ADD COLUMN detalles JSON NOT NULL DEFAULT '{"clave": "", "valor":  ""}';
 
